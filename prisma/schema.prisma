@@ -1,0 +1,681 @@
+// ============================================================================
+// ASTITVA 2K26 - Master Prisma Database Schema
+// Annual Sports, Cultural, Gaming & Literary Festival of LNJPIT Chapra
+// Dates: 4 September 2026 - 8 September 2026
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ----------------------------------------------------------------------------
+// ENUMS
+// ----------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  EVENT_COORDINATOR
+  VOLUNTEER
+  TEAM_CAPTAIN
+  PARTICIPANT
+}
+
+enum Branch {
+  CSE
+  ME
+  CE
+  EE
+  ECE
+  OTHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum CategoryType {
+  SPORTS
+  CULTURAL
+  GAMING
+  LITERARY
+}
+
+enum EventType {
+  INDIVIDUAL
+  TEAM
+}
+
+enum EventStatus {
+  UPCOMING
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  ATTENDED
+}
+
+enum TeamStatus {
+  FORMING
+  READY
+  REGISTERED
+  DISQUALIFIED
+}
+
+enum TeamMemberRole {
+  CAPTAIN
+  MEMBER
+}
+
+enum MemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CheckInType {
+  EVENT_ENTRY
+  GATE_ENTRY
+  MEAL
+  BADGE_VERIFY
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  EXCUSED
+}
+
+enum ResultPosition {
+  WINNER
+  FIRST_RUNNER_UP
+  SECOND_RUNNER_UP
+  FINALIST
+  PARTICIPANT
+}
+
+enum CertificateType {
+  WINNER
+  FIRST_RUNNER_UP
+  SECOND_RUNNER_UP
+  PARTICIPATION
+  VOLUNTEER
+  COORDINATOR
+  MERIT
+}
+
+enum AnnouncementCategory {
+  GENERAL
+  EVENT_UPDATE
+  EMERGENCY
+  SCHEDULE_CHANGE
+  RESULTS
+}
+
+enum AnnouncementPriority {
+  URGENT
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ALERT
+  REGISTRATION
+  RESULT
+  TEAM_INVITE
+}
+
+enum SponsorTier {
+  TITLE
+  POWERED_BY
+  GOLD
+  SILVER
+  BRONZE
+  MEDIA_PARTNER
+  COMMUNITY_PARTNER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum CommitteeCategory {
+  FACULTY
+  CORE_STUDENT
+  TECHNICAL
+  CULTURAL
+  SPORTS
+  VOLUNTEER_LEAD
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ----------------------------------------------------------------------------
+// 1. USER & AUTHENTICATION
+// ----------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  role          Role      @default(PARTICIPANT)
+  clerkId       String?   @unique
+  passwordHash  String?   // For local mock authentication / dev testing
+  avatarUrl     String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 1:1 Profile
+  profile            Profile?
+
+  // Registrations & Teams
+  registrations      Registration[]
+  captainTeams       Team[]           @relation("TeamCaptain")
+  teamMemberships    TeamMember[]
+
+  // Operations
+  coordinatedEvents  Event[]          @relation("EventCoordinators")
+  markedAttendances  Attendance[]     @relation("MarkedByVolunteer")
+  attendances        Attendance[]     @relation("UserAttendance")
+  results            Result[]
+  certificates       Certificate[]
+  announcements      Announcement[]
+  notifications      Notification[]
+  auditLogs          AuditLog[]
+  aiChatMessages     AiChatMessage[]
+
+  @@index([email])
+  @@index([role])
+  @@index([clerkId])
+}
+
+// ----------------------------------------------------------------------------
+// 2. STUDENT PROFILE (LNJPIT Chapra Specifics)
+// ----------------------------------------------------------------------------
+
+model Profile {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  participantId    String    @unique // Formatted: "AST26-1001"
+  collegeId        String    // University / College Roll Number (e.g. 22105123001)
+  collegeName      String    @default("LNJPIT Chapra")
+  branch           Branch
+  semester         Int       // 1 - 8
+  phone            String
+  gender           Gender
+  isHosteler       Boolean   @default(false)
+  hostelName       String?
+  roomNumber       String?
+  emergencyContact String?
+  qrPassToken      String?   // Encrypted HMAC pass token (AST26.<header>.<payload>.<sig>)
+  bio              String?
+  idCardUrl        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([participantId])
+  @@index([collegeId])
+  @@index([branch])
+  @@index([semester])
+}
+
+// ----------------------------------------------------------------------------
+// 3. CATEGORY
+// ----------------------------------------------------------------------------
+
+model Category {
+  id          String        @id @default(cuid())
+  slug        String        @unique // e.g. "sports", "cultural", "gaming", "literary"
+  name        String        // "Sports", "Cultural", "Gaming", "Literary"
+  type        CategoryType
+  description String
+  icon        String?       // Lucide icon identifier
+  coverImage  String?
+  order       Int           @default(0)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  events      Event[]
+
+  @@index([slug])
+  @@index([type])
+}
+
+// ----------------------------------------------------------------------------
+// 4. EVENT
+// ----------------------------------------------------------------------------
+
+model Event {
+  id                   String        @id @default(cuid())
+  slug                 String        @unique // e.g. "cricket-tournament", "bgmi-championship"
+  title                String
+  subtitle             String?
+  description          String
+  rules                String        // Full markdown/text rules & regulations
+  categoryId           String
+  venue                String        // e.g. "Main College Ground", "Auditorium"
+  eventType            EventType     @default(INDIVIDUAL)
+  minTeamSize          Int           @default(1)
+  maxTeamSize          Int           @default(1)
+  registrationFee      Float         @default(0.0)
+  maxRegistrations     Int           @default(100)
+  currentRegistrations Int           @default(0)
+  prizePool            Float         @default(0.0)
+  firstPrize           String?       // e.g. "₹10,000 + Gold Trophy + Certificate"
+  secondPrize          String?       // e.g. "₹5,000 + Silver Medal + Certificate"
+  thirdPrize           String?       // e.g. "₹2,500 + Bronze Medal + Certificate"
+  scheduleStart        DateTime      // Start Date & Time
+  scheduleEnd          DateTime      // End Date & Time
+  dayNumber            Int           @default(1) // Day 1 to Day 5 (Sept 4 - Sept 8, 2026)
+  status               EventStatus   @default(REGISTRATION_OPEN)
+  isFeatured           Boolean       @default(false)
+  bannerImage          String?
+  coordinatorId        String?
+  coordinatorName      String?
+  coordinatorPhone     String?
+  coordinatorEmail     String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  category             Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  coordinator          User?         @relation("EventCoordinators", fields: [coordinatorId], references: [id], onDelete: SetNull)
+  registrations        Registration[]
+  teams                Team[]
+  attendances          Attendance[]
+  results              Result[]
+  certificates         Certificate[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([dayNumber])
+  @@index([eventType])
+  @@index([isFeatured])
+  @@index([scheduleStart])
+}
+
+// ----------------------------------------------------------------------------
+// 5. REGISTRATION
+// ----------------------------------------------------------------------------
+
+model Registration {
+  id                 String             @id @default(cuid())
+  eventId            String
+  userId             String
+  teamId             String?
+  status             RegistrationStatus @default(CONFIRMED)
+  registrationNumber String             @unique // e.g. "AST26-REG-10492"
+  qrTicketCode       String?
+  remarks            String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  event              Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team               Team?              @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+  @@index([teamId])
+  @@index([status])
+  @@index([registrationNumber])
+}
+
+// ----------------------------------------------------------------------------
+// 6. TEAM
+// ----------------------------------------------------------------------------
+
+model Team {
+  id          String         @id @default(cuid())
+  name        String
+  code        String         @unique // 6-char alphanumeric invite code e.g. "BG26X1"
+  eventId     String
+  captainId   String
+  maxMembers  Int            @default(4)
+  minMembers  Int            @default(1)
+  status      TeamStatus     @default(FORMING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  captain     User           @relation("TeamCaptain", fields: [captainId], references: [id], onDelete: Cascade)
+  members     TeamMember[]
+  registrations Registration[]
+  results     Result[]
+
+  @@index([eventId])
+  @@index([captainId])
+  @@index([code])
+  @@index([status])
+}
+
+// ----------------------------------------------------------------------------
+// 7. TEAM MEMBER
+// ----------------------------------------------------------------------------
+
+model TeamMember {
+  id        String          @id @default(cuid())
+  teamId    String
+  userId    String
+  role      TeamMemberRole  @default(MEMBER)
+  status    MemberStatus    @default(APPROVED)
+  joinedAt  DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  team      Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+  @@index([status])
+}
+
+// ----------------------------------------------------------------------------
+// 8. ATTENDANCE (Volunteer Scanner & Check-in System)
+// ----------------------------------------------------------------------------
+
+model Attendance {
+  id            String           @id @default(cuid())
+  eventId       String?
+  userId        String
+  participantId String           // AST26-XXXX
+  scannedById   String           // Volunteer / Coordinator User ID
+  checkInType   CheckInType      @default(EVENT_ENTRY)
+  status        AttendanceStatus @default(PRESENT)
+  deviceInfo    String?
+  scannedAt     DateTime         @default(now())
+  remarks       String?
+
+  event         Event?           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user          User             @relation("UserAttendance", fields: [userId], references: [id], onDelete: Cascade)
+  scannedBy     User             @relation("MarkedByVolunteer", fields: [scannedById], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, eventId, checkInType])
+  @@index([eventId])
+  @@index([userId])
+  @@index([participantId])
+  @@index([scannedById])
+  @@index([scannedAt])
+  @@index([checkInType])
+}
+
+// ----------------------------------------------------------------------------
+// 9. RESULT (Podium & Scoring Engine)
+// ----------------------------------------------------------------------------
+
+model Result {
+  id                String         @id @default(cuid())
+  eventId           String
+  rank              Int            // 1 = Winner, 2 = 1st Runner Up, 3 = 2nd Runner Up
+  positionTitle     ResultPosition
+  userId            String?        // For individual events
+  teamId            String?        // For team events
+  score             String?        // e.g. "21-18, 21-19" or "45 pts"
+  prizeAwarded      String?        // e.g. "₹10,000 + Trophy"
+  certificateIssued Boolean        @default(false)
+  publishedAt       DateTime       @default(now())
+  notes             String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  event             Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user              User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  team              Team?          @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@unique([eventId, rank])
+  @@index([eventId])
+  @@index([userId])
+  @@index([teamId])
+  @@index([rank])
+  @@index([positionTitle])
+}
+
+// ----------------------------------------------------------------------------
+// 10. CERTIFICATE (Cryptographically Verifiable PDF Engine)
+// ----------------------------------------------------------------------------
+
+model Certificate {
+  id                String          @id @default(cuid())
+  certificateNumber String          @unique // e.g. "AST26-CERT-10492"
+  userId            String
+  eventId           String?
+  recipientName     String
+  participantId     String          // AST26-XXXX
+  type              CertificateType
+  title             String          // "Certificate of Excellence" / "Certificate of Participation"
+  eventName         String
+  category          String          // "Sports", "Cultural", "Gaming", "Literary"
+  issueDate         DateTime        @default(now())
+  signatureHash     String          // HMAC-SHA256 tamper-evident hash
+  verificationUrl   String          // e.g. "https://astitva2k26.lnjpit.ac.in/verify-certificate/AST26-CERT-10492"
+  pdfUrl            String?
+  isRevoked         Boolean         @default(false)
+  revokedReason     String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event             Event?          @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([certificateNumber])
+  @@index([userId])
+  @@index([eventId])
+  @@index([participantId])
+  @@index([type])
+  @@index([signatureHash])
+}
+
+// ----------------------------------------------------------------------------
+// 11. ANNOUNCEMENT (Broadcast Notice Board)
+// ----------------------------------------------------------------------------
+
+model Announcement {
+  id          String               @id @default(cuid())
+  title       String
+  content     String
+  category    AnnouncementCategory @default(GENERAL)
+  priority    AnnouncementPriority @default(NORMAL)
+  targetRole  Role?                // Nullable: null means visible to all roles
+  authorId    String
+  authorName  String               @default("Organizing Committee")
+  isPinned    Boolean              @default(false)
+  isActive    Boolean              @default(true)
+  publishedAt DateTime             @default(now())
+  expiresAt   DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  author      User                 @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([category])
+  @@index([priority])
+  @@index([isPinned])
+  @@index([publishedAt])
+  @@index([authorId])
+}
+
+// ----------------------------------------------------------------------------
+// 12. NOTIFICATION (In-App Notification Center)
+// ----------------------------------------------------------------------------
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  link      String?          // e.g. "/teams/join/BG26X1", "/results"
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@index([type])
+}
+
+// ----------------------------------------------------------------------------
+// 13. SPONSOR (Showcase & Admin CRUD)
+// ----------------------------------------------------------------------------
+
+model Sponsor {
+  id          String      @id @default(cuid())
+  name        String
+  tier        SponsorTier
+  logoUrl     String
+  websiteUrl  String?
+  description String?
+  amount      Float?
+  order       Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([tier])
+  @@index([isActive])
+  @@index([order])
+}
+
+// ----------------------------------------------------------------------------
+// 14. FAQ (Expandable Accordion & Search)
+// ----------------------------------------------------------------------------
+
+model Faq {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  category    String   @default("General")
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([order])
+}
+
+// ----------------------------------------------------------------------------
+// 15. GALLERY ITEM (Multimedia Showcase)
+// ----------------------------------------------------------------------------
+
+model GalleryItem {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  mediaUrl    String
+  mediaType   MediaType @default(IMAGE)
+  category    String    @default("Highlights") // e.g. "Sports", "Cultural", "Gaming", "Highlights"
+  year        Int       @default(2026)
+  isFeatured  Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category])
+  @@index([mediaType])
+  @@index([isFeatured])
+  @@index([order])
+}
+
+// ----------------------------------------------------------------------------
+// 16. COMMITTEE MEMBER (Organizing Committee)
+// ----------------------------------------------------------------------------
+
+model CommitteeMember {
+  id          String            @id @default(cuid())
+  name        String
+  role        String            // "Faculty Coordinator", "Student Lead", "Technical Head", etc.
+  category    CommitteeCategory
+  department  String?           // "Computer Science & Engineering", "Mechanical Engineering", etc.
+  photoUrl    String?
+  phone       String?
+  email       String?
+  linkedinUrl String?
+  githubUrl   String?
+  order       Int               @default(0)
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+  @@index([order])
+}
+
+// ----------------------------------------------------------------------------
+// 17. AUDIT LOG (Security & Admin Audit Trail)
+// ----------------------------------------------------------------------------
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userEmail String?
+  action    String   // e.g. "USER_ROLE_UPDATED", "RESULT_PUBLISHED", "QR_SCANNED"
+  resource  String   // e.g. "Event:cricket-tournament", "User:AST26-1001"
+  details   String?  // JSON stringified details
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([timestamp])
+}
+
+// ----------------------------------------------------------------------------
+// 18. AI CHAT MESSAGE (Conversational Fest Assistant History)
+// ----------------------------------------------------------------------------
+
+model AiChatMessage {
+  id          String   @id @default(cuid())
+  sessionId   String   // Client conversational session ID
+  userId      String?
+  role        ChatRole
+  content     String
+  queryIntent String?  // e.g. "SCHEDULE_QUERY", "RULE_LOOKUP", "VENUE_QUERY"
+  metadata    String?  // JSON metadata with suggested actions or related events
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([role])
+}
