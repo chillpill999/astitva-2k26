@@ -211,10 +211,7 @@ async function callGemini(message: string, snapshot: KnowledgeSnapshot): Promise
     process.env.GEMINI_API_KEY ||
     process.env.GOOGLE_API_KEY ||
     process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn("callGemini: No API key found in process.env");
-    return null;
-  }
+  if (!apiKey) return null;
 
   try {
     const prompt = `You are AstitvaBot, the official intelligent AI Assistant for ASTITVA 2K26 (Annual Sports, Cultural, Gaming & Literary Festival of LNJPIT Chapra, September 4 to September 8, 2026).
