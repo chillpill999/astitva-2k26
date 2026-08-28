@@ -136,6 +136,11 @@ export function Footer() {
             <span>SEPTEMBER 4–8, 2026</span>
           </div>
         </div>
+
+        {/* Credit */}
+        <div className="mt-4 text-center text-[11px] font-mono text-[#8E8D8A]">
+          <p>Made with love of Hothlalii Department ❤️</p>
+        </div>
       </div>
     </footer>
   );
