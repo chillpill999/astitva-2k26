@@ -47,6 +47,7 @@ export interface TeamData {
     slug: string;
     title: string;
     venue: string;
+    dayNumber?: number;
     scheduleStart: string;
     category?: {
       id: string;

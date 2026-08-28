@@ -1,13 +1,12 @@
 "use client";
 
 // ============================================================================
-// ASTITVA 2K26 - Hydration-Safe Live Countdown Timer
+// ASTITVA 2K26 - Hydration-Safe Live Countdown Timer (Exteta Luxury Aesthetic)
 // Path: components/landing/CountdownTimer.tsx
 // ============================================================================
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Flame, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 // Target Festival Opening Timestamp: 4 September 2026 09:00:00 AM IST
 const FEST_TARGET_DATE_STR = "2026-09-04T09:00:00+05:30";
@@ -68,52 +67,47 @@ export function CountdownTimer() {
   }, []);
 
   const timeCards = [
-    { label: "DAYS", value: timeLeft.days, color: "text-cyan-400", border: "hover:border-cyan-500/50" },
-    { label: "HOURS", value: timeLeft.hours, color: "text-purple-400", border: "hover:border-purple-500/50" },
-    { label: "MINUTES", value: timeLeft.minutes, color: "text-blue-400", border: "hover:border-blue-500/50" },
-    { label: "SECONDS", value: timeLeft.seconds, color: "text-amber-400", border: "hover:border-amber-500/50" },
+    { label: "DAYS", value: timeLeft.days },
+    { label: "HOURS", value: timeLeft.hours },
+    { label: "MINUTES", value: timeLeft.minutes },
+    { label: "SECONDS", value: timeLeft.seconds },
   ];
 
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
+    <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-[#1A1918]">
       {/* Live Badge Status */}
       <div className="mb-4 flex items-center justify-center">
         {mounted && timeLeft.isLive ? (
-          <div className="inline-flex items-center space-x-2 rounded-full border border-red-500/40 bg-red-950/60 px-4 py-1.5 backdrop-blur-md shadow-lg shadow-red-500/20 animate-pulse">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-red-400 animate-ping" />
-            <span className="text-xs font-black tracking-widest text-red-300 uppercase">
+          <div className="inline-flex items-center space-x-2 rounded-full border border-[#E85A4F]/40 bg-[#F6F4EE] px-4 py-1.5 shadow-sm">
+            <span className="flex h-2.5 w-2.5 rounded-full bg-[#E85A4F] animate-ping" />
+            <span className="text-xs font-mono font-bold tracking-widest text-[#E85A4F] uppercase">
               🔥 FESTIVAL IS LIVE NOW AT LNJPIT!
             </span>
           </div>
         ) : (
-          <div className="inline-flex items-center space-x-2 rounded-full border border-cyan-500/30 bg-slate-900/80 px-4 py-1 backdrop-blur-md">
-            <Clock className="h-3.5 w-3.5 text-cyan-400 animate-spin-slow" />
-            <span className="text-xs font-mono font-medium tracking-wide text-cyan-300">
+          <div className="inline-flex items-center space-x-2 rounded-full border border-[#8E8D8A]/25 bg-[#F6F4EE] px-4 py-1">
+            <Clock className="h-3.5 w-3.5 text-[#E85A4F]" />
+            <span className="text-xs font-mono font-bold tracking-wide text-[#1A1918] uppercase">
               OFFICIAL COUNTDOWN TO KICKOFF
             </span>
           </div>
         )}
       </div>
 
-      {/* 4-Digit Glass Bento Matrix */}
+      {/* 4-Digit Bento Matrix */}
       <div className="grid grid-cols-4 gap-2.5 sm:gap-4 md:gap-6 w-full">
         {timeCards.map((card, idx) => (
           <div
             key={idx}
-            className={`relative group flex flex-col items-center justify-center py-4 sm:py-6 px-2 sm:px-4 rounded-2xl bg-[#0d1224]/80 border border-white/10 shadow-2xl backdrop-blur-xl transition-all duration-300 ${card.border} hover:scale-[1.02] hover:bg-[#141c38]/90`}
+            className="flex flex-col items-center justify-center py-4 sm:py-6 px-2 sm:px-4 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm transition-all duration-300 hover:border-[#E85A4F]"
           >
-            {/* Top Accent Glow Bar */}
-            <div className="absolute top-0 inset-x-6 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent group-hover:via-cyan-400 transition-all" />
-
             {/* Digit */}
-            <span className={`font-mono text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white ${card.color} drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]`}>
-              {mounted
-                ? String(card.value).padStart(2, "0")
-                : "--"}
+            <span className="font-mono text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#1A1918]">
+              {mounted ? String(card.value).padStart(2, "0") : "--"}
             </span>
 
             {/* Sub-label */}
-            <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-slate-400 uppercase mt-1.5 sm:mt-2">
+            <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-[#8E8D8A] uppercase mt-1 sm:mt-2">
               {card.label}
             </span>
           </div>

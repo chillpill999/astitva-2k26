@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Team Captain Squad Headquarters
+// ASTITVA 2K26 - Team Captain Squad Headquarters (Exteta Luxury Aesthetic)
 // Path: app/dashboard/captain/page.tsx
 // ============================================================================
 
@@ -13,21 +13,11 @@ import {
   Check,
   Share2,
   Trophy,
-  Calendar,
   UserPlus,
   CheckCircle2,
   XCircle,
-  Clock,
   Sparkles,
-  ArrowRight,
-  Shield,
-  Zap,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { RoleBadge } from "@/components/dashboard/RoleBadge";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -100,7 +90,7 @@ export default function CaptainDashboardPage() {
       particleCount: 25,
       spread: 60,
       origin: { y: 0.8 },
-      colors: ["#06b6d4", "#f59e0b"],
+      colors: ["#E85A4F", "#D8C3A5"],
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -122,192 +112,192 @@ export default function CaptainDashboardPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300">
+    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
       {/* 1. Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
         <div>
           <div className="flex items-center space-x-2 mb-1">
             <RoleBadge role="TEAM_CAPTAIN" />
-            <span className="text-xs font-mono text-amber-300 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+            <span className="text-xs font-mono text-[#E85A4F] font-bold bg-[#EAE7DC] px-2 py-0.5 rounded border border-[#8E8D8A]/20">
               Aman Verma (ME • Sem 6)
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Squad Headquarters & Roster Control
+          <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono">
+            Squad Headquarters &amp; Roster Control
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
             Lead your LNJPIT team to championship victory across Cricket, BGMI, and Cultural group competitions.
           </p>
         </div>
 
         <Link href="/events">
-          <Button variant="neonAmber" size="sm" className="text-xs font-bold shadow-lg">
-            <Trophy className="w-3.5 h-3.5 mr-1.5" />
+          <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm">
+            <Trophy className="w-3.5 h-3.5" />
             Register Squad for Event
-          </Button>
+          </button>
         </Link>
       </div>
 
       {/* 2. Squad Overview Bento Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left: Active Squad Summary Card (7 cols) */}
-        <Card className="lg:col-span-7 glass-panel border-amber-500/30 bg-slate-900/70 shadow-2xl p-6 space-y-5">
-          <div className="flex items-start justify-between border-b border-white/10 pb-4">
+        <div className="lg:col-span-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex items-start justify-between border-b border-[#8E8D8A]/20 pb-4">
             <div>
-              <Badge variant="outline" className="text-[10px] font-mono border-amber-500/40 text-amber-300 mb-1">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase border border-[#8E8D8A]/20 mb-1 inline-block">
                 SQUAD #1 • GAMING
-              </Badge>
-              <h2 className="text-xl font-extrabold text-white">LNJPIT Titans</h2>
-              <p className="text-xs text-slate-400">BGMI LAN Invitational Championship (4v4)</p>
+              </span>
+              <h2 className="text-xl font-bold font-mono text-[#1A1918] uppercase">LNJPIT Titans</h2>
+              <p className="text-xs text-[#8E8D8A] font-mono">BGMI LAN Invitational Championship (4v4)</p>
             </div>
 
             <div className="text-right font-mono">
-              <span className="text-sm font-bold text-amber-400">
+              <span className="text-xs font-bold text-[#E85A4F]">
                 {roster.length} / 4 Slots Filled
               </span>
-              <Progress value={(roster.length / 4) * 100} className="h-1.5 w-28 bg-slate-800 mt-1" />
+              <div className="w-24 bg-[#EAE7DC] h-1.5 rounded-full overflow-hidden mt-1">
+                <div
+                  className="bg-[#E85A4F] h-full rounded-full"
+                  style={{ width: `${(roster.length / 4) * 100}%` }}
+                />
+              </div>
             </div>
           </div>
 
           {/* 6-Char Invite Code Highlight Box */}
-          <div className="rounded-2xl bg-slate-950/90 border border-cyan-500/30 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-0.5 text-center sm:text-left">
-              <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">
+              <span className="text-[10px] font-mono text-[#8E8D8A] uppercase font-bold tracking-wider">
                 6-Character Squad Invite Code
               </span>
               <div className="flex items-center space-x-2">
-                <span className="font-mono text-2xl font-black text-white tracking-widest bg-cyan-500/10 px-3 py-1 rounded-xl border border-cyan-500/30">
+                <span className="font-mono text-2xl font-black text-[#E85A4F] tracking-widest bg-[#F6F4EE] px-3 py-1 rounded-xl border border-[#8E8D8A]/20">
                   {inviteCode}
                 </span>
                 <button
                   type="button"
                   onClick={handleCopyCode}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  className="p-2 rounded-xl bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] text-[#1A1918] transition-colors cursor-pointer border border-[#8E8D8A]/20"
                   title="Copy Invite Code"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-4 h-4 text-[#E85A4F]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <Button
+            <button
               onClick={handleShareWhatsApp}
-              variant="outline"
-              size="sm"
-              className="text-xs font-semibold border-white/10 hover:border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
+              className="py-2.5 px-4 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white transition-colors flex items-center gap-1.5"
             >
-              <Share2 className="w-3.5 h-3.5 mr-1.5" />
-              Invite via WhatsApp
-            </Button>
+              <Share2 className="w-3.5 h-3.5" />
+              WhatsApp Invite
+            </button>
           </div>
 
-          <div className="text-xs text-slate-400 flex items-center justify-between pt-1">
-            <span className="flex items-center text-emerald-400 font-mono">
+          <div className="text-xs font-mono text-[#8E8D8A] flex items-center justify-between pt-1">
+            <span className="flex items-center text-[#E85A4F]">
               <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Minimum squad threshold (3) met
             </span>
-            <span className="text-slate-500">1 slot remaining</span>
+            <span>1 slot remaining</span>
           </div>
-        </Card>
+        </div>
 
         {/* Right: Pending Join Approvals (5 cols) */}
-        <Card className="lg:col-span-5 glass-panel border-white/10 bg-slate-900/70 shadow-2xl p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-white/10 pb-3">
-            <h3 className="text-sm font-bold text-white flex items-center">
-              <UserPlus className="w-4 h-4 text-cyan-400 mr-2" />
-              Pending Join Requests ({pending.length})
+        <div className="lg:col-span-5 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-3">
+            <h3 className="text-sm font-bold font-mono text-[#1A1918] uppercase flex items-center">
+              <UserPlus className="w-4 h-4 text-[#E85A4F] mr-2" />
+              Pending Requests ({pending.length})
             </h3>
-            <Badge variant="cyan" className="text-[10px] font-mono">
-              Awaiting Captain
-            </Badge>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#1A1918] uppercase">
+              Awaiting Approval
+            </span>
           </div>
 
           {pending.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-3 font-mono">
               {pending.map((req) => (
                 <div
                   key={req.id}
-                  className="p-3 rounded-xl bg-slate-950/80 border border-white/5 flex items-center justify-between gap-2"
+                  className="p-3 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 flex items-center justify-between gap-2"
                 >
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{req.name}</p>
-                    <p className="text-[10px] font-mono text-slate-400 truncate">
+                    <p className="text-xs font-bold text-[#1A1918] truncate">{req.name}</p>
+                    <p className="text-[10px] text-[#8E8D8A] truncate">
                       {req.roll} • {req.branch} (Sem {req.semester})
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Button
+                    <button
                       onClick={() => handleApprove(req)}
-                      size="sm"
-                      className="h-7 text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 px-2"
+                      className="h-7 text-[10px] font-bold uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] rounded-lg px-2 flex items-center gap-1 transition-colors"
                     >
-                      <Check className="w-3 h-3 mr-1" /> Approve
-                    </Button>
-                    <Button
+                      <Check className="w-3 h-3" /> Approve
+                    </button>
+                    <button
                       onClick={() => handleReject(req)}
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 text-xs text-slate-400 hover:text-red-400 px-2"
+                      className="h-7 text-[10px] font-bold uppercase border border-[#8E8D8A]/30 text-[#8E8D8A] hover:text-[#1A1918] rounded-lg px-2 transition-colors"
                     >
                       <XCircle className="w-3 h-3" />
-                    </Button>
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-8 text-center text-xs text-slate-500 space-y-1">
-              <Sparkles className="w-6 h-6 text-slate-600 mx-auto mb-2" />
+            <div className="py-8 text-center text-xs font-mono text-[#8E8D8A] space-y-1">
+              <Sparkles className="w-6 h-6 text-[#8E8D8A] mx-auto mb-2" />
               <p>No pending join requests.</p>
-              <p className="text-[11px]">Share your squad code with classmates to invite members.</p>
+              <p className="text-[10px]">Share your squad code with classmates to invite members.</p>
             </div>
           )}
-        </Card>
+        </div>
       </div>
 
       {/* 3. Confirmed Squad Roster Table */}
-      <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-        <CardHeader className="pb-3 border-b border-white/10">
-          <CardTitle className="text-base font-bold text-white flex items-center">
-            <Users className="w-4 h-4 text-amber-400 mr-2" />
+      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-4">
+        <div className="border-b border-[#8E8D8A]/20 pb-4">
+          <h3 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
+            <Users className="w-4 h-4 text-[#E85A4F] mr-2" />
             Confirmed Squad Lineup ({roster.length} Players)
-          </CardTitle>
-          <CardDescription className="text-xs text-slate-400">
+          </h3>
+          <p className="text-xs text-[#8E8D8A] font-mono mt-1">
             Official team members registered under LNJPIT Titans squad registry.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0 overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-white/10 font-mono uppercase text-slate-400">
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-mono">
+            <thead className="bg-[#EAE7DC] border-b border-[#8E8D8A]/20 uppercase text-[#1A1918]">
               <tr>
                 <th className="py-3 px-4">Member Name</th>
                 <th className="py-3 px-4">College Roll</th>
-                <th className="py-3 px-4">Branch & Sem</th>
+                <th className="py-3 px-4">Branch &amp; Sem</th>
                 <th className="py-3 px-4">Role</th>
                 <th className="py-3 px-4 text-right">Pass Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#8E8D8A]/15">
               {roster.map((m) => (
-                <tr key={m.id} className="hover:bg-white/5 transition-colors">
-                  <td className="py-3 px-4 font-bold text-white flex items-center space-x-2">
+                <tr key={m.id} className="hover:bg-[#EAE7DC]/50 transition-colors">
+                  <td className="py-3 px-4 font-bold text-[#1A1918] flex items-center space-x-2">
                     <span>{m.name}</span>
                     {m.role === "CAPTAIN" && (
-                      <span className="text-[9px] font-mono font-black text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/30">
+                      <span className="text-[9px] font-black text-[#EAE7DC] bg-[#1A1918] px-1.5 py-0.5 rounded">
                         C
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 font-mono text-slate-400">{m.roll}</td>
-                  <td className="py-3 px-4 font-mono text-slate-300">
+                  <td className="py-3 px-4 text-[#8E8D8A]">{m.roll}</td>
+                  <td className="py-3 px-4 text-[#8E8D8A]">
                     {m.branch} (Sem {m.semester})
                   </td>
                   <td className="py-3 px-4">
-                    <Badge variant="outline" className="text-[10px] font-mono border-white/15">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#1A1918] uppercase">
                       {m.role}
-                    </Badge>
+                    </span>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <span className="inline-flex items-center text-[10px] font-mono text-emerald-400">
+                    <span className="inline-flex items-center text-[10px] font-bold text-[#E85A4F]">
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Confirmed
                     </span>
                   </td>
@@ -315,8 +305,8 @@ export default function CaptainDashboardPage() {
               ))}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

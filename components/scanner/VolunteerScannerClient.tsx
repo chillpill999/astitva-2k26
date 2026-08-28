@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Volunteer Scanner Client (camera, manual, history, outcomes)
+// ASTITVA 2K26 - Volunteer Scanner Client (Exteta Luxury Aesthetic)
 // Path: components/scanner/VolunteerScannerClient.tsx
 // ============================================================================
 
@@ -12,20 +12,9 @@ import {
   ShieldCheck,
   KeyboardIcon,
   Camera as CameraIcon,
-  ListChecks,
-  History,
   Search,
-  UserCheck,
-  XCircle,
-  Hash,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ScannerPanel } from "./ScannerPanel";
 import { ScanOutcomeBadge } from "./ScanOutcomeBadge";
 
@@ -99,302 +88,158 @@ export function VolunteerScannerClient({
       const res = await fetch("/api/qr/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, eventId, checkInType }),
+        body: JSON.stringify({
+          token,
+          eventId: eventId || undefined,
+          checkInType,
+        }),
       });
       const data = await res.json();
-      const code: OutcomeCode = (data?.data?.code as OutcomeCode) ?? "INVALID_TOKEN";
-      setLastOutcome({ code, message: data?.data?.message });
+
+      if (data.valid && data.checkIn?.status === "SUCCESS") {
+        setLastOutcome({
+          code: "SUCCESS",
+          message: `${data.participant?.name ?? "Participant"} verified for ${eventMeta?.title ?? "Festival"}.`,
+        });
+        toast.success(`Check-in: ${data.participant?.name ?? "Participant"}`);
+      } else if (data.status === "ALREADY_CHECKED_IN") {
+        setLastOutcome({
+          code: "ALREADY_CHECKED_IN",
+          message: data.message ?? "Already checked in.",
+        });
+        toast.warning(data.message ?? "Already checked in");
+      } else {
+        const codeMap: Record<string, OutcomeCode> = {
+          INVALID_SIGNATURE: "INVALID_TOKEN",
+          EXPIRED: "QR_EXPIRED",
+          REVOKED: "REVOKED",
+          NOT_REGISTERED: "NOT_REGISTERED",
+          RATE_LIMITED: "RATE_LIMITED",
+        };
+        const mapped = codeMap[data.status] ?? "INVALID_TOKEN";
+        setLastOutcome({ code: mapped, message: data.message ?? "Scan rejected." });
+        toast.error(data.message ?? "Scan failed");
+      }
+
       pushLog({
-        id: `${Date.now()}-scan`,
-        participantId: data?.data?.participant?.participantId ?? "unknown",
-        participantName: data?.data?.participant?.name ?? null,
-        eventTitle: data?.data?.event?.title ?? eventMeta?.title ?? null,
-        action: data?.success ? "QR_SCAN_SUCCESS" : code,
-        result: data?.success ? "SUCCESS" : code === "ALREADY_CHECKED_IN" ? "WARNING" : "REJECTED",
-        reason: data?.data?.message ?? null,
+        id: `scan-${Date.now()}`,
+        participantId: data.participant?.collegeId ?? "N/A",
+        participantName: data.participant?.name ?? "Unknown",
+        eventTitle: eventMeta?.title ?? "General Gate",
+        action: checkInType,
+        result: data.status ?? (data.valid ? "SUCCESS" : "REJECTED"),
+        reason: data.message ?? null,
         timestamp: new Date().toISOString(),
       });
-      announceOutcome(code, data?.data?.participant?.name);
-    } catch (err) {
-      toast.error("Scanner network error. Please try again.");
+    } catch {
+      setLastOutcome({
+        code: "INVALID_TOKEN",
+        message: "Network error during scan verification.",
+      });
+      toast.error("Network error");
     } finally {
-      setTimeout(() => setPaused(false), 1500);
+      setTimeout(() => setPaused(false), 900);
+      startTransition(() => {
+        router.refresh();
+      });
     }
   }
 
-  function handleManualLookup() {
-    const id = manualId.trim();
-    if (!id) {
-      toast.error("Enter a participant ID (AST26-XXXX) or college roll number.");
-      return;
-    }
-    startTransition(async () => {
-      try {
-        const res = await fetch("/api/qr/scan", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mode: "manual", participantId: id, eventId, checkInType }),
-        });
-        const data = await res.json();
-        const code: OutcomeCode = (data?.data?.code as OutcomeCode) ?? "INVALID_TOKEN";
-        setLastOutcome({ code, message: data?.data?.message });
-        pushLog({
-          id: `${Date.now()}-manual`,
-          participantId: data?.data?.participant?.participantId ?? id.toUpperCase(),
-          participantName: data?.data?.participant?.name ?? null,
-          eventTitle: data?.data?.event?.title ?? eventMeta?.title ?? null,
-          action: data?.success ? "QR_SCAN_SUCCESS" : code,
-          result: data?.success ? "SUCCESS" : code === "ALREADY_CHECKED_IN" ? "WARNING" : "REJECTED",
-          reason: data?.data?.message ?? null,
-          timestamp: new Date().toISOString(),
-        });
-        announceOutcome(code, data?.data?.participant?.name);
-        if (data?.success) setManualId("");
-      } catch {
-        toast.error("Manual lookup failed.");
-      }
-    });
-  }
-
-  function announceOutcome(code: OutcomeCode, name?: string) {
-    const suffix = name ? `: ${name}` : "";
-    switch (code) {
-      case "SUCCESS":
-        toast.success(`Check-in OK${suffix}`);
-        break;
-      case "ALREADY_CHECKED_IN":
-        toast.warning(`Already checked in${suffix}`);
-        break;
-      case "NOT_REGISTERED":
-        toast.error("Not registered for this event.");
-        break;
-      case "INVALID_TOKEN":
-        toast.error("Invalid QR — possible tampering.");
-        break;
-      case "QR_EXPIRED":
-        toast.error("QR pass has expired.");
-        break;
-      case "REVOKED":
-        toast.error("This pass has been revoked.");
-        break;
-      case "RATE_LIMITED":
-        toast.warning("Slow down — too many scans.");
-        break;
-    }
+  async function handleManualSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!manualId.trim()) return;
+    await handleScan(manualId.trim());
+    setManualId("");
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-7 space-y-4">
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-          <CardHeader className="pb-3">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-              <div>
-                <CardTitle className="text-base font-bold text-white flex items-center">
-                  <CameraIcon className="h-4 w-4 text-cyan-400 mr-2" /> Live Check-in Console
-                </CardTitle>
-                <CardDescription className="text-xs text-slate-400 mt-1">
-                  Operator: <span className="text-cyan-300 font-mono">{scannerName}</span>
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <Select value={eventId} onValueChange={setEventId}>
-                  <SelectTrigger className="bg-slate-950/80 border-white/10 text-white text-xs h-8 min-w-[200px]">
-                    <SelectValue placeholder="Select event" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {events.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>
-                        {e.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={checkInType} onValueChange={(v) => setCheckInType(v as any)}>
-                  <SelectTrigger className="bg-slate-950/80 border-white/10 text-white text-xs h-8 min-w-[140px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="EVENT_ENTRY">Tournament Entry</SelectItem>
-                    <SelectItem value="GATE_ENTRY">Gate Entry</SelectItem>
-                    <SelectItem value="MEAL">Meal Coupon</SelectItem>
-                    <SelectItem value="BADGE_VERIFY">Badge Verify</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Tabs defaultValue="camera" className="w-full">
-              <TabsList className="bg-slate-950/80 border border-white/10">
-                <TabsTrigger value="camera" className="text-xs">
-                  <CameraIcon className="h-3.5 w-3.5 mr-1" /> Webcam
-                </TabsTrigger>
-                <TabsTrigger value="manual" className="text-xs">
-                  <KeyboardIcon className="h-3.5 w-3.5 mr-1" /> Manual
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="camera" className="pt-4">
-                <ScannerPanel onScan={handleScan} paused={paused} />
-              </TabsContent>
-              <TabsContent value="manual" className="pt-4 space-y-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center">
-                    <Hash className="h-3.5 w-3.5 mr-1 text-amber-300" />
-                    Participant ID or College Roll Number
-                  </label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="AST26-1042 or 22105128032"
-                      value={manualId}
-                      onChange={(e) => setManualId(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleManualLookup();
-                      }}
-                      className="font-mono text-xs bg-slate-950/80 border-white/10 text-white"
-                    />
-                    <Button
-                      type="button"
-                      variant="neonCyan"
-                      onClick={handleManualLookup}
-                      disabled={pending}
-                      className="text-xs font-bold"
-                    >
-                      <Search className="h-4 w-4 mr-1.5" /> Verify
-                    </Button>
-                  </div>
-                  <p className="text-[10px] text-slate-500 font-mono">
-                    Use as fallback for damaged badges or low-battery devices.
-                  </p>
-                </div>
-              </TabsContent>
-            </Tabs>
+    <div className="space-y-6 text-[#1A1918]">
+      {/* Controls Bar */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-3xl bg-[#EAE7DC] border border-[#8E8D8A]/25">
+        <div className="space-y-1">
+          <label className="text-[10px] font-mono font-bold uppercase text-[#8E8D8A]">
+            Selected Tournament Gate
+          </label>
+          <select
+            value={eventId}
+            onChange={(e) => setEventId(e.target.value)}
+            className="w-full p-2.5 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+          >
+            {events.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.title} ({e.venue})
+              </option>
+            ))}
+          </select>
+        </div>
 
-            <ScanOutcomeBadge code={lastOutcome.code} message={lastOutcome.message} />
-          </CardContent>
-        </Card>
+        <div className="space-y-1">
+          <label className="text-[10px] font-mono font-bold uppercase text-[#8E8D8A]">
+            Scan Operation Type
+          </label>
+          <select
+            value={checkInType}
+            onChange={(e) => setCheckInType(e.target.value as any)}
+            className="w-full p-2.5 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+          >
+            <option value="EVENT_ENTRY">Tournament Arena Entry</option>
+            <option value="GATE_ENTRY">Main College Gate Entry</option>
+            <option value="MEAL">Catering &amp; Refreshment Coupon</option>
+            <option value="BADGE_VERIFY">Spot ID Badge Inspection</option>
+          </select>
+        </div>
       </div>
 
-      <div className="lg:col-span-5 space-y-4">
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <ShieldCheck className="h-4 w-4 text-emerald-400 mr-2" /> Active Event
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-xs">
-            <p className="text-white font-bold">{eventMeta?.title ?? "—"}</p>
-            <p className="text-slate-400 font-mono">{eventMeta?.venue ?? ""}</p>
-            <div className="flex flex-wrap gap-1.5 pt-2">
-              <Badge variant="outline" className="border-cyan-500/30 text-cyan-300 font-mono">
-                {checkInType.replace("_", " ")}
-              </Badge>
-              <Badge variant="outline" className="border-white/10 text-slate-300 font-mono">
-                OPERATOR: {scannerName}
-              </Badge>
+      {/* Outcome Status Banner */}
+      <ScanOutcomeBadge code={lastOutcome.code} message={lastOutcome.message} />
+
+      {/* Camera vs Manual Tabs */}
+      <Tabs defaultValue="camera" className="w-full">
+        <TabsList className="bg-[#EAE7DC] border border-[#8E8D8A]/25 p-1 rounded-2xl w-full grid grid-cols-2">
+          <TabsTrigger
+            value="camera"
+            className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2 uppercase"
+          >
+            <CameraIcon className="h-3.5 w-3.5 mr-1.5 inline" /> Optical Scanner
+          </TabsTrigger>
+          <TabsTrigger
+            value="manual"
+            className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2 uppercase"
+          >
+            <KeyboardIcon className="h-3.5 w-3.5 mr-1.5 inline" /> Manual Entry
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="camera" className="pt-4">
+          <ScannerPanel onScan={handleScan} paused={paused} />
+        </TabsContent>
+
+        <TabsContent value="manual" className="pt-4">
+          <form onSubmit={handleManualSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-mono font-bold uppercase text-[#8E8D8A]">
+                Participant ID or Roll No
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={manualId}
+                  onChange={(e) => setManualId(e.target.value)}
+                  placeholder="AST26-0005 or 24105128032"
+                  className="flex-1 p-3 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] placeholder:text-[#8E8D8A]/60 focus:outline-none focus:border-[#E85A4F]"
+                />
+                <button
+                  type="submit"
+                  disabled={!manualId.trim()}
+                  className="px-5 py-3 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-sm"
+                >
+                  <Search className="h-4 w-4" /> Verify
+                </button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <History className="h-4 w-4 text-cyan-400 mr-2" /> Recent Activity
-            </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-[10px] text-slate-400 hover:text-white"
-              onClick={() => router.refresh()}
-            >
-              Refresh
-            </Button>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <ScrollArea className="h-72 pr-2">
-              {logs.length === 0 ? (
-                <p className="text-xs text-slate-500 italic">
-                  No scans yet. Try scanning a participant pass.
-                </p>
-              ) : (
-                <ul className="divide-y divide-white/5">
-                  {logs.map((log) => (
-                    <li
-                      key={log.id}
-                      className="py-2 flex items-start justify-between gap-3"
-                    >
-                      <div className="space-y-0.5 min-w-0">
-                        <div className="flex items-center gap-2 text-xs">
-                          <span className="font-mono text-cyan-300 truncate">
-                            {log.participantId}
-                          </span>
-                          {log.participantName && (
-                            <span className="font-bold text-white truncate">
-                              {log.participantName}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[10px] text-slate-500 font-mono truncate">
-                          {log.eventTitle ?? "—"}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-                        <span
-                          className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full border ${resultClass(
-                            log.result
-                          )}`}
-                        >
-                          {log.action.replace("QR_SCAN_", "")}
-                        </span>
-                        <span className="text-[9px] text-slate-500 font-mono">
-                          {new Date(log.timestamp).toLocaleTimeString("en-IN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </ScrollArea>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-bold text-white flex items-center">
-              <ListChecks className="h-4 w-4 text-amber-300 mr-2" /> Quick Reference
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-[11px] text-slate-400 space-y-1">
-            <p className="flex items-center">
-              <UserCheck className="h-3 w-3 text-emerald-400 mr-1" /> SUCCESS — pass valid, registration confirmed.
-            </p>
-            <p className="flex items-center">
-              <UserCheck className="h-3 w-3 text-amber-300 mr-1" /> ALREADY CHECKED IN — duplicate scan, ignore.
-            </p>
-            <p className="flex items-center">
-              <XCircle className="h-3 w-3 text-red-400 mr-1" /> INVALID / EXPIRED / REVOKED — escalate to coordinator.
-            </p>
-            <p className="flex items-center">
-              <XCircle className="h-3 w-3 text-rose-300 mr-1" /> NOT REGISTERED — direct participant to registration desk.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          </form>
+        </TabsContent>
+      </Tabs>
     </div>
   );
-}
-
-function resultClass(result: string) {
-  switch (result) {
-    case "SUCCESS":
-      return "border-emerald-500/40 text-emerald-300 bg-emerald-500/10";
-    case "WARNING":
-      return "border-amber-500/40 text-amber-300 bg-amber-500/10";
-    default:
-      return "border-red-500/40 text-red-300 bg-red-500/10";
-  }
 }

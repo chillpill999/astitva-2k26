@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Export Data Modal Component
+// ASTITVA 2K26 - Export Data Modal (Exteta Luxury Aesthetic)
 // Path: components/dashboard/ExportDataModal.tsx
 // ============================================================================
 
@@ -13,8 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Download, FileSpreadsheet, Check, Loader2 } from "lucide-react";
+import { FileSpreadsheet, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface ExportDataModalProps {
@@ -55,20 +54,20 @@ export function ExportDataModal({ isOpen, onClose }: ExportDataModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="glass-panel border-white/10 bg-slate-950/95 text-white max-w-md">
+      <DialogContent className="border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[#1A1918] max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center">
-            <FileSpreadsheet className="h-5 w-5 text-cyan-400 mr-2" />
+          <DialogTitle className="text-base font-bold font-mono uppercase text-[#1A1918] flex items-center">
+            <FileSpreadsheet className="h-5 w-5 text-[#E85A4F] mr-2" />
             Export Festival Data
           </DialogTitle>
-          <DialogDescription className="text-xs text-slate-400">
+          <DialogDescription className="text-xs text-[#8E8D8A] font-mono">
             Download filtered reports in standard CSV / Excel format.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2 text-xs">
+        <div className="space-y-4 py-2 text-xs font-mono">
           <div className="space-y-2">
-            <label className="font-semibold text-slate-300">Select Dataset</label>
+            <label className="font-bold uppercase text-[#1A1918]">Select Dataset</label>
             <div className="grid grid-cols-1 gap-2">
               {[
                 { id: "registrations", label: "Tournament Registrations & Rosters" },
@@ -80,47 +79,41 @@ export function ExportDataModal({ isOpen, onClose }: ExportDataModalProps) {
                   key={item.id}
                   type="button"
                   onClick={() => setExportType(item.id)}
-                  className={`p-2.5 rounded-lg border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                     exportType === item.id
-                      ? "bg-cyan-500/15 border-cyan-500/40 text-white font-semibold"
-                      : "bg-slate-900 border-white/10 text-slate-400 hover:text-white"
+                      ? "bg-[#EAE7DC] border-[#E85A4F] text-[#E85A4F] font-bold"
+                      : "bg-[#EAE7DC]/40 border-[#8E8D8A]/20 text-[#8E8D8A] hover:text-[#1A1918]"
                   }`}
                 >
                   <span>{item.label}</span>
-                  {exportType === item.id && <Check className="h-4 w-4 text-cyan-400" />}
+                  {exportType === item.id && <Check className="h-4 w-4 text-[#E85A4F]" />}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={onClose}
-              className="text-xs border-white/10"
+              className="px-4 py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
             >
               Cancel
-            </Button>
-            <Button
-              variant="neonCyan"
-              size="sm"
-              onClick={handleExport}
+            </button>
+            <button
+              type="button"
               disabled={isExporting}
-              className="text-xs font-bold"
+              onClick={handleExport}
+              className="px-5 py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm"
             >
               {isExporting ? (
                 <>
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  Exporting...
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating...
                 </>
               ) : (
-                <>
-                  <Download className="mr-1.5 h-3.5 w-3.5" />
-                  Download CSV
-                </>
+                <>Download CSV</>
               )}
-            </Button>
+            </button>
           </div>
         </div>
       </DialogContent>

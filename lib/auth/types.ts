@@ -48,7 +48,7 @@ export interface DemoUserAccount {
   hostelName?: string;
   roomNumber?: string;
   bio: string;
-  avatarUrl: string;
+  avatarUrl?: string | null;
   redirectPath: string;
   badgeColor: string;
 }

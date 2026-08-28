@@ -1,7 +1,7 @@
 "use client";
 
 // ============================================================================
-// ASTITVA 2K26 - Join Squad with Invite Code Modal Component
+// ASTITVA 2K26 - Join Squad Modal (Exteta Luxury Aesthetic)
 // Path: components/teams/JoinTeamModal.tsx
 // ============================================================================
 
@@ -14,13 +14,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Users,
-  Sparkles,
+  KeyRound,
   Loader2,
   AlertTriangle,
   CheckCircle2,
@@ -98,95 +94,85 @@ export function JoinTeamModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md bg-[#0b0f19]/95 border-white/15 text-white backdrop-blur-2xl">
+      <DialogContent className="border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[#1A1918] max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl font-mono">
         <DialogHeader className="space-y-2">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] font-mono bg-cyan-950/40 text-cyan-300 border-cyan-500/30">
-              SQUAD JOIN PORTAL
-            </Badge>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
+              SQUAD ENROLLMENT
+            </span>
           </div>
-          <DialogTitle className="text-xl font-black tracking-tight text-white">
-            Join Tournament Squad
+          <DialogTitle className="text-xl font-bold uppercase text-[#1A1918]">
+            Join with Invite Code
           </DialogTitle>
-          <DialogDescription className="text-xs text-slate-300">
-            Enter the 6-character alphanumeric code provided by your Squad Captain.
+          <DialogDescription className="text-xs text-[#8E8D8A]">
+            Enter the 6-character code provided by your Squad Captain.
           </DialogDescription>
         </DialogHeader>
 
         {joinedTeam ? (
-          <div className="py-6 flex flex-col items-center text-center space-y-4">
-            <div className="h-16 w-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 animate-bounce">
+          <div className="space-y-6 py-3 text-center">
+            <div className="h-16 w-16 rounded-full bg-[#E85A4F]/10 border border-[#E85A4F]/30 flex items-center justify-center text-[#E85A4F] mx-auto">
               <CheckCircle2 className="h-8 w-8" />
             </div>
 
             <div className="space-y-1">
-              <h4 className="text-lg font-black text-white">Joined Squad Successfully!</h4>
-              <p className="text-xs text-slate-300">
-                You are now an approved member of squad <strong className="text-cyan-300">{joinedTeam.name}</strong>
-                {joinedTeam.eventTitle ? ` for ${joinedTeam.eventTitle}` : ""}.
+              <h3 className="text-lg font-bold text-[#1A1918] uppercase">{joinedTeam.name}</h3>
+              <p className="text-xs text-[#8E8D8A]">
+                Successfully enrolled in <strong className="text-[#1A1918]">{joinedTeam.eventTitle}</strong>
               </p>
             </div>
 
-            <Button
-              type="button"
-              onClick={() => {
-                handleClose();
-                router.push(`/teams/${joinedTeam.id}`);
-              }}
-              className="w-full text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/25 py-5 mt-2"
-            >
-              View Squad Roster
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleClose();
+                  router.push(`/teams/${joinedTeam.id}`);
+                }}
+                className="w-full py-3 rounded-xl bg-[#E85A4F] text-white text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              >
+                Go to Squad Roster <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-mono text-slate-300">6-Character Invite Code</Label>
-              <Input
+          <form onSubmit={handleSubmit} className="space-y-5 py-2 text-xs">
+            <div className="space-y-2 text-center">
+              <label className="text-[10px] font-bold uppercase text-[#1A1918] block">
+                6-Digit Squad Invite Code
+              </label>
+              <input
                 type="text"
-                placeholder="e.g. BG26X1, TITN26"
-                value={code}
                 maxLength={6}
-                onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
-                className="text-center font-mono text-lg font-bold tracking-widest bg-slate-900 border-white/15 text-cyan-300 placeholder:text-slate-600 rounded-xl focus:border-cyan-400 uppercase"
+                placeholder="e.g. CRK824"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                className="w-full p-4 text-center font-black text-2xl tracking-[0.3em] bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#E85A4F] uppercase rounded-2xl focus:outline-none focus:border-[#E85A4F]"
               />
             </div>
 
             {error && (
-              <div className="p-3 rounded-lg bg-red-950/40 border border-red-500/30 flex items-start gap-2 text-xs text-red-300">
-                <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-red-700 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
-              <Button
+            <div className="flex gap-3 pt-2">
+              <button
                 type="button"
-                variant="outline"
-                disabled={loading}
                 onClick={handleClose}
-                className="text-xs font-bold border-white/15 bg-white/5 text-slate-300 hover:text-white"
+                className="flex-1 py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
               >
                 Cancel
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
                 disabled={loading || code.trim().length !== 6}
-                className="text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30"
+                className="flex-1 py-2.5 rounded-xl bg-[#E85A4F] text-white font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Verifying Code...
-                  </>
-                ) : (
-                  <>
-                    <Users className="mr-1.5 h-3.5 w-3.5" />
-                    Confirm &amp; Join Squad
-                  </>
-                )}
-              </Button>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Join Squad"}
+              </button>
             </div>
           </form>
         )}

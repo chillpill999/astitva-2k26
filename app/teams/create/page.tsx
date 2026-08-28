@@ -1,12 +1,11 @@
 // ============================================================================
-// ASTITVA 2K26 - Dedicated Squad Creation Page
+// ASTITVA 2K26 - Dedicated Squad Creation Page (Exteta Luxury Aesthetic)
 // Path: app/teams/create/page.tsx
 // ============================================================================
 
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Users, Sparkles, ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Users } from "lucide-react";
 import { getEventsCatalog } from "@/lib/events/actions";
 import { CreateTeamForm } from "./CreateTeamForm";
 
@@ -26,13 +25,13 @@ export default async function CreateTeamPage({ searchParams }: CreateTeamPagePro
   const teamEvents = allEvents.filter((e) => e.eventType === "TEAM" || e.maxTeamSize > 1);
 
   return (
-    <div className="w-full min-h-screen bg-[#030712] text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-10">
       <div className="container max-w-3xl mx-auto space-y-8">
         {/* Back Link */}
         <div>
           <Link
             href="/teams"
-            className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono text-[#8E8D8A] hover:text-[#1A1918] transition-colors uppercase font-bold"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Squads Hub
@@ -40,20 +39,19 @@ export default async function CreateTeamPage({ searchParams }: CreateTeamPagePro
         </div>
 
         {/* Page Header */}
-        <div className="space-y-3 border-b border-white/10 pb-6">
+        <div className="space-y-3 border-b border-[#8E8D8A]/20 pb-6">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="text-xs font-mono bg-cyan-950/40 text-cyan-300 border-cyan-500/30">
-              <Users className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
+            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
               SQUAD CREATION
-            </Badge>
-            <Badge variant="outline" className="text-xs font-mono bg-purple-950/40 text-purple-300 border-purple-500/30">
+            </span>
+            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/25 text-[#E85A4F] uppercase">
               CAPTAIN REGISTRATION
-            </Badge>
+            </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white uppercase">
-            Form Your <span className="cyber-gradient-text">Tournament Squad</span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+            Form Your <span className="text-[#E85A4F]">Tournament Squad</span>
           </h1>
-          <p className="text-sm text-slate-300">
+          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
             Create an official team squad for ASTITVA 2K26. As Captain, you will receive a unique 6-character invite code to assemble your roster.
           </p>
         </div>

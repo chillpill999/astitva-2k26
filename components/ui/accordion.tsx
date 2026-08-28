@@ -12,7 +12,7 @@ const AccordionItem = React.forwardRef<
   <AccordionPrimitive.Item
     ref={ref}
     className={cn(
-      "border-b border-white/10 rounded-xl bg-slate-900/40 px-4 mb-3 border backdrop-blur-sm",
+      "rounded-2xl bg-[#F6F4EE] px-5 mb-3 border border-[#8E8D8A]/25",
       className
     )}
     {...props}
@@ -28,17 +28,17 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:text-cyan-400 [&[data-state=open]>svg]:rotate-180 text-left",
+        "flex flex-1 items-center justify-between py-4 text-xs font-mono font-bold uppercase transition-all text-[#1A1918] hover:text-[#E85A4F] [&[data-state=open]>svg]:rotate-180 text-left",
         className
       )}
       {...props}
     >
       {children}
-      <ChevronDown className="h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200" />
+      <ChevronDown className="h-4 w-4 shrink-0 text-[#8E8D8A] transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+AccordionTrigger.displayName = "AccordionTrigger";
 
 const AccordionContent = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Content>,
@@ -46,12 +46,12 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
-    className="overflow-hidden text-sm text-slate-400 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className="overflow-hidden text-xs font-mono text-[#8E8D8A] leading-relaxed data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
     <div className={cn("pb-4 pt-0", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+AccordionContent.displayName = "AccordionContent";
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };

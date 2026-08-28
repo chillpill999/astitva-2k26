@@ -46,8 +46,8 @@ export function HeroShaderCanvas() {
         className="w-full h-full block opacity-70 transition-opacity duration-1000"
       />
       {/* Ambient Vignette & Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030712]/30 via-transparent to-[#030712] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#030712_85%)] pointer-events-none opacity-80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#EAE7DC]/30 via-transparent to-[#EAE7DC] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#EAE7DC_85%)] pointer-events-none opacity-80" />
     </div>
   );
 }

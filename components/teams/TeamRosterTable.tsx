@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Team Roster Table & Captain Controls Component
-// Path: components/teams/TeamRosterTable.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import {
   Crown,
@@ -16,8 +11,6 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -74,138 +67,90 @@ export function TeamRosterTable({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-[#1A1918]">
       {errorMessage && (
-        <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-red-400 shrink-0" />
+        <div className="p-3 rounded-2xl bg-red-100 border border-red-300 text-xs font-mono text-red-700 flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      <div className="rounded-2xl border border-white/10 bg-[#0b0f19]/80 overflow-hidden backdrop-blur-xl shadow-xl">
+      <div className="rounded-3xl border border-[#8E8D8A]/25 bg-[#F6F4EE] overflow-hidden shadow-sm">
         <Table>
-          <TableHeader className="bg-slate-900/90 border-b border-white/10">
-            <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="text-xs font-mono font-bold text-slate-300">Player</TableHead>
-              <TableHead className="text-xs font-mono font-bold text-slate-300">Roll No</TableHead>
-              <TableHead className="text-xs font-mono font-bold text-slate-300">Branch &amp; Sem</TableHead>
-              <TableHead className="text-xs font-mono font-bold text-slate-300">Role</TableHead>
-              <TableHead className="text-xs font-mono font-bold text-slate-300">Status</TableHead>
+          <TableHeader className="bg-[#EAE7DC] border-b border-[#8E8D8A]/20">
+            <TableRow className="border-[#8E8D8A]/20 hover:bg-transparent">
+              <TableHead className="text-xs font-mono font-bold text-[#1A1918]">Player</TableHead>
+              <TableHead className="text-xs font-mono font-bold text-[#1A1918]">Roll No</TableHead>
+              <TableHead className="text-xs font-mono font-bold text-[#1A1918]">Branch &amp; Sem</TableHead>
+              <TableHead className="text-xs font-mono font-bold text-[#1A1918]">Role</TableHead>
+              <TableHead className="text-xs font-mono font-bold text-[#1A1918]">Status</TableHead>
               {isCaptain && (
-                <TableHead className="text-xs font-mono font-bold text-slate-300 text-right">
+                <TableHead className="text-xs font-mono font-bold text-[#1A1918] text-right">
                   Actions
                 </TableHead>
               )}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members.map((member) => {
-              const isLead = member.role === "CAPTAIN";
-              const isRemoving = loadingAction === `REMOVE-${member.userId}`;
-              const isPromoting = loadingAction === `PROMOTE-${member.userId}`;
+            {members.map((m) => {
+              const isMemCaptain = m.role === "CAPTAIN";
+              const isRemoving = loadingAction === `REMOVE-${m.userId}`;
+              const isPromoting = loadingAction === `PROMOTE-${m.userId}`;
 
               return (
-                <TableRow
-                  key={member.id}
-                  className="border-white/5 hover:bg-white/[0.02] transition-colors"
-                >
-                  {/* Player Name */}
-                  <TableCell className="py-4 font-medium text-white">
-                    <div className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 rounded-full bg-slate-800 border border-white/15 flex items-center justify-center text-xs font-bold text-cyan-400">
-                        {member.user?.name?.slice(0, 2).toUpperCase() || "PL"}
+                <TableRow key={m.id} className="border-[#8E8D8A]/15 hover:bg-[#EAE7DC]/60 font-mono text-xs">
+                  <TableCell className="font-bold text-[#1A1918]">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-[#EAE7DC] border border-[#8E8D8A]/30 flex items-center justify-center text-[10px] text-[#1A1918]">
+                        {(m.user?.name || "M").charAt(0)}
                       </div>
-                      <div>
-                        <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                          {member.user?.name || "Player"}
-                          {isLead && <Crown className="h-3.5 w-3.5 text-amber-400 inline" />}
-                        </div>
-                        <div className="text-[10px] font-mono text-slate-400">
-                          {member.user?.profile?.participantId || member.user?.email}
-                        </div>
-                      </div>
+                      <span>{m.user?.name || "Participant"}</span>
                     </div>
                   </TableCell>
-
-                  {/* Roll No */}
-                  <TableCell className="py-4 font-mono text-xs text-slate-300">
-                    {member.user?.profile?.collegeId || "—"}
+                  <TableCell className="text-[#8E8D8A]">{m.user?.profile?.collegeId || "—"}</TableCell>
+                  <TableCell className="text-[#8E8D8A]">
+                    {m.user?.profile?.branch ? `${m.user.profile.branch} · Sem ${m.user.profile.semester || 1}` : "—"}
                   </TableCell>
-
-                  {/* Branch & Semester */}
-                  <TableCell className="py-4 font-mono text-xs text-slate-300">
-                    {member.user?.profile?.branch ? (
-                      <span>
-                        {member.user.profile.branch} • Sem {member.user.profile.semester || 1}
+                  <TableCell>
+                    {isMemCaptain ? (
+                      <span className="bg-[#1A1918] text-[#EAE7DC] text-[9px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1 w-max">
+                        <Crown className="h-2.5 w-2.5 text-[#E85A4F]" />
+                        CAPTAIN
                       </span>
                     ) : (
-                      "—"
-                    )}
-                  </TableCell>
-
-                  {/* Role Badge */}
-                  <TableCell className="py-4">
-                    {isLead ? (
-                      <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold">
-                        <Crown className="mr-1 h-3 w-3 text-amber-400" />
-                        CAPTAIN
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-white/5 text-slate-300 border-white/15 text-[10px] font-mono">
+                      <span className="bg-[#EAE7DC] text-[#8E8D8A] text-[9px] font-bold px-2 py-0.5 rounded uppercase w-max">
                         MEMBER
-                      </Badge>
+                      </span>
                     )}
                   </TableCell>
-
-                  {/* Status Badge */}
-                  <TableCell className="py-4">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400">
-                      <CheckCircle2 className="h-3 w-3" />
-                      Approved
+                  <TableCell>
+                    <span className="text-[#E85A4F] font-bold uppercase text-[10px]">
+                      {m.status}
                     </span>
                   </TableCell>
-
-                  {/* Captain Action Controls */}
                   {isCaptain && (
-                    <TableCell className="py-4 text-right">
-                      {!isLead && (
-                        <div className="flex items-center justify-end gap-1.5">
-                          <Button
-                            size="sm"
-                            variant="ghost"
+                    <TableCell className="text-right space-x-2">
+                      {!isMemCaptain && (
+                        <>
+                          <button
+                            type="button"
                             disabled={!!loadingAction}
-                            onClick={() => handleAction(member.userId, "PROMOTE")}
-                            className="h-7 px-2 text-[11px] font-mono text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                            onClick={() => handleAction(m.userId, "PROMOTE")}
+                            className="px-2.5 py-1 rounded-lg bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] text-[#1A1918] text-[10px] font-bold uppercase transition-colors"
                             title="Make Captain"
                           >
-                            {isPromoting ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <>
-                                <ArrowUpCircle className="mr-1 h-3.5 w-3.5" />
-                                Promote
-                              </>
-                            )}
-                          </Button>
-
-                          <Button
-                            size="sm"
-                            variant="ghost"
+                            {isPromoting ? "..." : "PROMOTE"}
+                          </button>
+                          <button
+                            type="button"
                             disabled={!!loadingAction}
-                            onClick={() => handleAction(member.userId, "REMOVE")}
-                            className="h-7 px-2 text-[11px] font-mono text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            onClick={() => handleAction(m.userId, "REMOVE")}
+                            className="px-2.5 py-1 rounded-lg bg-[#EAE7DC] hover:bg-[#E85A4F] hover:text-white text-[#E85A4F] text-[10px] font-bold uppercase transition-colors"
                             title="Remove from squad"
                           >
-                            {isRemoving ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <>
-                                <Trash2 className="mr-1 h-3.5 w-3.5" />
-                                Kick
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                            {isRemoving ? "..." : "REMOVE"}
+                          </button>
+                        </>
                       )}
                     </TableCell>
                   )}

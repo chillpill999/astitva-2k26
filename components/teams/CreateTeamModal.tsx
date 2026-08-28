@@ -1,7 +1,7 @@
 "use client";
 
 // ============================================================================
-// ASTITVA 2K26 - Create Squad Modal Component
+// ASTITVA 2K26 - Create Squad Modal (Exteta Luxury Aesthetic)
 // Path: components/teams/CreateTeamModal.tsx
 // ============================================================================
 
@@ -14,10 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Users,
   Sparkles,
@@ -103,195 +99,134 @@ export function CreateTeamModal({
     }
   };
 
-  const handleClose = () => {
+  const handleModalClose = () => {
     setCreatedTeam(null);
     setTeamName("");
     setError(null);
     onClose();
   };
 
+  const handleCopyCode = async (code: string) => {
+    if (typeof window !== "undefined") {
+      try {
+        await navigator.clipboard.writeText(code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {}
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg bg-[#0b0f19]/95 border-white/15 text-white backdrop-blur-2xl">
+    <Dialog open={isOpen} onOpenChange={handleModalClose}>
+      <DialogContent className="border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[#1A1918] max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl font-mono">
         <DialogHeader className="space-y-2">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] font-mono bg-cyan-950/40 text-cyan-300 border-cyan-500/30">
-              SQUAD CREATION
-            </Badge>
-            <Badge variant="outline" className="text-[10px] font-mono bg-purple-950/40 text-purple-300 border-purple-500/30">
-              CAPTAIN ENROLLMENT
-            </Badge>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
+              CAPTAIN PORTAL
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase border border-[#8E8D8A]/20">
+              SQUAD REGISTRATION
+            </span>
           </div>
-          <DialogTitle className="text-xl font-black tracking-tight text-white">
-            Form Your Tournament Squad
+          <DialogTitle className="text-xl font-bold uppercase text-[#1A1918]">
+            Form Tournament Squad
           </DialogTitle>
-          <DialogDescription className="text-xs text-slate-300">
-            Create a squad, become the Captain, and generate an instant 6-character invite code for your teammates.
+          <DialogDescription className="text-xs text-[#8E8D8A]">
+            Create a squad and generate a unique 6-character team invite code.
           </DialogDescription>
         </DialogHeader>
 
         {createdTeam ? (
-          <div className="py-6 flex flex-col items-center text-center space-y-5">
-            <div className="h-16 w-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 animate-bounce">
+          <div className="space-y-6 py-3 text-center">
+            <div className="h-16 w-16 rounded-full bg-[#E85A4F]/10 border border-[#E85A4F]/30 flex items-center justify-center text-[#E85A4F] mx-auto">
               <CheckCircle2 className="h-8 w-8" />
             </div>
 
             <div className="space-y-1">
-              <h4 className="text-lg font-black text-white">Squad Successfully Formed!</h4>
-              <p className="text-xs text-slate-300">
-                Squad <strong className="text-cyan-300">{createdTeam.name}</strong> is now live. Share the invite code with teammates.
+              <h3 className="text-lg font-bold text-[#1A1918] uppercase">{createdTeam.name}</h3>
+              <p className="text-xs text-[#8E8D8A]">
+                Squad created for <strong className="text-[#1A1918]">{selectedEvent?.title}</strong>
               </p>
             </div>
 
-            {/* Invite Code Box */}
-            <div className="w-full p-5 rounded-2xl bg-slate-950 border border-cyan-500/40 space-y-3">
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">
-                6-Character Invite Code
-              </span>
-              <div className="text-3xl font-mono font-black tracking-widest text-cyan-300">
+            <div className="w-full p-5 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 space-y-3">
+              <span className="text-[10px] uppercase text-[#8E8D8A]">Squad Invite Code</span>
+              <div className="text-4xl font-black tracking-widest text-[#E85A4F]">
                 {createdTeam.code}
               </div>
-
-              <div className="flex items-center justify-center gap-3 pt-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={async () => {
-                    if (typeof window !== "undefined") {
-                      try {
-                        await navigator.clipboard.writeText(createdTeam.code);
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 2000);
-                      } catch {}
-                    }
-                  }}
-                  className="text-xs font-mono font-bold bg-cyan-600 hover:bg-cyan-500 text-white"
-                >
-                  <Copy className="mr-1.5 h-3.5 w-3.5" />
-                  {copied ? "Code Copied!" : "Copy Code"}
-                </Button>
-
-                <a
-                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-                    `🔥 Join my squad *${createdTeam.name}* for ASTITVA 2K26!\n⚡ Invite Code: *${createdTeam.code}*\n👉 Direct Join: https://astitva2k26.lnjpit.ac.in/teams/join/${createdTeam.code}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button
-                    type="button"
-                    size="sm"
-                    className="text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white"
-                  >
-                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
-                    WhatsApp
-                  </Button>
-                </a>
-              </div>
+              <button
+                type="button"
+                onClick={() => handleCopyCode(createdTeam.code)}
+                className="px-4 py-1.5 rounded-xl border border-[#8E8D8A]/35 bg-[#F6F4EE] text-xs font-bold text-[#1A1918] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5 mx-auto"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                {copied ? "Copied to Clipboard!" : "Copy Code"}
+              </button>
             </div>
 
-            <div className="w-full flex gap-3 pt-2">
-              <Button
+            <div className="flex gap-3 pt-2">
+              <button
                 type="button"
                 onClick={() => {
-                  handleClose();
+                  handleModalClose();
                   router.push(`/teams/${createdTeam.id}`);
                 }}
-                className="w-full text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/25 py-5"
+                className="w-full py-3 rounded-xl bg-[#E85A4F] text-white text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                Go to Squad Roster Dashboard
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+                Go to Squad Roster <ArrowRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 py-2">
-            {/* Event Selector */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-mono text-slate-300">Target Tournament</Label>
+          <form onSubmit={handleSubmit} className="space-y-5 py-2 text-xs">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase text-[#1A1918]">Select Tournament</label>
               <select
                 value={selectedEventId}
                 onChange={(e) => setSelectedEventId(e.target.value)}
-                className="w-full p-2.5 rounded-xl bg-slate-900 border border-white/15 text-xs text-white focus:border-cyan-400 focus:outline-none"
+                className="w-full p-3 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
               >
                 {teamEvents.map((evt) => (
                   <option key={evt.id} value={evt.id}>
-                    {evt.title} ({evt.minTeamSize}-{evt.maxTeamSize} Players)
+                    {evt.title} ({evt.category?.name}) · {evt.minTeamSize}-{evt.maxTeamSize} Players
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Squad Name Input */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-mono text-slate-300">Squad Name</Label>
-                <span className="text-[10px] font-mono text-slate-400">
-                  {teamName.length}/50 chars
-                </span>
-              </div>
-              <Input
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase text-[#1A1918]">Squad Name</label>
+              <input
                 type="text"
-                placeholder="e.g. LNJPIT Titans ME, Cyber Ninjas"
+                placeholder="e.g. LNJPIT Warriors"
                 value={teamName}
-                maxLength={50}
                 onChange={(e) => setTeamName(e.target.value)}
-                className="text-xs bg-slate-900 border-white/15 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-400"
+                className="w-full p-3 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] placeholder:text-[#8E8D8A]/60 focus:outline-none focus:border-[#E85A4F]"
               />
             </div>
 
-            {/* Event Info Card */}
-            {selectedEvent && (
-              <div className="p-3.5 rounded-xl bg-slate-900/60 border border-white/10 space-y-1 text-xs font-mono text-slate-300">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Required Squad Size:</span>
-                  <span className="text-cyan-300 font-bold">
-                    {selectedEvent.minTeamSize} to {selectedEvent.maxTeamSize} Players
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Venue:</span>
-                  <span className="text-slate-200">{selectedEvent.venue}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Error Feedback */}
             {error && (
-              <div className="p-3 rounded-lg bg-red-950/40 border border-red-500/30 flex items-start gap-2 text-xs text-red-300">
-                <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-red-700 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
-              <Button
+            <div className="flex gap-3 pt-2">
+              <button
                 type="button"
-                variant="outline"
-                disabled={loading}
-                onClick={handleClose}
-                className="text-xs font-bold border-white/15 bg-white/5 text-slate-300 hover:text-white"
+                onClick={handleModalClose}
+                className="flex-1 py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
               >
                 Cancel
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
                 disabled={loading}
-                className="text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30"
+                className="flex-1 py-2.5 rounded-xl bg-[#E85A4F] text-white font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Squad...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-                    Create Squad &amp; Get Code
-                  </>
-                )}
-              </Button>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Squad"}
+              </button>
             </div>
           </form>
         )}

@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Deep Event Detail Page
+// ASTITVA 2K26 - Deep Event Detail Page (Exteta Luxury Aesthetic)
 // Path: app/events/[id]/page.tsx
 // ============================================================================
 
@@ -15,10 +15,7 @@ import {
   Users,
   User,
   Sparkles,
-  ShieldCheck,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { getEventBySlugOrId } from "@/lib/events/actions";
 import { EventDetailTabs } from "@/components/events/EventDetailTabs";
 
@@ -50,13 +47,13 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   const isTeam = event.eventType === "TEAM";
 
   return (
-    <div className="w-full min-h-screen bg-[#030712] text-slate-100 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10">
       <div className="container max-w-7xl mx-auto space-y-8">
         {/* Back Link */}
         <div>
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono text-[#8E8D8A] hover:text-[#1A1918] transition-colors uppercase font-bold"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to All Tournaments
@@ -64,7 +61,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         </div>
 
         {/* Hero Banner Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-[#0b0f19] border border-white/15 shadow-2xl backdrop-blur-2xl">
+        <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm">
           {/* Background Cover Image with Gradient */}
           <div className="relative h-64 sm:h-80 w-full overflow-hidden">
             {event.bannerImage ? (
@@ -73,71 +70,68 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                 alt={event.title}
                 fill
                 priority
-                className="object-cover opacity-40 blur-xs scale-105"
+                className="object-cover opacity-60"
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-r from-cyan-950 via-slate-900 to-purple-950 opacity-60" />
+              <div className="h-full w-full bg-[#D8C3A5]" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#F6F4EE] via-[#F6F4EE]/70 to-transparent" />
           </div>
 
           {/* Hero Content Overlay */}
           <div className="relative -mt-40 sm:-mt-48 p-6 sm:p-10 space-y-6 z-10">
             {/* Badges Bar */}
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="text-xs font-mono font-bold bg-cyan-950/60 text-cyan-300 border-cyan-500/40">
+              <span className="text-[10px] font-mono font-bold px-3 py-1 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
                 {event.category?.name || "Competition"}
-              </Badge>
-              <Badge variant="outline" className="text-xs font-mono font-bold bg-purple-950/60 text-purple-300 border-purple-500/40">
+              </span>
+              <span className="text-[10px] font-mono font-bold px-3 py-1 rounded bg-[#EAE7DC] border border-[#8E8D8A]/25 text-[#E85A4F] uppercase">
                 {isTeam ? (
                   <span className="flex items-center gap-1">
-                    <Users className="h-3.5 w-3.5 text-cyan-400" />
+                    <Users className="h-3 w-3" />
                     Squad ({event.minTeamSize}-{event.maxTeamSize} Players)
                   </span>
                 ) : (
                   <span className="flex items-center gap-1">
-                    <User className="h-3.5 w-3.5 text-purple-400" />
+                    <User className="h-3 w-3" />
                     Solo Individual
                   </span>
                 )}
-              </Badge>
-              <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/50 text-xs font-mono font-bold">
-                <Trophy className="mr-1 h-3.5 w-3.5 text-amber-400" />
-                ₹{event.prizePool.toLocaleString("en-IN")} CASH PRIZE
-              </Badge>
+              </span>
+              <span className="text-[10px] font-mono font-bold px-3 py-1 rounded bg-[#EAE7DC] border border-[#8E8D8A]/25 text-[#1A1918] uppercase">
+                Day 0{event.dayNumber} · 4–8 Sept
+              </span>
             </div>
 
             {/* Title & Subtitle */}
             <div className="space-y-2 max-w-4xl">
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1A1918] uppercase">
                 {event.title}
               </h1>
-              {event.subtitle && (
-                <p className="text-base sm:text-lg text-cyan-300 font-medium font-sans">
-                  {event.subtitle}
-                </p>
-              )}
+              <p className="text-sm sm:text-base text-[#8E8D8A] font-mono">
+                {event.subtitle || event.description.slice(0, 160)}
+              </p>
             </div>
 
-            {/* Quick Logistics Chips */}
-            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-300 pt-2 border-t border-white/10">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="h-4 w-4 text-purple-400" />
-                <span>Day {event.dayNumber} (Sept {3 + event.dayNumber}, 2026)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-cyan-400" />
+            {/* Metadata Badges */}
+            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-[#8E8D8A] pt-2">
+              <div className="flex items-center gap-1.5 bg-[#EAE7DC] px-3 py-1.5 rounded-xl border border-[#8E8D8A]/20">
+                <MapPin className="h-3.5 w-3.5 text-[#E85A4F]" />
                 <span>{event.venue}</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                <span className="text-emerald-300 font-bold">Status: {event.status.replace("_", " ")}</span>
+              <div className="flex items-center gap-1.5 bg-[#EAE7DC] px-3 py-1.5 rounded-xl border border-[#8E8D8A]/20">
+                <Calendar className="h-3.5 w-3.5 text-[#E85A4F]" />
+                <span>Day 0{event.dayNumber}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#EAE7DC] px-3 py-1.5 rounded-xl border border-[#8E8D8A]/20">
+                <Trophy className="h-3.5 w-3.5 text-[#E85A4F]" />
+                <span className="font-bold text-[#E85A4F]">₹{event.prizePool?.toLocaleString("en-IN") || 0}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 4-Tabbed Content & Registration Widget */}
+        {/* 4-Tab Body and Interactive Registration Actions */}
         <EventDetailTabs event={event} />
       </div>
     </div>

@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Live Camera Scanner (html5-qrcode)
+// ASTITVA 2K26 - Live Camera Scanner (Exteta Luxury Aesthetic)
 // Path: components/scanner/ScannerPanel.tsx
 // ============================================================================
 
@@ -8,8 +8,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { Camera, CameraOff, RotateCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 export type ScannerPanelProps = {
   onScan: (decodedText: string) => void | Promise<void>;
@@ -94,70 +92,52 @@ export function ScannerPanel({ onScan, paused, className }: ScannerPanelProps) {
       }
       scannerRef.current.clear();
     } catch {
-      // ignore stop errors
+      // ignore
     }
     scannerRef.current = null;
     setActive(false);
   }
 
   return (
-    <div className={className}>
-      <div className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-black shadow-[0_0_30px_rgba(6,182,212,0.25)]">
-        <div id={REGION_ID} className="w-full h-72" />
-        {!active && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 text-center px-6">
-            <Camera className="h-10 w-10 text-cyan-400/80 mb-2" />
-            <p className="text-sm font-semibold text-white">Optical Scanner Standby</p>
-            <p className="text-xs text-slate-400 mt-1">
-              Click <span className="text-cyan-300 font-bold">Start Camera</span> to begin live
-              scanning.
-            </p>
-            {error && (
-              <p className="mt-2 text-xs text-red-300 max-w-xs">{error}</p>
-            )}
+    <div className={`space-y-4 ${className ?? ""}`}>
+      <div className="relative overflow-hidden rounded-3xl border border-[#8E8D8A]/25 bg-[#EAE7DC] p-3 shadow-inner">
+        <div
+          id={REGION_ID}
+          className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#1A1918]/90 flex items-center justify-center text-xs font-mono text-[#EAE7DC]"
+        />
+
+        {paused && active && (
+          <div className="absolute inset-0 bg-[#EAE7DC]/80 backdrop-blur-sm flex items-center justify-center font-mono text-xs font-bold text-[#E85A4F]">
+            <RotateCw className="h-5 w-5 animate-spin mr-2" />
+            PROCESSING SCAN...
           </div>
         )}
-        <div className="pointer-events-none absolute inset-0 border border-white/5 rounded-2xl" />
-        <div className="pointer-events-none absolute inset-x-8 top-1/2 h-0.5 -translate-y-1/2 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-70 animate-scanline" />
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {active ? (
-          <Button
-            type="button"
-            variant="outline"
-            className="text-xs font-bold border-red-500/40 text-red-300 hover:bg-red-500/10"
-            onClick={async () => {
-              await stop();
-              toast.message("Scanner paused");
-            }}
-          >
-            <CameraOff className="h-4 w-4 mr-1.5" /> Stop Camera
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            variant="neonCyan"
-            className="text-xs font-bold"
-            onClick={start}
-          >
-            <Camera className="h-4 w-4 mr-1.5" /> Start Camera
-          </Button>
-        )}
-        <Button
-          type="button"
-          variant="ghost"
-          className="text-xs text-slate-400"
-          onClick={async () => {
-            await stop();
-            await start();
-          }}
-        >
-          <RotateCw className="h-4 w-4 mr-1.5" /> Restart
-        </Button>
-        <p className="text-[10px] text-slate-500 font-mono ml-auto">
-          {active ? "LIVE • 12 FPS" : "IDLE"}
+      {error && (
+        <p className="text-xs font-mono text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
+          {error}
         </p>
+      )}
+
+      <div className="flex items-center gap-3">
+        {!active ? (
+          <button
+            type="button"
+            onClick={start}
+            className="w-full py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm"
+          >
+            <Camera className="h-4 w-4" /> Start Camera
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={stop}
+            className="w-full py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center justify-center gap-2"
+          >
+            <CameraOff className="h-4 w-4" /> Stop Camera
+          </button>
+        )}
       </div>
     </div>
   );

@@ -289,6 +289,7 @@ export async function getTeamDetails(
             slug: team.event.slug,
             title: team.event.title,
             venue: team.event.venue,
+            dayNumber: team.event.dayNumber,
             scheduleStart: team.event.scheduleStart.toISOString(),
             category: team.event.category
               ? {

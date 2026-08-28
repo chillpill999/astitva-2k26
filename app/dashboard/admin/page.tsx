@@ -1,36 +1,23 @@
 // ============================================================================
-// ASTITVA 2K26 - Admin Control Center
+// ASTITVA 2K26 - Admin Control Center (Exteta Luxury Aesthetic)
 // Path: app/dashboard/admin/page.tsx
-// Stitch Screen: bcf81365838f4c8bab210179a7c506df
 // ============================================================================
 
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Users,
   Trophy,
   UserCheck,
-  Shield,
   Search,
   Download,
   TrendingUp,
-  Filter,
   CheckCircle2,
-  Clock,
   AlertCircle,
-  Sparkles,
-  ArrowUpRight,
-  MoreVertical,
-  Calendar,
-  Radio,
   FileSpreadsheet,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { RoleBadge } from "@/components/dashboard/RoleBadge";
 import { ExportDataModal } from "@/components/dashboard/ExportDataModal";
 import {
@@ -53,11 +40,11 @@ const REGISTRATION_VELOCITY_DATA = [
 ];
 
 const TOURNAMENT_CAPACITIES = [
-  { name: "Cricket Tournament (11v11)", registered: 16, capacity: 16, percentage: 100, color: "text-cyan-400" },
-  { name: "BGMI LAN Championship (4v4)", registered: 32, capacity: 32, percentage: 100, color: "text-purple-400" },
-  { name: "Tark-Vitark Hindi Debate", registered: 42, capacity: 50, percentage: 84, color: "text-amber-400" },
-  { name: "Nrityangana Classical Dance", registered: 28, capacity: 30, percentage: 93, color: "text-emerald-400" },
-  { name: "Grandmaster Chess Blitz", registered: 64, capacity: 64, percentage: 100, color: "text-rose-400" },
+  { name: "Cricket Tournament (11v11)", registered: 16, capacity: 16, percentage: 100 },
+  { name: "BGMI LAN Championship (4v4)", registered: 32, capacity: 32, percentage: 100 },
+  { name: "Tark-Vitark Hindi Debate", registered: 42, capacity: 50, percentage: 84 },
+  { name: "Nrityangana Classical Dance", registered: 28, capacity: 30, percentage: 93 },
+  { name: "Grandmaster Chess Blitz", registered: 64, capacity: 64, percentage: 100 },
 ];
 
 const PARTICIPANTS_DATA = [
@@ -69,7 +56,6 @@ const PARTICIPANTS_DATA = [
     role: "ADMIN" as const,
     events: 3,
     status: "Checked In",
-    statusColor: "emerald",
   },
   {
     id: "AST26-0002",
@@ -79,7 +65,6 @@ const PARTICIPANTS_DATA = [
     role: "EVENT_COORDINATOR" as const,
     events: 5,
     status: "Checked In",
-    statusColor: "emerald",
   },
   {
     id: "AST26-0003",
@@ -89,7 +74,6 @@ const PARTICIPANTS_DATA = [
     role: "VOLUNTEER" as const,
     events: 2,
     status: "Checked In",
-    statusColor: "emerald",
   },
   {
     id: "AST26-0004",
@@ -99,7 +83,6 @@ const PARTICIPANTS_DATA = [
     role: "TEAM_CAPTAIN" as const,
     events: 4,
     status: "Checked In",
-    statusColor: "emerald",
   },
   {
     id: "AST26-0005",
@@ -108,364 +91,257 @@ const PARTICIPANTS_DATA = [
     branch: "CE",
     role: "PARTICIPANT" as const,
     events: 3,
-    status: "Pending",
-    statusColor: "amber",
-  },
-  {
-    id: "AST26-1006",
-    name: "Vikram Malhotra",
-    roll: "23105128099",
-    branch: "CSE",
-    role: "PARTICIPANT" as const,
-    events: 2,
-    status: "Checked In",
-    statusColor: "emerald",
-  },
-  {
-    id: "AST26-1007",
-    name: "Pooja Singh",
-    roll: "22105128045",
-    branch: "ECE",
-    role: "PARTICIPANT" as const,
-    events: 1,
-    status: "Pending",
-    statusColor: "amber",
+    status: "Registered",
   },
 ];
 
 export default function AdminDashboardPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [branchFilter, setBranchFilter] = useState("ALL");
-  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("ALL");
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const filteredParticipants = PARTICIPANTS_DATA.filter((p) => {
     const matchesSearch =
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.roll.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesBranch = branchFilter === "ALL" || p.branch === branchFilter;
-    return matchesSearch && matchesBranch;
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.roll.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = roleFilter === "ALL" || p.role === roleFilter;
+    return matchesSearch && matchesRole;
   });
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300">
-      {/* 1. Header Banner & Action Deck */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
+      {/* 1. Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
         <div>
           <div className="flex items-center space-x-2 mb-1">
             <RoleBadge role="ADMIN" />
-            <Badge variant="outline" className="text-[10px] font-mono border-red-500/30 text-red-400">
-              HIGH PRIVILEGE CLEARANCE
-            </Badge>
+            <span className="text-xs font-mono text-[#E85A4F] font-bold bg-[#EAE7DC] px-2 py-0.5 rounded border border-[#8E8D8A]/20">
+              Dr. Shailendra Kumar · Principal Admin
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Festival Operations & Analytics Control Center
+          <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono">
+            Executive Festival Control Center
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Real-time telemetry, tournament registration streams, volunteer rosters, and emergency broadcast dispatch.
+          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
+            Platform governance, cross-branch telemetry, gate controls, and real-time database audits.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={() => setIsExportOpen(true)}
-            variant="outline"
-            size="sm"
-            className="text-xs font-semibold border-white/15 bg-slate-900/80 hover:bg-slate-800 text-white cursor-pointer"
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setIsExportModalOpen(true)}
+            className="px-4 py-2 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5 shadow-sm"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 text-cyan-400" />
+            <Download className="w-3.5 h-3.5 text-[#E85A4F]" />
             Export Reports
-          </Button>
-          <Button
-            variant="neonCyan"
-            size="sm"
-            className="text-xs font-bold shadow-lg cursor-pointer"
-          >
-            <Radio className="w-3.5 h-3.5 mr-1.5" />
-            Live Broadcast
-          </Button>
+          </button>
+          <Link href="/dashboard/admin/analytics">
+            <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm">
+              <TrendingUp className="w-3.5 h-3.5" />
+              Deep Analytics →
+            </button>
+          </Link>
         </div>
       </div>
 
-      {/* 2. Top 4 Metric KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Metric 1 */}
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-xl">
-          <CardContent className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Total Registrations
-              </span>
-              <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                <Users className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <span className="text-2xl sm:text-3xl font-black text-white font-mono">1,248</span>
-              <span className="text-xs font-semibold text-emerald-400 flex items-center">
-                <TrendingUp className="w-3 h-3 mr-0.5" /> +14.2%
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400">Across 16 Sports & Cultural competitions</p>
-          </CardContent>
-        </Card>
+      {/* 2. Top Metric Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
+        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
+            <span>Total Enrolled</span>
+            <Users className="w-4 h-4 text-[#1A1918]" />
+          </div>
+          <p className="text-3xl font-bold text-[#1A1918]">1,248</p>
+          <p className="text-[10px] text-[#E85A4F]">+18% vs last year</p>
+        </div>
 
-        {/* Metric 2 */}
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-xl">
-          <CardContent className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Total Prize Pool
-              </span>
-              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <Trophy className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <span className="text-2xl sm:text-3xl font-black text-white font-mono">₹1,50,000</span>
-            </div>
-            <p className="text-[11px] text-slate-400">100% Sponsor & Institutional Backed</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
+            <span>Total Checked In</span>
+            <UserCheck className="w-4 h-4 text-[#E85A4F]" />
+          </div>
+          <p className="text-3xl font-bold text-[#E85A4F]">1,080</p>
+          <p className="text-[10px] text-[#8E8D8A]">86.5% gate turnover</p>
+        </div>
 
-        {/* Metric 3 */}
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-xl">
-          <CardContent className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Attendance Rate
-              </span>
-              <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <UserCheck className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <span className="text-2xl sm:text-3xl font-black text-white font-mono">86.5%</span>
-              <span className="text-xs font-mono text-cyan-300">1,080 / 1,248</span>
-            </div>
-            <Progress value={86.5} className="h-1.5 bg-slate-800" />
-          </CardContent>
-        </Card>
+        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
+            <span>Tournaments Live</span>
+            <Trophy className="w-4 h-4 text-[#1A1918]" />
+          </div>
+          <p className="text-3xl font-bold text-[#1A1918]">16 / 16</p>
+          <p className="text-[10px] text-[#E85A4F]">100% capacity filled</p>
+        </div>
 
-        {/* Metric 4 */}
-        <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-xl">
-          <CardContent className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Volunteers On-Duty
-              </span>
-              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <Shield className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <span className="text-2xl sm:text-3xl font-black text-white font-mono">34</span>
-              <span className="inline-flex items-center text-[10px] font-mono text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-ping" />
-                14 ZONES ACTIVE
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400">QR Gate scanning & venue logistics</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
+            <span>Certificates Issued</span>
+            <CheckCircle2 className="w-4 h-4 text-[#E85A4F]" />
+          </div>
+          <p className="text-3xl font-bold text-[#1A1918]">412</p>
+          <p className="text-[10px] text-[#8E8D8A]">HMAC-SHA256 verified</p>
+        </div>
       </div>
 
-      {/* 3. Charts & Tournament Status Grid */}
+      {/* 3. Analytics Chart & Event Capacity Bento */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left: Registration Velocity Recharts Area Chart (7 cols) */}
-        <Card className="lg:col-span-7 glass-panel border-white/10 bg-slate-900/70 shadow-xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <TrendingUp className="w-4 h-4 text-cyan-400 mr-2" />
-              Registration Velocity & Check-in Surge
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              Cumulative student registrations leading up to Day 1 kickoff.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={REGISTRATION_VELOCITY_DATA}>
-                  <defs>
-                    <linearGradient id="regGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="checkGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="day" stroke="#64748b" fontSize={11} />
-                  <YAxis stroke="#64748b" fontSize={11} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#030712",
-                      borderColor: "rgba(255,255,255,0.1)",
-                      borderRadius: "0.75rem",
-                      fontSize: "12px",
-                      color: "#fff",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="registrations"
-                    stroke="#06b6d4"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#regGradient)"
-                    name="Registrations"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="checkins"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#checkGradient)"
-                    name="Gate Check-ins"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Right: Tournament Capacity Gauges (5 cols) */}
-        <Card className="lg:col-span-5 glass-panel border-white/10 bg-slate-900/70 shadow-xl">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <Trophy className="w-4 h-4 text-amber-400 mr-2" />
-              Tournament Slot Capacities
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              Live capacity monitoring across premier competitive brackets.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {TOURNAMENT_CAPACITIES.map((t) => (
-              <div key={t.name} className="space-y-1.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-slate-200 truncate">{t.name}</span>
-                  <span className="font-mono text-cyan-300 font-bold">
-                    {t.registered}/{t.capacity} ({t.percentage}%)
-                  </span>
-                </div>
-                <Progress value={t.percentage} className="h-1.5 bg-slate-800" />
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 4. High-Density Participant Directory Table */}
-      <Card className="glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-        <CardHeader className="pb-4 border-b border-white/10">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Left: Registration Velocity Chart (7 cols) */}
+        <div className="lg:col-span-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
             <div>
-              <CardTitle className="text-base font-bold text-white flex items-center">
-                <Users className="w-4 h-4 text-cyan-400 mr-2" />
-                Live Festival Participant Directory
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-400">
-                Search, filter, and inspect registered LNJPIT students and committee personnel.
-              </CardDescription>
-            </div>
-
-            {/* Search & Filter Toolbar */}
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="relative w-48 sm:w-64">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <Input
-                  placeholder="Search name, ID, roll..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 bg-slate-950/80 border-white/10 text-white text-xs h-8"
-                />
-              </div>
-
-              <select
-                value={branchFilter}
-                onChange={(e) => setBranchFilter(e.target.value)}
-                className="bg-slate-950/80 border border-white/10 text-xs text-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-cyan-500"
-              >
-                <option value="ALL">All Branches</option>
-                <option value="CSE">CSE</option>
-                <option value="ME">ME</option>
-                <option value="CE">CE</option>
-                <option value="EE">EE</option>
-                <option value="ECE">ECE</option>
-              </select>
+              <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
+                <TrendingUp className="w-4 h-4 text-[#E85A4F] mr-2" /> Registration &amp; Check-In Velocity
+              </h2>
+              <p className="text-xs text-[#8E8D8A] font-mono mt-1">
+                Daily cumulative student enrollment vs gate scans.
+              </p>
             </div>
           </div>
-        </CardHeader>
 
-        <CardContent className="p-0 overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-white/10 font-mono uppercase text-slate-400">
+          <div className="h-64 w-full pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={REGISTRATION_VELOCITY_DATA}>
+                <defs>
+                  <linearGradient id="colorReg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#E85A4F" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#E85A4F" stopOpacity={0.0} />
+                  </linearGradient>
+                  <linearGradient id="colorCheck" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#1A1918" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#1A1918" stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#8E8D8A" opacity={0.2} />
+                <XAxis dataKey="day" stroke="#8E8D8A" fontSize={10} />
+                <YAxis stroke="#8E8D8A" fontSize={10} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#F6F4EE",
+                    borderColor: "#8E8D8A",
+                    borderRadius: "16px",
+                    fontSize: "12px",
+                    fontFamily: "monospace",
+                    color: "#1A1918",
+                  }}
+                />
+                <Area type="monotone" dataKey="registrations" stroke="#E85A4F" fill="url(#colorReg)" />
+                <Area type="monotone" dataKey="checkins" stroke="#1A1918" fill="url(#colorCheck)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Right: Tournament Capacity Tracker (5 cols) */}
+        <div className="lg:col-span-5 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
+          <div className="border-b border-[#8E8D8A]/20 pb-4">
+            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase">
+              Tournament Slot Utilization
+            </h2>
+            <p className="text-xs text-[#8E8D8A] font-mono mt-1">Live squad &amp; slot saturation rates.</p>
+          </div>
+
+          <div className="space-y-4 font-mono text-xs">
+            {TOURNAMENT_CAPACITIES.map((item) => (
+              <div key={item.name} className="space-y-1.5">
+                <div className="flex justify-between items-center text-[11px]">
+                  <span className="font-bold text-[#1A1918] truncate pr-2">{item.name}</span>
+                  <span className="text-[#E85A4F] font-bold shrink-0">{item.percentage}%</span>
+                </div>
+                <div className="w-full bg-[#EAE7DC] h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="bg-[#E85A4F] h-full rounded-full"
+                    style={{ width: `${item.percentage}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[9px] text-[#8E8D8A]">
+                  <span>{item.registered} Registered</span>
+                  <span>Cap: {item.capacity}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Filterable User Registry Table */}
+      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#8E8D8A]/20 pb-4">
+          <div>
+            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase">
+              Master Participant &amp; Role Registry
+            </h2>
+            <p className="text-xs text-[#8E8D8A] font-mono mt-1">
+              Search and filter across all authenticated college stakeholders.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8D8A]" />
+              <input
+                type="text"
+                placeholder="Search name, roll, ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 pr-3 py-1.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] placeholder:text-[#8E8D8A]/60 focus:outline-none focus:border-[#E85A4F]"
+              />
+            </div>
+
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="p-1.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] focus:outline-none"
+            >
+              <option value="ALL">All Roles</option>
+              <option value="ADMIN">Admin</option>
+              <option value="EVENT_COORDINATOR">Coordinator</option>
+              <option value="VOLUNTEER">Volunteer</option>
+              <option value="TEAM_CAPTAIN">Captain</option>
+              <option value="PARTICIPANT">Participant</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto font-mono text-xs">
+          <table className="w-full text-left">
+            <thead className="bg-[#EAE7DC] border-b border-[#8E8D8A]/20 uppercase text-[#1A1918]">
               <tr>
                 <th className="py-3 px-4">Participant ID</th>
                 <th className="py-3 px-4">Full Name</th>
-                <th className="py-3 px-4">Roll Number</th>
+                <th className="py-3 px-4">Roll / Dept</th>
                 <th className="py-3 px-4">Branch</th>
-                <th className="py-3 px-4">Role</th>
-                <th className="py-3 px-4">Gate Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4">Assigned Role</th>
+                <th className="py-3 px-4">Tournaments</th>
+                <th className="py-3 px-4 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
-              {filteredParticipants.map((p) => (
-                <tr key={p.id} className="hover:bg-white/5 transition-colors">
-                  <td className="py-3 px-4 font-mono font-bold text-cyan-400">
-                    {p.id}
-                  </td>
-                  <td className="py-3 px-4 font-semibold text-white">
-                    {p.name}
-                  </td>
-                  <td className="py-3 px-4 font-mono text-slate-400">
-                    {p.roll}
-                  </td>
+            <tbody className="divide-y divide-[#8E8D8A]/15">
+              {filteredParticipants.map((user) => (
+                <tr key={user.id} className="hover:bg-[#EAE7DC]/50 transition-colors">
+                  <td className="py-3 px-4 font-bold text-[#E85A4F]">{user.id}</td>
+                  <td className="py-3 px-4 font-bold text-[#1A1918]">{user.name}</td>
+                  <td className="py-3 px-4 text-[#8E8D8A]">{user.roll}</td>
+                  <td className="py-3 px-4 text-[#8E8D8A]">{user.branch}</td>
                   <td className="py-3 px-4">
-                    <Badge variant="outline" className="text-[10px] font-mono border-white/15">
-                      {p.branch}
-                    </Badge>
+                    <RoleBadge role={user.role} />
                   </td>
-                  <td className="py-3 px-4">
-                    <RoleBadge role={p.role} className="text-[9px] py-0 px-1.5" />
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono ${
-                        p.status === "Checked In"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                          : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          p.status === "Checked In" ? "bg-emerald-400" : "bg-amber-400"
-                        }`}
-                      />
-                      {p.status}
-                    </span>
-                  </td>
+                  <td className="py-3 px-4 text-[#1A1918] font-bold">{user.events} Events</td>
                   <td className="py-3 px-4 text-right">
-                    <Button variant="ghost" size="sm" className="h-7 text-xs text-slate-400 hover:text-white">
-                      Inspect
-                    </Button>
+                    <span className="text-[10px] font-bold text-[#E85A4F] uppercase">
+                      {user.status}
+                    </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <ExportDataModal
-        isOpen={isExportOpen}
-        onClose={() => setIsExportOpen(false)}
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
       />
     </div>
   );

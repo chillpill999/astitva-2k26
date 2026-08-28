@@ -1,12 +1,10 @@
 // ============================================================================
-// ASTITVA 2K26 - Live Multi-Stream Leaderboard
+// ASTITVA 2K26 - Live Multi-Stream Leaderboard (Exteta Luxury Aesthetic)
 // Path: app/leaderboard/page.tsx
 // ============================================================================
 
 import Link from "next/link";
 import { Crown, Trophy, Users, Zap, Flame } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { getLeaderboard, getBranchStandings } from "@/lib/results/actions";
 
@@ -21,153 +19,153 @@ export default async function LeaderboardPage() {
   const [boards, branches] = await Promise.all([getLeaderboard(), getBranchStandings()]);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-10">
       <div className="container max-w-7xl mx-auto space-y-8">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-950/40 via-slate-900/90 to-slate-900/90 border border-cyan-500/20 p-8 sm:p-12 shadow-2xl backdrop-blur-2xl">
-          <div className="relative z-10 space-y-5 max-w-3xl">
-            <Badge variant="outline" className="px-3 py-1 text-xs font-mono border-cyan-500/40 text-cyan-300 bg-cyan-950/40">
-              <Flame className="mr-1.5 h-3.5 w-3.5 text-cyan-300" /> LIVE MULTI-STREAM STANDINGS
-            </Badge>
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white uppercase">
-              Branch & Category <span className="text-cyan-300">Championship</span>
+        {/* Header Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-8 sm:p-12 shadow-sm">
+          <div className="relative z-10 space-y-4 max-w-3xl">
+            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
+              <Flame className="mr-1.5 h-3 w-3 inline text-[#E85A4F]" /> LIVE MULTI-STREAM STANDINGS
+            </span>
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              BRANCH &amp; CATEGORY <span className="text-[#E85A4F]">CHAMPIONSHIP</span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm sm:text-base text-[#8E8D8A] font-mono leading-relaxed">
               Points: 10 for Winner · 6 for First Runner-Up · 3 for Second Runner-Up.
-              Leaderboards refresh as coordinators publish results.
+              Leaderboards refresh automatically as coordinators publish results.
             </p>
           </div>
         </div>
 
         {/* Branch championship */}
-        <Card className="glass-panel border-amber-500/20 bg-slate-900/70">
-          <CardHeader className="pb-3 border-b border-white/10">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <Crown className="h-4 w-4 text-amber-300 mr-2" /> Branch Championship (LNJPIT)
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-400 mt-1">
-              Aggregated podium points by student branch.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-4">
+        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="border-b border-[#8E8D8A]/20 pb-4">
+            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
+              <Crown className="h-4 w-4 text-[#E85A4F] mr-2" /> Branch Championship (LNJPIT Chapra)
+            </h2>
+            <p className="text-xs text-[#8E8D8A] font-mono mt-1">
+              Aggregated podium points by engineering branch.
+            </p>
+          </div>
+          <div>
             {branches.length === 0 ? (
-              <p className="text-xs text-slate-500 italic">No results published yet.</p>
+              <p className="text-xs font-mono text-[#8E8D8A] italic">No results published yet.</p>
             ) : (
               <ul className="space-y-2">
                 {branches.map((b, i) => (
                   <li
                     key={b.branch}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-slate-950/60 px-3 py-2"
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-[#8E8D8A]/20 bg-[#EAE7DC] px-4 py-3 font-mono text-xs"
                   >
                     <div className="flex items-center gap-3">
                       <span
-                        className={`text-base ${i === 0 ? "text-amber-300" : i === 1 ? "text-slate-200" : "text-orange-300"}`}
+                        className={`font-black text-sm ${i === 0 ? "text-[#E85A4F]" : "text-[#1A1918]"}`}
                       >
-                        {i + 1}
+                        0{i + 1}
                       </span>
-                      <span className="text-xs font-bold text-white">{b.branch}</span>
-                      <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-300 font-mono">
+                      <span className="font-bold text-[#1A1918]">{b.branch}</span>
+                      <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#F6F4EE] text-[#E85A4F] uppercase border border-[#8E8D8A]/15">
                         {b.wins} wins
-                      </Badge>
+                      </span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-black font-mono text-amber-300">{b.points}</p>
-                      <p className="text-[9px] text-slate-500 font-mono">{b.totalPodiums} podiums</p>
+                      <p className="text-lg font-black text-[#E85A4F]">{b.points} pts</p>
+                      <p className="text-[9px] text-[#8E8D8A]">{b.totalPodiums} podiums</p>
                     </div>
                   </li>
                 ))}
               </ul>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Category leaderboards */}
         <Tabs defaultValue={boards[0]?.slug ?? "sports"} className="w-full">
-          <TabsList className="bg-slate-900/80 border border-white/10 w-full justify-start flex-wrap">
+          <TabsList className="bg-[#F6F4EE] border border-[#8E8D8A]/25 p-1 w-full justify-start flex-wrap rounded-2xl">
             {boards.map((b) => (
-              <TabsTrigger key={b.slug} value={b.slug} className="text-xs">
+              <TabsTrigger
+                key={b.slug}
+                value={b.slug}
+                className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2 uppercase"
+              >
                 {b.category}
               </TabsTrigger>
             ))}
           </TabsList>
+
           {boards.map((b) => (
             <TabsContent key={b.slug} value={b.slug} className="pt-6 space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="glass-panel border-white/10 bg-slate-900/70">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-bold text-white flex items-center">
-                      <Trophy className="h-4 w-4 text-amber-300 mr-2" /> Top Individual Performers
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold font-mono text-[#1A1918] uppercase flex items-center border-b border-[#8E8D8A]/20 pb-3">
+                    <Trophy className="h-4 w-4 text-[#E85A4F] mr-2" /> Top Individual Performers
+                  </h3>
+                  <div>
                     {b.topParticipants.length === 0 ? (
-                      <p className="text-xs text-slate-500 italic">No podiums yet.</p>
+                      <p className="text-xs font-mono text-[#8E8D8A] italic">No podiums yet.</p>
                     ) : (
-                      <ul className="space-y-1.5">
+                      <ul className="space-y-2 font-mono text-xs">
                         {b.topParticipants.map((p, i) => (
                           <li
                             key={p.userId}
-                            className="flex items-center justify-between text-xs"
+                            className="flex items-center justify-between p-2.5 rounded-xl bg-[#EAE7DC]"
                           >
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className={`font-mono ${i === 0 ? "text-amber-300" : "text-slate-500"}`}>
-                                {i + 1}
+                              <span className={`font-bold ${i === 0 ? "text-[#E85A4F]" : "text-[#8E8D8A]"}`}>
+                                #{i + 1}
                               </span>
-                              <span className="font-bold text-white truncate">{p.name}</span>
+                              <span className="font-bold text-[#1A1918] truncate">{p.name}</span>
                               {p.branch && (
-                                <Badge variant="outline" className="text-[9px] border-white/10 text-slate-300 font-mono">
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#F6F4EE] text-[#8E8D8A]">
                                   {p.branch}
-                                </Badge>
+                                </span>
                               )}
                             </div>
-                            <span className="text-amber-300 font-black font-mono">{p.points} pts</span>
+                            <span className="text-[#E85A4F] font-bold">{p.points} pts</span>
                           </li>
                         ))}
                       </ul>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
-                <Card className="glass-panel border-white/10 bg-slate-900/70">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-bold text-white flex items-center">
-                      <Users className="h-4 w-4 text-cyan-300 mr-2" /> Top Squads
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold font-mono text-[#1A1918] uppercase flex items-center border-b border-[#8E8D8A]/20 pb-3">
+                    <Users className="h-4 w-4 text-[#1A1918] mr-2" /> Top Squads
+                  </h3>
+                  <div>
                     {b.topTeams.length === 0 ? (
-                      <p className="text-xs text-slate-500 italic">No team podiums yet.</p>
+                      <p className="text-xs font-mono text-[#8E8D8A] italic">No team podiums yet.</p>
                     ) : (
-                      <ul className="space-y-1.5">
+                      <ul className="space-y-2 font-mono text-xs">
                         {b.topTeams.map((t, i) => (
                           <li
                             key={t.teamId}
-                            className="flex items-center justify-between text-xs"
+                            className="flex items-center justify-between p-2.5 rounded-xl bg-[#EAE7DC]"
                           >
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className={`font-mono ${i === 0 ? "text-cyan-300" : "text-slate-500"}`}>
-                                {i + 1}
+                              <span className={`font-bold ${i === 0 ? "text-[#E85A4F]" : "text-[#8E8D8A]"}`}>
+                                #{i + 1}
                               </span>
-                              <span className="font-bold text-white truncate">{t.name}</span>
+                              <span className="font-bold text-[#1A1918] truncate">{t.name}</span>
                             </div>
-                            <span className="text-cyan-300 font-black font-mono">{t.points} pts</span>
+                            <span className="text-[#E85A4F] font-bold">{t.points} pts</span>
                           </li>
                         ))}
                       </ul>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
 
               {/* Per-event winners */}
-              <Card className="glass-panel border-white/10 bg-slate-900/70">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-bold text-white flex items-center">
-                    <Zap className="h-4 w-4 text-purple-300 mr-2" /> Per-Event Winners ({b.category})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+              <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-8 shadow-sm space-y-4">
+                <h3 className="text-sm font-bold font-mono text-[#1A1918] uppercase flex items-center border-b border-[#8E8D8A]/20 pb-3">
+                  <Zap className="h-4 w-4 text-[#E85A4F] mr-2" /> Per-Event Winners ({b.category})
+                </h3>
+                <div>
                   {b.events.filter((e) => e.winners.length > 0).length === 0 ? (
-                    <p className="text-xs text-slate-500 italic">No published results for this stream yet.</p>
+                    <p className="text-xs font-mono text-[#8E8D8A] italic">No published results for this stream yet.</p>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {b.events
@@ -175,26 +173,26 @@ export default async function LeaderboardPage() {
                         .map((e) => (
                           <div
                             key={e.id}
-                            className="rounded-xl border border-white/10 bg-slate-950/60 p-3 space-y-1"
+                            className="rounded-2xl border border-[#8E8D8A]/20 bg-[#EAE7DC] p-3.5 space-y-1.5 font-mono"
                           >
                             <Link
                               href={`/events/${e.id}`}
-                              className="text-xs font-bold text-white hover:text-cyan-300 truncate block"
+                              className="text-xs font-bold text-[#1A1918] hover:text-[#E85A4F] truncate block uppercase"
                             >
                               {e.title}
                             </Link>
                             {e.winners.map((w) => (
-                              <p key={`${e.id}-${w.rank}`} className="text-[10px] font-mono text-slate-300">
-                                <span className="text-amber-300">#{w.rank}</span> · {w.name}
-                                <span className="text-slate-500"> ({w.kind})</span>
+                              <p key={`${e.id}-${w.rank}`} className="text-[11px] text-[#8E8D8A]">
+                                <span className="text-[#E85A4F] font-bold">#{w.rank}</span> · {w.name}
+                                <span className="text-[#8E8D8A]/70"> ({w.kind})</span>
                               </p>
                             ))}
                           </div>
                         ))}
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
           ))}
         </Tabs>

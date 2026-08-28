@@ -400,7 +400,7 @@ export async function getBranchStandings(): Promise<BranchStanding[]> {
 }
 
 export async function getAllEventsWithResults(): Promise<
-  Array<{ id: string; title: string; category: string; slug: string; hasResults: boolean }>
+  Array<{ id: string; title: string; category: string; slug: string; dayNumber: number; hasResults: boolean }>
 > {
   const events = await prisma.event.findMany({
     orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
@@ -411,6 +411,7 @@ export async function getAllEventsWithResults(): Promise<
     title: e.title,
     category: e.category.name,
     slug: e.slug,
+    dayNumber: e.dayNumber,
     hasResults: e.results.length > 0,
   }));
 }

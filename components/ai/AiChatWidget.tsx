@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - AI Fest Assistant Chat Widget
+// ASTITVA 2K26 - AI Fest Assistant Chat Widget (Exteta Luxury Aesthetic)
 // Path: components/ai/AiChatWidget.tsx
 // ============================================================================
 
@@ -8,10 +8,6 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, Send, X, Bot, User as UserIcon, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 interface ChatMessage {
   id: string;
@@ -77,7 +73,7 @@ export function AiChatWidget() {
           suggestedActions: data.suggestedActions,
         },
       ]);
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
@@ -97,59 +93,61 @@ export function AiChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all px-5 py-3"
-          aria-label="Open AstitvaBot"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#E85A4F] text-white font-mono text-xs font-bold tracking-wider uppercase shadow-xl hover:bg-[#C94A40] transition-all px-4 py-3 border border-[#E85A4F] cursor-pointer"
         >
-          <Sparkles className="h-4 w-4" />
-          <span className="text-sm">AstitvaBot</span>
+          <Sparkles className="w-4 h-4 text-white" />
+          <span>ASTITVA AI ASSISTANT</span>
         </button>
       )}
 
-      {/* Chat panel */}
+      {/* Floating Chat Window */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[min(420px,calc(100vw-3rem))] h-[min(640px,calc(100vh-6rem))] rounded-2xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl shadow-2xl shadow-cyan-500/20 flex flex-col overflow-hidden animate-in fade-in-50 slide-in-from-bottom-4">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-gradient-to-r from-cyan-950/40 to-purple-950/40">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
-                <Bot className="h-4 w-4 text-white" />
+        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[420px] max-h-[640px] h-[85vh] bg-[#F6F4EE] text-[#1A1918] border border-[#8E8D8A]/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 bg-[#EAE7DC] border-b border-[#8E8D8A]/25">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-full bg-[#E85A4F] text-white flex items-center justify-center font-bold text-xs">
+                AI
               </div>
               <div>
-                <p className="text-sm font-bold text-white">AstitvaBot</p>
-                <p className="text-[10px] font-mono text-cyan-300">AST26 · Local RAG</p>
+                <h3 className="text-xs font-bold font-mono uppercase tracking-wider text-[#1A1918]">
+                  ASTITVA FEST CONCIERGE
+                </h3>
+                <p className="text-[10px] font-mono text-[#8E8D8A]">
+                  Official 24/7 AI Fest Assistant
+                </p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-slate-400 hover:text-white"
+            <button
               onClick={() => setOpen(false)}
+              className="p-1 rounded text-[#8E8D8A] hover:text-[#1A1918] transition-colors"
             >
-              <X className="h-4 w-4" />
-            </Button>
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+          {/* Message Stream */}
+          <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-3">
             {messages.length === 0 && (
-              <div className="space-y-3">
-                <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-3">
-                  <p className="text-sm text-white">
-                    Namaste! I'm AstitvaBot, your festival guide. Ask me about schedules, venues,
-                    rules, registrations, teams, results, or certificates.
+              <div className="space-y-4 pt-4">
+                <div className="p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-2">
+                  <p className="text-xs font-semibold text-[#1A1918]">
+                    Namaste! I am your ASTITVA 2K26 assistant. Ask me anything about tournament rules, venue locations, schedule, or team registrations.
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-[10px] font-mono uppercase text-slate-500 tracking-wider">
-                    Try a prompt
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {SUGGESTED_PROMPTS.map((p) => (
+
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-mono text-[#8E8D8A] uppercase tracking-wider block">
+                    SUGGESTED INQUIRIES:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SUGGESTED_PROMPTS.map((prompt) => (
                       <button
-                        key={p}
-                        type="button"
-                        onClick={() => sendMessage(p)}
-                        className="rounded-full border border-cyan-500/30 bg-cyan-500/5 px-3 py-1 text-[11px] text-cyan-200 hover:bg-cyan-500/15 transition"
+                        key={prompt}
+                        onClick={() => sendMessage(prompt)}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] hover:border-[#E85A4F] hover:text-[#E85A4F] transition-colors text-left"
                       >
-                        {p}
+                        {prompt}
                       </button>
                     ))}
                   </div>
@@ -160,89 +158,79 @@ export function AiChatWidget() {
             {messages.map((m) => (
               <div
                 key={m.id}
-                className={cn("flex gap-2", m.role === "user" ? "justify-end" : "justify-start")}
+                className={`flex gap-2 text-xs ${
+                  m.role === "user" ? "justify-end" : "justify-start"
+                }`}
               >
-                {m.role === "assistant" && (
-                  <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
-                    <Bot className="h-3.5 w-3.5 text-white" />
-                  </div>
-                )}
                 <div
-                  className={cn(
-                    "max-w-[80%] rounded-2xl px-3 py-2 text-sm",
+                  className={`max-w-[85%] rounded-2xl p-3.5 space-y-2 ${
                     m.role === "user"
-                      ? "bg-cyan-500/20 text-white border border-cyan-500/30"
-                      : "bg-slate-900/80 text-slate-100 border border-white/10"
-                  )}
+                      ? "bg-[#1A1918] text-[#EAE7DC]"
+                      : "bg-[#EAE7DC] border border-[#8E8D8A]/25 text-[#1A1918]"
+                  }`}
                 >
-                  <p className="whitespace-pre-wrap">{m.content}</p>
+                  <p className="leading-relaxed whitespace-pre-wrap">{m.content}</p>
+
                   {m.relatedEvents && m.relatedEvents.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {m.relatedEvents.map((e) => (
+                    <div className="pt-2 border-t border-[#8E8D8A]/20 space-y-1">
+                      <span className="text-[10px] font-mono text-[#8E8D8A] uppercase block">
+                        Related Tournaments:
+                      </span>
+                      {m.relatedEvents.map((evt) => (
                         <Link
-                          key={e.id}
-                          href={`/events/${e.id}`}
-                          className="block rounded-lg border border-white/10 bg-slate-950/60 px-2 py-1.5 text-[11px] hover:border-cyan-500/30"
+                          key={evt.id}
+                          href={`/events/${evt.id}`}
+                          className="block p-1.5 rounded bg-[#F6F4EE] border border-[#8E8D8A]/20 text-[11px] font-mono text-[#E85A4F] hover:underline"
                         >
-                          <p className="font-bold text-cyan-200">{e.title}</p>
-                          <p className="text-[10px] text-slate-400 font-mono">{e.venue}</p>
+                          {evt.title} ({evt.venue}) →
                         </Link>
                       ))}
                     </div>
                   )}
+
                   {m.suggestedActions && m.suggestedActions.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {m.suggestedActions.map((a) => (
+                    <div className="pt-2 flex flex-wrap gap-1">
+                      {m.suggestedActions.map((act) => (
                         <Link
-                          key={a.url}
-                          href={a.url}
-                          className="rounded-full border border-purple-500/30 bg-purple-500/10 px-2.5 py-1 text-[10px] text-purple-200 hover:bg-purple-500/20"
+                          key={act.url}
+                          href={act.url}
+                          className="px-2 py-1 rounded bg-[#E85A4F] text-white text-[10px] font-mono uppercase font-bold"
                         >
-                          {a.label}
+                          {act.label} →
                         </Link>
                       ))}
                     </div>
                   )}
                 </div>
-                {m.role === "user" && (
-                  <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center">
-                    <UserIcon className="h-3.5 w-3.5 text-cyan-300" />
-                  </div>
-                )}
               </div>
             ))}
 
             {pending && (
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <Loader2 className="h-3 w-3 animate-spin" /> AstitvaBot is thinking...
+              <div className="flex items-center space-x-2 text-xs text-[#8E8D8A] font-mono p-2">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#E85A4F]" />
+                <span>Consulting festival knowledge base...</span>
               </div>
             )}
           </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              sendMessage();
-            }}
-            className="border-t border-white/10 p-3 flex items-center gap-2"
-          >
-            <Input
-              placeholder="Ask about schedule, venue, rules…"
+          {/* Input Bar */}
+          <div className="p-3 bg-[#EAE7DC] border-t border-[#8E8D8A]/25 flex items-center gap-2">
+            <input
+              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="bg-slate-900/60 border-white/10 text-white text-sm"
-              disabled={pending}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="Ask about events, venues, schedule..."
+              className="flex-1 px-3.5 py-2 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] placeholder:text-[#8E8D8A]/70 focus:outline-none focus:border-[#E85A4F]"
             />
-            <Button
-              type="submit"
-              variant="neonCyan"
-              size="icon"
+            <button
+              onClick={() => sendMessage()}
               disabled={pending || !input.trim()}
-              className="flex-shrink-0"
+              className="p-2 rounded-xl bg-[#E85A4F] text-white disabled:opacity-50 hover:bg-[#C94A40] transition-colors"
             >
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </>

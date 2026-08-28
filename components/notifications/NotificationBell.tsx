@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Notification Center Dropdown
+// ASTITVA 2K26 - Notification Center Dropdown (Exteta Luxury Aesthetic)
 // Path: components/notifications/NotificationBell.tsx
 // ============================================================================
 
@@ -8,8 +8,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bell, Check, AlertTriangle, Info, Trophy, UserPlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface NotificationItem {
@@ -86,12 +84,12 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative h-9 w-9 rounded-lg border border-white/10 bg-slate-900/70 hover:bg-slate-800/70 flex items-center justify-center text-slate-300 hover:text-cyan-300"
+        className="relative h-9 w-9 rounded-xl border border-[#8E8D8A]/25 bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] flex items-center justify-center text-[#1A1918] transition-colors cursor-pointer"
         aria-label="Open notifications"
       >
         <Bell className="h-4 w-4" />
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#E85A4F] text-white text-[9px] font-bold flex items-center justify-center">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -99,25 +97,23 @@ export function NotificationBell() {
 
       {open && (
         <div
-          className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] z-50 rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-2xl shadow-2xl shadow-cyan-500/10 overflow-hidden"
+          className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] z-50 rounded-3xl border border-[#8E8D8A]/25 bg-[#F6F4EE] shadow-2xl overflow-hidden font-mono text-[#1A1918]"
         >
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
-            <p className="text-xs font-bold text-white">Notifications</p>
-            <Button
-              size="sm"
-              variant="ghost"
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#8E8D8A]/20 bg-[#EAE7DC]">
+            <p className="text-xs font-bold uppercase text-[#1A1918]">Notifications</p>
+            <button
               onClick={markAll}
               disabled={pending || unread === 0}
-              className="text-[10px] text-cyan-300 hover:text-cyan-200"
+              className="text-[10px] uppercase font-bold text-[#E85A4F] hover:underline disabled:opacity-50"
             >
               Mark all read
-            </Button>
+            </button>
           </div>
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto divide-y divide-[#8E8D8A]/15">
             {items.length === 0 ? (
               <div className="p-6 text-center">
-                <Bell className="h-6 w-6 text-slate-500 mx-auto mb-1" />
-                <p className="text-xs text-slate-500">No notifications yet.</p>
+                <Bell className="h-6 w-6 text-[#8E8D8A] mx-auto mb-1" />
+                <p className="text-xs text-[#8E8D8A]">No notifications yet.</p>
               </div>
             ) : (
               items.map((n) => {
@@ -125,28 +121,26 @@ export function NotificationBell() {
                 const content = (
                   <div
                     className={cn(
-                      "px-4 py-3 border-b border-white/5 flex items-start gap-3 hover:bg-slate-900/60 transition",
-                      !n.isRead && "bg-cyan-500/5"
+                      "px-4 py-3 flex items-start gap-3 hover:bg-[#EAE7DC]/60 transition",
+                      !n.isRead && "bg-[#EAE7DC]/40"
                     )}
                   >
                     <div
                       className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0",
+                        "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border border-[#8E8D8A]/20",
                         n.type === "ALERT"
-                          ? "bg-red-500/10 text-red-300"
+                          ? "bg-red-100 text-red-700"
                           : n.type === "WARNING"
-                          ? "bg-amber-500/10 text-amber-300"
-                          : n.type === "SUCCESS" || n.type === "RESULT"
-                          ? "bg-emerald-500/10 text-emerald-300"
-                          : "bg-cyan-500/10 text-cyan-300"
+                          ? "bg-amber-100 text-amber-800"
+                          : "bg-[#EAE7DC] text-[#E85A4F]"
                       )}
                     >
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{n.title}</p>
-                      <p className="text-[11px] text-slate-300 line-clamp-2">{n.message}</p>
-                      <p className="text-[9px] text-slate-500 font-mono mt-1">
+                      <p className="text-xs font-bold text-[#1A1918] truncate">{n.title}</p>
+                      <p className="text-[11px] text-[#8E8D8A] line-clamp-2">{n.message}</p>
+                      <p className="text-[9px] text-[#8E8D8A] mt-1">
                         {new Date(n.createdAt).toLocaleString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -163,7 +157,7 @@ export function NotificationBell() {
                           e.stopPropagation();
                           markOne(n.id);
                         }}
-                        className="text-cyan-400 hover:text-cyan-200 flex-shrink-0"
+                        className="text-[#E85A4F] hover:text-[#C94A40] shrink-0"
                         aria-label="Mark as read"
                       >
                         <Check className="h-3.5 w-3.5" />
@@ -184,7 +178,7 @@ export function NotificationBell() {
           <Link
             href="/announcements"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2.5 text-center text-[11px] font-mono text-cyan-300 hover:bg-slate-900/60 border-t border-white/10"
+            className="block px-4 py-2.5 text-center text-[11px] font-bold text-[#E85A4F] hover:bg-[#EAE7DC] border-t border-[#8E8D8A]/20 uppercase"
           >
             View all announcements →
           </Link>

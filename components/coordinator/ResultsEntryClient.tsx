@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Coordinator Results Entry Client
+// ASTITVA 2K26 - Coordinator Results Entry Client (Exteta Luxury Aesthetic)
 // Path: components/coordinator/ResultsEntryClient.tsx
 // ============================================================================
 
@@ -8,18 +8,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Save, Trash2, Trophy, Medal, Award, Hash } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Save, Trash2, Trophy, Medal, Award } from "lucide-react";
 import { recordEventResults, deleteResult } from "@/lib/results/actions";
 
 export interface CoordinatorEvent {
@@ -100,160 +89,150 @@ export function ResultsEntryClient({ events, initialResultsByEvent }: ResultsEnt
         toast.success(`Published ${res.data?.results.length} result(s).`);
         router.refresh();
       } else {
-        toast.error(res.error ?? "Failed to publish.");
+        toast.error(res.error ?? "Failed to save results.");
       }
     });
   }
 
-  function handleDelete(resultId: string) {
+  function handleDelete(id: string) {
     startTransition(async () => {
-      const res = await deleteResult({ resultId });
+      const res = await deleteResult(id);
       if (res.success) {
         toast.success("Result removed.");
         router.refresh();
       } else {
-        toast.error(res.error ?? "Delete failed.");
+        toast.error(res.error ?? "Failed to remove result.");
       }
     });
   }
 
   return (
-    <Card className="glass-panel border-white/10 bg-slate-900/70">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-bold text-white flex items-center">
-          <Trophy className="h-4 w-4 text-amber-300 mr-2" /> Live Score Entry & Podium Publisher
-        </CardTitle>
-        <CardDescription className="text-xs text-slate-400 mt-1">
-          Enter rank 1, 2, 3 results. Saving will mark the event COMPLETED and trigger certificate
-          auto-issuance.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Select value={eventId} onValueChange={setEventId}>
-            <SelectTrigger className="bg-slate-950/80 border-white/10 text-white text-xs h-9 min-w-[280px]">
-              <SelectValue placeholder="Select event" />
-            </SelectTrigger>
-            <SelectContent>
-              {events.map((e) => (
-                <SelectItem key={e.id} value={e.id}>
-                  {e.title} · {e.eventType}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {event && (
-            <Badge variant="outline" className="border-amber-500/30 text-amber-300 font-mono text-[10px]">
-              {event.eventType} · Day {event.dayNumber}
-            </Badge>
-          )}
-        </div>
+    <div className="space-y-6 text-[#1A1918]">
+      {/* Event selection */}
+      <div className="p-4 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 space-y-2">
+        <label className="text-xs font-mono font-bold uppercase text-[#1A1918]">
+          Select Tournament to Score
+        </label>
+        <select
+          value={eventId}
+          onChange={(e) => setEventId(e.target.value)}
+          className="w-full p-3 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+        >
+          {events.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.title} ({e.category} · Day 0{e.dayNumber} · {e.eventType})
+            </option>
+          ))}
+        </select>
+      </div>
 
-        {existing.length > 0 && (
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 space-y-2">
-            <p className="text-xs font-mono text-amber-300 uppercase tracking-wider">
-              Existing Podium
-            </p>
+      {/* Existing results */}
+      {existing.length > 0 && (
+        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4 font-mono text-xs">
+          <h3 className="font-bold text-[#1A1918] uppercase flex items-center">
+            <Trophy className="h-4 w-4 text-[#E85A4F] mr-2" /> Currently Published Podiums ({existing.length})
+          </h3>
+          <div className="space-y-2">
             {existing.map((r) => (
               <div
                 key={r.id}
-                className="flex items-center justify-between text-xs"
+                className="flex items-center justify-between p-3 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20"
               >
-                <div className="space-y-0.5 min-w-0">
-                  <p className="font-bold text-white truncate">
-                    #{r.rank} · {r.winnerName ?? "TBD"} ·{" "}
-                    <span className="text-amber-300 font-mono">
-                      {r.positionTitle.replace("_", " ")}
-                    </span>
+                <div>
+                  <p className="font-bold text-[#1A1918]">
+                    #{r.rank} · {r.winnerName ?? "Unknown"} ({r.positionTitle})
                   </p>
-                  {r.score && <p className="text-[10px] text-slate-400 font-mono">{r.score}</p>}
+                  <p className="text-[10px] text-[#8E8D8A]">
+                    Score: {r.score ?? "—"} · Prize: {r.prizeAwarded ?? "—"}
+                  </p>
                 </div>
-                <Button
+                <button
                   type="button"
-                  size="icon"
-                  variant="ghost"
-                  className="text-red-400 hover:bg-red-500/10"
-                  onClick={() => handleDelete(r.id)}
                   disabled={pending}
+                  onClick={() => handleDelete(r.id)}
+                  className="p-1.5 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             ))}
           </div>
-        )}
+        </div>
+      )}
 
-        <div className="space-y-2">
+      {/* New score entry */}
+      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="border-b border-[#8E8D8A]/20 pb-4">
+          <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
+            <Award className="h-4 w-4 text-[#E85A4F] mr-2" /> Record Podium Winners
+          </h2>
+          <p className="text-xs text-[#8E8D8A] font-mono mt-1">
+            Format: {event?.eventType === "TEAM" ? "Team ID" : "User ID / Roll No"}.
+          </p>
+        </div>
+
+        <div className="space-y-4 font-mono text-xs">
           {rows.map((row, idx) => (
             <div
               key={row.rank}
-              className="grid grid-cols-12 gap-2 rounded-xl border border-white/10 bg-slate-950/60 p-3"
+              className="p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-3"
             >
-              <div className="col-span-1 flex items-center justify-center">
-                {row.rank === 1 ? (
-                  <Trophy className="h-5 w-5 text-amber-300" />
-                ) : row.rank === 2 ? (
-                  <Medal className="h-5 w-5 text-slate-200" />
-                ) : (
-                  <Award className="h-5 w-5 text-orange-300" />
-                )}
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-[#E85A4F] uppercase">
+                  {row.rank === 1 ? "🥇 Winner (1st)" : row.rank === 2 ? "🥈 1st Runner-Up (2nd)" : "🥉 2nd Runner-Up (3rd)"}
+                </span>
               </div>
-              <div className="col-span-2 space-y-1">
-                <label className="text-[10px] font-mono text-slate-400">Rank</label>
-                <Input
-                  value={row.rank}
-                  readOnly
-                  className="bg-slate-900/60 border-white/10 text-white text-xs h-8"
-                />
-              </div>
-              <div className="col-span-3 space-y-1">
-                <label className="text-[10px] font-mono text-slate-400 flex items-center">
-                  <Hash className="h-3 w-3 mr-1" />
-                  {event?.eventType === "TEAM" ? "Team ID" : "User ID"}
-                </label>
-                <Input
-                  placeholder={event?.eventType === "TEAM" ? "team_xxx" : "usr_xxx"}
-                  value={event?.eventType === "TEAM" ? row.teamId : row.userId}
-                  onChange={(e) =>
-                    setRow(idx, event?.eventType === "TEAM" ? { teamId: e.target.value } : { userId: e.target.value })
-                  }
-                  className="bg-slate-900/60 border-white/10 text-white text-xs h-8 font-mono"
-                />
-              </div>
-              <div className="col-span-3 space-y-1">
-                <label className="text-[10px] font-mono text-slate-400">Score</label>
-                <Input
-                  placeholder="e.g. 21-18, 21-19"
-                  value={row.score}
-                  onChange={(e) => setRow(idx, { score: e.target.value })}
-                  className="bg-slate-900/60 border-white/10 text-white text-xs h-8"
-                />
-              </div>
-              <div className="col-span-3 space-y-1">
-                <label className="text-[10px] font-mono text-slate-400">Prize</label>
-                <Input
-                  placeholder="₹10,000 + Trophy"
-                  value={row.prizeAwarded}
-                  onChange={(e) => setRow(idx, { prizeAwarded: e.target.value })}
-                  className="bg-slate-900/60 border-white/10 text-white text-xs h-8"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-[9px] uppercase text-[#8E8D8A] block mb-1">
+                    {event?.eventType === "TEAM" ? "Team ID / Name" : "Participant User ID / Roll"}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={event?.eventType === "TEAM" ? "team_..." : "usr_... or Roll No"}
+                    value={event?.eventType === "TEAM" ? row.teamId : row.userId}
+                    onChange={(e) =>
+                      event?.eventType === "TEAM"
+                        ? setRow(idx, { teamId: e.target.value })
+                        : setRow(idx, { userId: e.target.value })
+                    }
+                    className="w-full p-2.5 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] uppercase text-[#8E8D8A] block mb-1">Final Score / Time</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 142/4 or 12.4s"
+                    value={row.score}
+                    onChange={(e) => setRow(idx, { score: e.target.value })}
+                    className="w-full p-2.5 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] uppercase text-[#8E8D8A] block mb-1">Prize Awarded</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. ₹15,000 + Trophy"
+                    value={row.prizeAwarded}
+                    onChange={(e) => setRow(idx, { prizeAwarded: e.target.value })}
+                    className="w-full p-2.5 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                  />
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end pt-2">
-          <Button
-            type="button"
-            variant="neonAmber"
-            onClick={handleSave}
-            disabled={pending || !eventId}
-            className="text-xs font-bold"
-          >
-            <Save className="h-4 w-4 mr-1.5" /> Publish Podium
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={handleSave}
+          className="w-full py-3.5 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
+        >
+          <Save className="h-4 w-4" /> Save &amp; Publish Official Podium
+        </button>
+      </div>
+    </div>
   );
 }

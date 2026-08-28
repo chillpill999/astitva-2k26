@@ -1,29 +1,21 @@
 // ============================================================================
-// ASTITVA 2K26 - Event Coordinator Scoring & Ops Console
+// ASTITVA 2K26 - Event Coordinator Scoring & Ops Console (Exteta Luxury Aesthetic)
 // Path: app/dashboard/coordinator/page.tsx
 // ============================================================================
 
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Trophy,
-  Calendar,
   Users,
   Award,
-  CheckCircle2,
-  Clock,
   Play,
   Save,
   Radio,
   FileCheck,
-  Plus,
-  AlertTriangle,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RoleBadge } from "@/components/dashboard/RoleBadge";
 import { toast } from "sonner";
 
@@ -88,201 +80,184 @@ export default function CoordinatorDashboardPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300">
+    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
       {/* 1. Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
         <div>
           <div className="flex items-center space-x-2 mb-1">
             <RoleBadge role="EVENT_COORDINATOR" />
-            <span className="text-xs font-mono text-purple-300 font-bold bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/30">
+            <span className="text-xs font-mono text-[#E85A4F] font-bold bg-[#EAE7DC] px-2 py-0.5 rounded border border-[#8E8D8A]/20">
               Prof. Rajesh Ranjan
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Event Coordinator Scoring & Management Console
+          <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono">
+            Coordinator Scoring &amp; Operations
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Real-time match scoring, live result entry, podium publication, and tournament roster oversight.
+          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
+            Manage live match fixtures, push real-time score updates, and finalize official podium results.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Badge variant="purple" className="text-xs font-mono py-1 px-3">
-            <Radio className="w-3 h-3 mr-1.5 animate-pulse" />
-            Scoring Terminal Active
-          </Badge>
-        </div>
+        <Link href="/dashboard/coordinator/results">
+          <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm">
+            <Trophy className="w-3.5 h-3.5" />
+            Official Results Entry
+          </button>
+        </Link>
       </div>
 
-      {/* 2. Coordinated Tournaments Cards */}
+      {/* 2. Coordinated Events Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {COORDINATED_EVENTS.map((evt) => (
-          <Card
+          <div
             key={evt.id}
             onClick={() => setSelectedEvent(evt.id)}
-            className={`glass-panel border p-5 space-y-3 cursor-pointer transition-all ${
+            className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm space-y-3 font-mono ${
               selectedEvent === evt.id
-                ? "border-purple-500/60 bg-purple-500/10 shadow-lg shadow-purple-500/15"
-                : "border-white/10 bg-slate-900/70 hover:border-purple-500/30"
+                ? "bg-[#F6F4EE] border-[#E85A4F] ring-1 ring-[#E85A4F]"
+                : "bg-[#F6F4EE] border-[#8E8D8A]/25 hover:border-[#E85A4F]"
             }`}
           >
             <div className="flex items-center justify-between">
-              <Badge variant="outline" className="text-[10px] font-mono border-purple-500/40 text-purple-300">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#1A1918] uppercase">
                 {evt.category}
-              </Badge>
-              <span className="text-[10px] font-mono text-emerald-400 font-bold flex items-center">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse" />
+              </span>
+              <span className="text-[9px] font-bold text-[#E85A4F]">
                 {evt.status}
               </span>
             </div>
-            <h3 className="text-sm font-bold text-white">{evt.title}</h3>
-            <div className="text-xs text-slate-400 space-y-1">
-              <p>📍 {evt.venue}</p>
-              <p>👥 {evt.teamsRegistered} Teams Confirmed</p>
-              <p className="text-purple-300 font-mono text-[11px] pt-1 truncate">
-                ⚡ {evt.activeMatch}
-              </p>
+            <h3 className="text-sm font-bold text-[#1A1918] uppercase">{evt.title}</h3>
+            <p className="text-[11px] text-[#8E8D8A]">{evt.venue}</p>
+            <div className="pt-2 border-t border-[#8E8D8A]/15 text-[10px] text-[#8E8D8A] flex justify-between">
+              <span>{evt.teamsRegistered} Teams / Enrolled</span>
+              <span className="text-[#E85A4F] font-bold">Select →</span>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
 
-      {/* 3. Live Match Score Entry Terminal & Podium Publisher Grid */}
+      {/* 3. Real-Time Score Updater Form */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left: Live Match Score Entry Terminal (7 cols) */}
-        <Card className="lg:col-span-7 glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-          <CardHeader className="pb-3 border-b border-white/10">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <Play className="w-4 h-4 text-cyan-400 mr-2" />
-              Live Match Score Entry Terminal
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              Update scores in real-time. Changes instantly sync with public leaderboards.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-5">
-            <form onSubmit={handleScoreUpdate} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Team / Player A</label>
-                  <Input
-                    value={scoreForm.teamA}
-                    onChange={(e) => setScoreForm({ ...scoreForm, teamA: e.target.value })}
-                    className="bg-slate-950/80 border-white/10 text-white text-xs font-bold"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Score / Tally A</label>
-                  <Input
-                    value={scoreForm.scoreA}
-                    onChange={(e) => setScoreForm({ ...scoreForm, scoreA: e.target.value })}
-                    className="bg-slate-950/80 border-white/10 text-cyan-300 text-xs font-mono font-bold"
-                  />
-                </div>
+        <div className="lg:col-span-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-5">
+          <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
+            <div>
+              <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
+                <Radio className="w-4 h-4 text-[#E85A4F] mr-2" /> Live Match Telemetry
+              </h2>
+              <p className="text-xs text-[#8E8D8A] font-mono mt-1">
+                Push live scores to attendee dashboards and public tickers.
+              </p>
+            </div>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase border border-[#8E8D8A]/20">
+              LIVE BROADCAST
+            </span>
+          </div>
+
+          <form onSubmit={handleScoreUpdate} className="space-y-4 font-mono text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] text-[#8E8D8A] uppercase">Team / Participant A</label>
+                <input
+                  type="text"
+                  value={scoreForm.teamA}
+                  onChange={(e) => setScoreForm({ ...scoreForm, teamA: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                />
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Team / Player B</label>
-                  <Input
-                    value={scoreForm.teamB}
-                    onChange={(e) => setScoreForm({ ...scoreForm, teamB: e.target.value })}
-                    className="bg-slate-950/80 border-white/10 text-white text-xs font-bold"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Score / Tally B</label>
-                  <Input
-                    value={scoreForm.scoreB}
-                    onChange={(e) => setScoreForm({ ...scoreForm, scoreB: e.target.value })}
-                    className="bg-slate-950/80 border-white/10 text-purple-300 text-xs font-mono font-bold"
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-[#8E8D8A] uppercase">Team / Participant B</label>
+                <input
+                  type="text"
+                  value={scoreForm.teamB}
+                  onChange={(e) => setScoreForm({ ...scoreForm, teamB: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                />
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Tournament Stage</label>
-                  <Input
-                    value={scoreForm.round}
-                    onChange={(e) => setScoreForm({ ...scoreForm, round: e.target.value })}
-                    className="bg-slate-950/80 border-white/10 text-white text-xs"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Current Leader / Winner</label>
-                  <Input
-                    value={scoreForm.winner}
-                    onChange={(e) => setScoreForm({ ...scoreForm, winner: e.target.value })}
-                    className="bg-slate-950/80 border-white/10 text-emerald-300 text-xs font-semibold"
-                  />
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] text-[#8E8D8A] uppercase">Score A</label>
+                <input
+                  type="text"
+                  value={scoreForm.scoreA}
+                  onChange={(e) => setScoreForm({ ...scoreForm, scoreA: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                />
               </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-[#8E8D8A] uppercase">Score B</label>
+                <input
+                  type="text"
+                  value={scoreForm.scoreB}
+                  onChange={(e) => setScoreForm({ ...scoreForm, scoreB: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
+                />
+              </div>
+            </div>
 
-              <Button type="submit" variant="neonCyan" className="w-full text-xs font-bold py-2.5">
-                <Save className="w-3.5 h-3.5 mr-1.5" />
-                Publish Live Score Update
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Save className="w-4 h-4" /> Broadcast Live Score
+              </button>
+            </div>
+          </form>
+        </div>
 
-        {/* Right: Podium Winner Finalizer (5 cols) */}
-        <Card className="lg:col-span-5 glass-panel border-white/10 bg-slate-900/70 shadow-2xl">
-          <CardHeader className="pb-3 border-b border-white/10">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <Trophy className="w-4 h-4 text-amber-400 mr-2" />
-              Podium Winner Publisher
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              Finalize tournament standings and trigger verifiable certificate generation.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-5 space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-amber-400 flex items-center">
-                🥇 1st Place (Winner)
-              </label>
-              <Input
+        {/* Right: Quick Podium Finalization */}
+        <div className="lg:col-span-5 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
+          <div className="border-b border-[#8E8D8A]/20 pb-4">
+            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
+              <Award className="w-4 h-4 text-[#E85A4F] mr-2" /> Podium Finalization
+            </h2>
+            <p className="text-xs text-[#8E8D8A] font-mono mt-1">
+              Trigger automated merit certificate generation and leaderboard points.
+            </p>
+          </div>
+
+          <div className="space-y-3 font-mono text-xs">
+            <div className="space-y-1">
+              <label className="text-[10px] text-[#8E8D8A] uppercase">🥇 1st Place (Champion)</label>
+              <input
+                type="text"
                 value={podiumForm.winner}
                 onChange={(e) => setPodiumForm({ ...podiumForm, winner: e.target.value })}
-                className="bg-slate-950/80 border-amber-500/30 text-white font-semibold text-xs"
+                className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
               />
             </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 flex items-center">
-                🥈 2nd Place (1st Runner Up)
-              </label>
-              <Input
+            <div className="space-y-1">
+              <label className="text-[10px] text-[#8E8D8A] uppercase">🥈 2nd Place (Runner-Up)</label>
+              <input
+                type="text"
                 value={podiumForm.firstRunner}
                 onChange={(e) => setPodiumForm({ ...podiumForm, firstRunner: e.target.value })}
-                className="bg-slate-950/80 border-white/10 text-white text-xs"
+                className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
               />
             </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-amber-600 flex items-center">
-                🥉 3rd Place (2nd Runner Up)
-              </label>
-              <Input
+            <div className="space-y-1">
+              <label className="text-[10px] text-[#8E8D8A] uppercase">🥉 3rd Place (2nd Runner-Up)</label>
+              <input
+                type="text"
                 value={podiumForm.secondRunner}
                 onChange={(e) => setPodiumForm({ ...podiumForm, secondRunner: e.target.value })}
-                className="bg-slate-950/80 border-white/10 text-white text-xs"
+                className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
               />
             </div>
 
-            <Button
-              type="button"
-              onClick={handlePublishPodium}
-              variant="neonPurple"
-              className="w-full text-xs font-bold py-2.5 mt-2"
-            >
-              <FileCheck className="w-3.5 h-3.5 mr-1.5" />
-              Confirm & Issue Certificates
-            </Button>
-          </CardContent>
-        </Card>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handlePublishPodium}
+                className="w-full py-2.5 rounded-xl bg-[#1A1918] text-[#EAE7DC] text-xs font-mono font-bold uppercase hover:bg-[#E85A4F] transition-colors flex items-center justify-center gap-2"
+              >
+                <FileCheck className="w-4 h-4" /> Publish Podium &amp; Issue Certs
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

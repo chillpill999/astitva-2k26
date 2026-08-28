@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Dedicated Squad Dashboard Page
+// ASTITVA 2K26 - Dedicated Squad Dashboard Page (Exteta Luxury Aesthetic)
 // Path: app/teams/[id]/page.tsx
 // ============================================================================
 
@@ -35,13 +35,13 @@ export default async function TeamPage({ params }: TeamPageProps) {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#030712] text-slate-100 py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-8">
       <div className="container max-w-7xl mx-auto space-y-6">
         {/* Back Link */}
         <div>
           <Link
             href="/teams"
-            className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono text-[#8E8D8A] hover:text-[#1A1918] transition-colors uppercase font-bold"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to All Squads Hub

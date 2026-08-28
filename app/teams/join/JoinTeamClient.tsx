@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Join Squad Client Component
-// Path: app/teams/join/JoinTeamClient.tsx
-// ============================================================================
-
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,10 +14,6 @@ import {
   ShieldCheck,
   Trophy,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { joinTeamByCode, getTeamByCode } from "@/lib/teams/actions";
 import { TeamData } from "@/lib/teams/types";
 
@@ -95,41 +86,24 @@ export function JoinTeamClient({ initialCode = "" }: JoinTeamClientProps) {
 
   if (joinedTeam) {
     return (
-      <div className="rounded-3xl bg-[#0b0f19]/90 border border-white/10 p-8 sm:p-12 shadow-2xl backdrop-blur-2xl text-center space-y-6">
-        <div className="h-20 w-20 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mx-auto animate-bounce">
-          <CheckCircle2 className="h-10 w-10" />
+      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-8 sm:p-12 shadow-sm text-center space-y-6 text-[#1A1918]">
+        <div className="h-16 w-16 rounded-full bg-[#E85A4F]/10 border border-[#E85A4F]/30 flex items-center justify-center text-[#E85A4F] mx-auto">
+          <CheckCircle2 className="h-8 w-8" />
         </div>
 
-        <div className="space-y-2">
-          <Badge variant="outline" className="text-xs font-mono bg-emerald-950/40 text-emerald-300 border-emerald-500/30">
-            SQUAD MEMBERSHIP APPROVED
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl font-black text-white">
-            Welcome to <span className="text-cyan-300">{joinedTeam.name}</span>!
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto">
-            You are officially enrolled in squad {joinedTeam.name} for {joinedTeam.eventTitle || "the tournament"}.
+        <div className="space-y-2 font-mono">
+          <span className="text-[10px] text-[#8E8D8A] uppercase tracking-wider">SUCCESSFULLY ENROLLED</span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold uppercase text-[#1A1918]">{joinedTeam.name}</h2>
+          <p className="text-xs text-[#8E8D8A]">
+            You are now part of the lineup for <strong>{joinedTeam.eventTitle || "Tournament"}</strong>.
           </p>
         </div>
 
-        <div className="max-w-md mx-auto pt-4 flex flex-col sm:flex-row gap-3">
-          <Button
-            type="button"
-            onClick={() => router.push(`/teams/${joinedTeam.id}`)}
-            className="flex-1 text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30 py-5"
-          >
-            View Squad Roster &amp; Status
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-
-          <Link href="/teams" className="flex-1">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full text-xs font-bold border-white/15 bg-white/5 text-slate-200 py-5"
-            >
-              All Squads Hub
-            </Button>
+        <div className="flex justify-center pt-2">
+          <Link href={`/teams/${joinedTeam.id}`}>
+            <button className="py-3 px-8 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+              Go to Squad Dashboard →
+            </button>
           </Link>
         </div>
       </div>
@@ -137,84 +111,76 @@ export function JoinTeamClient({ initialCode = "" }: JoinTeamClientProps) {
   }
 
   return (
-    <div className="rounded-3xl bg-[#0b0f19]/90 border border-white/10 p-6 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6">
-      <form onSubmit={handleJoin} className="space-y-6">
+    <form onSubmit={handleJoin} className="space-y-6 text-[#1A1918]">
+      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-8 shadow-sm space-y-6">
+        {/* Code Input */}
         <div className="space-y-2 text-center">
-          <Label className="text-xs font-mono text-slate-300">
-            ENTER 6-CHARACTER SQUAD ACCESS TOKEN
-          </Label>
-          <div className="max-w-xs mx-auto">
-            <Input
-              type="text"
-              placeholder="BG26X1"
-              value={code}
-              maxLength={6}
-              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
-              className="text-center font-mono text-3xl font-black tracking-widest bg-slate-950 border-cyan-500/40 text-cyan-300 placeholder:text-slate-700 rounded-2xl focus:border-cyan-400 py-6 uppercase"
-            />
-          </div>
+          <label htmlFor="teamCode" className="text-xs font-mono font-bold text-[#1A1918] uppercase block">
+            Enter 6-Digit Team Invite Code <span className="text-[#E85A4F]">*</span>
+          </label>
+          <input
+            id="teamCode"
+            type="text"
+            maxLength={6}
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="e.g. CRK824"
+            className="w-full max-w-xs mx-auto p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-2xl sm:text-3xl font-mono font-black text-center tracking-[0.3em] text-[#E85A4F] uppercase focus:outline-none focus:border-[#E85A4F]"
+          />
         </div>
 
-        {/* Live Squad Preview Box if Found */}
+        {/* Live Preview Box */}
         {previewLoading && (
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-white/10 flex items-center justify-center gap-2 text-xs font-mono text-cyan-400">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Looking up squad details...
+          <div className="p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 flex items-center justify-center gap-2 text-xs font-mono text-[#8E8D8A]">
+            <Loader2 className="h-4 w-4 animate-spin text-[#E85A4F]" />
+            <span>Finding squad in LNJPIT registry...</span>
           </div>
         )}
 
         {previewTeam && !previewLoading && (
-          <div className="p-5 rounded-2xl bg-cyan-950/20 border border-cyan-500/40 space-y-3">
+          <div className="p-5 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 space-y-3 font-mono text-xs animate-in fade-in-50">
             <div className="flex items-center justify-between">
-              <Badge className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-mono font-bold">
-                SQUAD FOUND
-              </Badge>
-              <span className="text-[11px] font-mono text-slate-400">
-                Captain: <strong className="text-white">{previewTeam.captain?.name}</strong>
+              <span className="text-[10px] text-[#8E8D8A] uppercase">SQUAD FOUND</span>
+              <span className="text-[10px] font-bold text-[#E85A4F] uppercase">
+                {previewTeam.event?.category?.name}
               </span>
             </div>
-
-            <div className="space-y-1">
-              <h4 className="text-lg font-black text-white">{previewTeam.name}</h4>
-              <p className="text-xs text-slate-300">{previewTeam.event?.title}</p>
+            <div>
+              <h4 className="text-base font-bold text-[#1A1918] uppercase">{previewTeam.name}</h4>
+              <p className="text-xs text-[#8E8D8A]">{previewTeam.event?.title}</p>
             </div>
-
-            <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-white/10 text-slate-300">
-              <span>Roster: <strong>{previewTeam.approvedMemberCount} / {previewTeam.maxMembers}</strong></span>
-              <span className="text-cyan-400 font-bold">{previewTeam.event?.venue}</span>
+            <div className="flex items-center justify-between pt-2 border-t border-[#8E8D8A]/20 text-[#8E8D8A]">
+              <span>Captain: <strong className="text-[#1A1918]">{previewTeam.captain?.name}</strong></span>
+              <span>Roster: <strong className="text-[#1A1918]">{previewTeam.approvedMemberCount}/{previewTeam.maxMembers}</strong></span>
             </div>
           </div>
         )}
 
-        {/* Error Feedback */}
         {error && (
-          <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 flex items-start gap-2.5 text-xs text-red-300">
-            <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-xs font-mono text-red-700 flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Action Button */}
-        <div>
-          <Button
-            type="submit"
-            disabled={loading || code.trim().length !== 6}
-            className="w-full text-xs sm:text-sm font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30 py-6 rounded-xl"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Verifying Roster &amp; Enrolling...
-              </>
-            ) : (
-              <>
-                <Users className="mr-2 h-4 w-4" />
-                Confirm &amp; Join Squad
-              </>
-            )}
-          </Button>
-        </div>
-      </form>
-    </div>
+        <button
+          type="submit"
+          disabled={loading || code.trim().length !== 6}
+          className="w-full py-3.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              JOINING SQUAD...
+            </>
+          ) : (
+            <>
+              <Users className="h-4 w-4" />
+              CONFIRM &amp; JOIN SQUAD
+            </>
+          )}
+        </button>
+      </div>
+    </form>
   );
 }

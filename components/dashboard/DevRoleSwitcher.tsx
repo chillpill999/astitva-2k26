@@ -1,102 +1,111 @@
+"use client";
+
 // ============================================================================
-// ASTITVA 2K26 - Dev Role Switcher Floating Control
+// ASTITVA 2K26 - Fast Dev Role Switcher Widget (Exteta Luxury Aesthetic)
 // Path: components/dashboard/DevRoleSwitcher.tsx
 // ============================================================================
 
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import {
+  ShieldAlert,
+  Crown,
+  Sparkles,
+  QrCode,
+  UserCheck,
+  ChevronDown,
+  RefreshCw,
+  Zap,
+} from "lucide-react";
 import { RoleBadge, FestRole } from "./RoleBadge";
-import { Shield, Trophy, UserCheck, Users, Sparkles, ChevronDown, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 interface DemoAccount {
   role: FestRole;
-  email: string;
   name: string;
+  collegeId: string;
   participantId: string;
   route: string;
-  icon: React.ElementType;
+  icon: any;
 }
 
-export const DEMO_ACCOUNTS: DemoAccount[] = [
+const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     role: "ADMIN",
-    email: "admin@lnjpit.ac.in",
     name: "Dr. Shailendra Kumar",
+    collegeId: "LNJPIT-ADMIN-01",
     participantId: "AST26-0001",
     route: "/dashboard/admin",
-    icon: Shield,
+    icon: ShieldAlert,
   },
   {
     role: "EVENT_COORDINATOR",
-    email: "coordinator@lnjpit.ac.in",
     name: "Prof. Rajesh Ranjan",
+    collegeId: "LNJPIT-FAC-042",
     participantId: "AST26-0002",
     route: "/dashboard/coordinator",
-    icon: Trophy,
+    icon: Sparkles,
   },
   {
     role: "VOLUNTEER",
-    email: "volunteer@lnjpit.ac.in",
     name: "Ananya Sharma",
+    collegeId: "23105128014",
     participantId: "AST26-0003",
     route: "/dashboard/volunteer",
-    icon: UserCheck,
+    icon: QrCode,
   },
   {
     role: "TEAM_CAPTAIN",
-    email: "captain@lnjpit.ac.in",
     name: "Aman Verma",
+    collegeId: "22105128005",
     participantId: "AST26-0004",
     route: "/dashboard/captain",
-    icon: Users,
+    icon: Crown,
   },
   {
     role: "PARTICIPANT",
-    email: "participant@lnjpit.ac.in",
     name: "Sneha Kumari",
+    collegeId: "24105128032",
     participantId: "AST26-0005",
     route: "/dashboard/participant",
-    icon: Sparkles,
+    icon: UserCheck,
   },
 ];
 
-export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole }) {
+interface DevRoleSwitcherProps {
+  currentRole?: FestRole | any;
+}
+
+export function DevRoleSwitcher({ currentRole }: DevRoleSwitcherProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
 
-  const getRoleFromPath = (): FestRole => {
-    if (currentRole) return currentRole;
-    if (pathname.includes("/admin")) return "ADMIN";
-    if (pathname.includes("/coordinator")) return "EVENT_COORDINATOR";
-    if (pathname.includes("/volunteer")) return "VOLUNTEER";
-    if (pathname.includes("/captain")) return "TEAM_CAPTAIN";
-    return "PARTICIPANT";
-  };
-
-  const [activeRole, setActiveRole] = useState<FestRole>(getRoleFromPath);
-
-  useEffect(() => {
-    setActiveRole(getRoleFromPath());
-  }, [pathname, currentRole]);
+  // Identify current active role based on prop or path
+  const activeRole: FestRole = currentRole || (pathname.includes("/admin")
+    ? "ADMIN"
+    : pathname.includes("/coordinator")
+    ? "EVENT_COORDINATOR"
+    : pathname.includes("/volunteer")
+    ? "VOLUNTEER"
+    : pathname.includes("/captain")
+    ? "TEAM_CAPTAIN"
+    : "PARTICIPANT");
 
   const handleRoleSwitch = async (account: DemoAccount) => {
     setIsSwitching(true);
-    setActiveRole(account.role);
     setIsExpanded(false);
 
     try {
-      const res = await fetch("/api/auth/mock/switch-role", {
+      const res = await fetch("/api/auth/mock/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: account.role }),
       });
 
       const data = await res.json();
+
       if (data.success) {
         toast.success(`Switched role to ${account.role}`, {
           description: `Logged in as ${account.name} (${account.participantId})`,
@@ -114,52 +123,59 @@ export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole }) {
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      <div className="bg-[#030712]/95 border border-white/15 rounded-xl shadow-2xl p-1.5 backdrop-blur-xl flex flex-col gap-1 transition-all">
+      <div className="bg-[#F6F4EE] border border-[#8E8D8A]/30 rounded-2xl shadow-xl p-1.5 backdrop-blur-xl flex flex-col gap-1 transition-all text-[#1A1918]">
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={isSwitching}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-xs font-mono cursor-pointer"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-colors text-xs font-mono cursor-pointer"
         >
           {isSwitching ? (
-            <RefreshCw className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
+            <RefreshCw className="w-3.5 h-3.5 text-[#E85A4F] animate-spin" />
           ) : (
-            <span className="text-slate-400 font-bold">DEV SWITCHER:</span>
+            <span className="text-[#8E8D8A] font-bold">DEV SWITCHER:</span>
           )}
           <RoleBadge role={activeRole} />
           <ChevronDown
-            className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
+            className={`w-3.5 h-3.5 text-[#8E8D8A] transition-transform ${
               isExpanded ? "rotate-180" : ""
             }`}
           />
         </button>
 
         {isExpanded && (
-          <div className="flex flex-col gap-1 pt-1 border-t border-white/10 mt-1 min-w-[250px]">
+          <div className="flex flex-col gap-1 pt-1 border-t border-[#8E8D8A]/20 mt-1 min-w-[250px] font-mono">
             {DEMO_ACCOUNTS.map((acc) => {
               const Icon = acc.icon;
               const isSelected = activeRole === acc.role;
+
               return (
                 <button
                   key={acc.role}
                   type="button"
                   onClick={() => handleRoleSwitch(acc)}
-                  className={`flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all cursor-pointer ${
+                  className={`flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                     isSelected
-                      ? "bg-cyan-500/20 text-white border border-cyan-500/40 font-semibold"
-                      : "hover:bg-white/5 text-slate-300 hover:text-white"
+                      ? "bg-[#E85A4F] text-white"
+                      : "hover:bg-[#EAE7DC] text-[#1A1918]"
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 text-slate-400" />
-                    <div>
-                      <p className="font-medium text-slate-200">{acc.name}</p>
-                      <p className="text-[10px] text-slate-500 font-mono">
-                        {acc.participantId}
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Icon
+                      className={`w-4 h-4 shrink-0 ${
+                        isSelected ? "text-white" : "text-[#E85A4F]"
+                      }`}
+                    />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold truncate">{acc.name}</p>
+                      <p className="text-[10px] opacity-75 truncate">
+                        {acc.role} • {acc.participantId}
                       </p>
                     </div>
                   </div>
-                  <RoleBadge role={acc.role} />
+                  {isSelected && (
+                    <Zap className="w-3 h-3 text-white shrink-0 fill-white" />
+                  )}
                 </button>
               );
             })}

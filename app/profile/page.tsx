@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Profile Hub & Participant ID Pass
+// ASTITVA 2K26 - Profile Hub & Participant ID Pass (Exteta Luxury Aesthetic)
 // Path: app/profile/page.tsx
 // ============================================================================
 
@@ -9,9 +9,6 @@ import { getProfile } from "@/lib/profile/actions";
 import { ProfileCard } from "@/components/profile/ProfileCard";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import {
   Trophy,
   Users,
@@ -35,19 +32,19 @@ export default async function ProfilePage() {
 
   if (!result.success || !result.data) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <div className="glass-card max-w-md w-full p-8 rounded-2xl text-center space-y-4 border border-white/10">
-          <div className="h-12 w-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400">
+      <div className="min-h-[80vh] flex items-center justify-center px-4 bg-[#EAE7DC] text-[#1A1918]">
+        <div className="max-w-md w-full p-8 rounded-3xl text-center space-y-4 bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-xl">
+          <div className="h-12 w-12 rounded-full bg-[#E85A4F]/10 border border-[#E85A4F]/30 flex items-center justify-center mx-auto text-[#E85A4F]">
             <ShieldCheck className="h-6 w-6" />
           </div>
-          <h2 className="text-xl font-bold text-white">Authentication Required</h2>
-          <p className="text-sm text-slate-400">
+          <h2 className="text-xl font-bold font-mono text-[#1A1918] uppercase">Authentication Required</h2>
+          <p className="text-xs text-[#8E8D8A]">
             {result.error || "Please sign in to access your ASTITVA 2K26 festival pass."}
           </p>
           <Link href="/sign-in">
-            <Button variant="neonCyan" className="w-full font-bold">
+            <button className="w-full py-2.5 rounded-xl bg-[#E85A4F] text-white font-mono text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors">
               Sign In to ASTITVA
-            </Button>
+            </button>
           </Link>
         </div>
       </div>
@@ -57,43 +54,45 @@ export default async function ProfilePage() {
   const pass = result.data;
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 bg-[#EAE7DC] text-[#1A1918]">
       {/* Top Banner: Profile Completion & Festival Identity */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-white/10 p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-8 h-48 w-48 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
-
+      <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-8 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center space-x-2.5">
-              <Badge variant="cyan" className="text-xs font-mono font-bold">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
                 ASTITVA 2K26 PASS
-              </Badge>
-              <Badge variant="outline" className="text-xs text-amber-400 border-amber-500/30">
+              </span>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/25 text-[#E85A4F] uppercase">
                 LNJPIT Chapra
-              </Badge>
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Welcome, <span className="cyber-gradient-text">{pass.fullName}</span>
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1A1918] tracking-tight uppercase">
+              Welcome, <span className="text-[#E85A4F]">{pass.fullName}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
+            <p className="text-xs sm:text-sm text-[#8E8D8A] max-w-xl">
               Your ASTITVA 2K26 festival credential acts as your digital identity across all 16 Sports, Cultural, Gaming, and Literary tournaments.
             </p>
           </div>
 
           {/* Profile Completion Card */}
-          <div className="rounded-2xl bg-slate-950/80 border border-white/10 p-4 min-w-[260px] space-y-2.5 shadow-lg">
-            <div className="flex justify-between items-center text-xs">
-              <span className="font-semibold text-slate-300 flex items-center">
-                <Sparkles className="h-3.5 w-3.5 text-cyan-400 mr-1" />
+          <div className="rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 p-4 min-w-[260px] space-y-2.5">
+            <div className="flex justify-between items-center text-xs font-mono">
+              <span className="font-semibold text-[#1A1918] flex items-center">
+                <Sparkles className="h-3.5 w-3.5 text-[#E85A4F] mr-1" />
                 Profile Strength
               </span>
-              <span className="font-mono font-bold text-cyan-400">
+              <span className="font-bold text-[#E85A4F]">
                 {pass.profileCompletionPercentage}%
               </span>
             </div>
-            <Progress value={pass.profileCompletionPercentage} className="h-2 bg-slate-800" />
-            <p className="text-[11px] text-slate-400">
+            <div className="w-full bg-[#D8C3A5]/40 h-2 rounded-full overflow-hidden">
+              <div
+                className="bg-[#E85A4F] h-full rounded-full transition-all duration-500"
+                style={{ width: `${pass.profileCompletionPercentage}%` }}
+              />
+            </div>
+            <p className="text-[11px] text-[#8E8D8A] font-mono">
               {pass.profileCompletionPercentage === 100
                 ? "🎉 Profile complete! All event permissions active."
                 : "Complete LNJPIT credentials to enable 1-click team registration."}
@@ -104,32 +103,32 @@ export default async function ProfilePage() {
 
       {/* Main 2-Column Responsive Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Holographic Festival ID Card & Quick Actions */}
+        {/* Left Column: Festival ID Card & Quick Actions */}
         <div className="lg:col-span-5 space-y-6">
           <ProfileCard passData={pass} />
 
           {/* Quick Metrics Strip */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="glass-card rounded-xl p-3 text-center border border-white/5">
-              <Trophy className="h-4 w-4 text-cyan-400 mx-auto mb-1" />
-              <span className="text-lg font-black text-white font-mono block">
+            <div className="rounded-2xl p-4 text-center bg-[#F6F4EE] border border-[#8E8D8A]/25">
+              <Trophy className="h-4 w-4 text-[#E85A4F] mx-auto mb-1" />
+              <span className="text-xl font-bold text-[#1A1918] font-mono block">
                 {pass.registeredEventsCount}
               </span>
-              <span className="text-[10px] text-slate-400 uppercase">Tournaments</span>
+              <span className="text-[10px] text-[#8E8D8A] font-mono uppercase">Tournaments</span>
             </div>
-            <div className="glass-card rounded-xl p-3 text-center border border-white/5">
-              <Users className="h-4 w-4 text-purple-400 mx-auto mb-1" />
-              <span className="text-lg font-black text-white font-mono block">
+            <div className="rounded-2xl p-4 text-center bg-[#F6F4EE] border border-[#8E8D8A]/25">
+              <Users className="h-4 w-4 text-[#1A1918] mx-auto mb-1" />
+              <span className="text-xl font-bold text-[#1A1918] font-mono block">
                 {pass.teamsCount}
               </span>
-              <span className="text-[10px] text-slate-400 uppercase">Teams</span>
+              <span className="text-[10px] text-[#8E8D8A] font-mono uppercase">Teams</span>
             </div>
-            <div className="glass-card rounded-xl p-3 text-center border border-white/5">
-              <Award className="h-4 w-4 text-amber-400 mx-auto mb-1" />
-              <span className="text-lg font-black text-white font-mono block">
+            <div className="rounded-2xl p-4 text-center bg-[#F6F4EE] border border-[#8E8D8A]/25">
+              <Award className="h-4 w-4 text-[#E85A4F] mx-auto mb-1" />
+              <span className="text-xl font-bold text-[#1A1918] font-mono block">
                 {pass.certificatesCount}
               </span>
-              <span className="text-[10px] text-slate-400 uppercase">Certificates</span>
+              <span className="text-[10px] text-[#8E8D8A] font-mono uppercase">Certificates</span>
             </div>
           </div>
         </div>
@@ -137,15 +136,24 @@ export default async function ProfilePage() {
         {/* Right Column: Tabbed Management & Registered Tournaments */}
         <div className="lg:col-span-7">
           <Tabs defaultValue="edit-profile" className="space-y-6">
-            <TabsList className="bg-slate-900 border border-white/10 p-1 w-full grid grid-cols-3 rounded-xl">
-              <TabsTrigger value="edit-profile" className="text-xs font-semibold">
-                Edit Profile
+            <TabsList className="bg-[#F6F4EE] border border-[#8E8D8A]/25 p-1 w-full grid grid-cols-3 rounded-2xl">
+              <TabsTrigger
+                value="edit-profile"
+                className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2"
+              >
+                EDIT PROFILE
               </TabsTrigger>
-              <TabsTrigger value="tournaments" className="text-xs font-semibold">
-                My Events ({pass.registeredEventsCount})
+              <TabsTrigger
+                value="tournaments"
+                className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2"
+              >
+                MY EVENTS ({pass.registeredEventsCount})
               </TabsTrigger>
-              <TabsTrigger value="guidelines" className="text-xs font-semibold">
-                Fest Guidelines
+              <TabsTrigger
+                value="guidelines"
+                className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2"
+              >
+                GUIDELINES
               </TabsTrigger>
             </TabsList>
 
@@ -161,46 +169,48 @@ export default async function ProfilePage() {
                   {pass.registeredEvents.map((evt) => (
                     <div
                       key={evt.id}
-                      className="glass-card rounded-xl p-4 border border-white/10 flex items-center justify-between hover:border-cyan-500/40 transition-all"
+                      className="rounded-2xl p-4 bg-[#F6F4EE] border border-[#8E8D8A]/25 flex items-center justify-between hover:border-[#E85A4F] transition-all"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="outline" className="text-[10px] text-cyan-400 border-cyan-500/30 font-mono">
+                          <span className="text-[10px] text-[#E85A4F] font-bold font-mono uppercase px-2 py-0.5 rounded bg-[#EAE7DC]">
                             {evt.category}
-                          </Badge>
-                          <h4 className="text-sm font-bold text-white">{evt.title}</h4>
+                          </span>
+                          <h4 className="text-sm font-bold text-[#1A1918]">{evt.title}</h4>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8D8A] font-mono">
                           <span className="flex items-center">
-                            <MapPin className="h-3.5 w-3.5 text-slate-500 mr-1" />
+                            <MapPin className="h-3 w-3 text-[#E85A4F] mr-1" />
                             {evt.venue}
                           </span>
                           {evt.teamName && (
-                            <span className="flex items-center text-purple-300">
-                              <Users className="h-3.5 w-3.5 mr-1" />
+                            <span className="flex items-center text-[#1A1918]">
+                              <Users className="h-3 w-3 mr-1 text-[#8E8D8A]" />
                               Team: {evt.teamName}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <Badge variant="cyan" className="text-xs font-mono font-semibold">
+                      <span className="text-xs font-mono font-bold px-3 py-1 rounded bg-[#EAE7DC] text-[#1A1918] uppercase">
                         {evt.status}
-                      </Badge>
+                      </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="glass-card rounded-2xl p-8 text-center border border-white/10 space-y-3">
-                  <Flame className="h-10 w-10 text-cyan-400 mx-auto animate-bounce" />
-                  <h3 className="text-base font-bold text-white">No Tournaments Registered Yet</h3>
-                  <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                <div className="rounded-3xl p-8 text-center bg-[#F6F4EE] border border-[#8E8D8A]/25 space-y-3">
+                  <Flame className="h-8 w-8 text-[#E85A4F] mx-auto" />
+                  <h3 className="text-base font-bold text-[#1A1918] font-mono uppercase">
+                    No Tournaments Registered Yet
+                  </h3>
+                  <p className="text-xs text-[#8E8D8A] max-w-sm mx-auto font-mono">
                     Explore 16 tournaments across Sports, Cultural, Gaming, and Literary categories and claim your spots!
                   </p>
                   <Link href="/events">
-                    <Button variant="neonCyan" size="sm" className="font-bold text-xs">
-                      Explore 16 Events <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                    </Button>
+                    <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors">
+                      Explore 16 Events →
+                    </button>
                   </Link>
                 </div>
               )}
@@ -208,12 +218,12 @@ export default async function ProfilePage() {
 
             {/* TAB 3: Fest Guidelines */}
             <TabsContent value="guidelines" className="space-y-4 mt-0">
-              <div className="glass-card rounded-2xl p-6 border border-white/10 space-y-4 text-xs text-slate-300 leading-relaxed">
-                <h3 className="text-sm font-bold text-white flex items-center">
-                  <ShieldCheck className="h-4 w-4 text-cyan-400 mr-2" />
-                  LNJPIT ASTITVA 2K26 Festival Rules & Code of Conduct
+              <div className="rounded-3xl p-6 bg-[#F6F4EE] border border-[#8E8D8A]/25 space-y-4 text-xs text-[#1A1918] leading-relaxed">
+                <h3 className="text-sm font-bold text-[#1A1918] flex items-center font-mono uppercase">
+                  <ShieldCheck className="h-4 w-4 text-[#E85A4F] mr-2" />
+                  LNJPIT ASTITVA 2K26 Festival Rules &amp; Code of Conduct
                 </h3>
-                <ul className="list-disc pl-5 space-y-2 text-slate-400">
+                <ul className="list-disc pl-5 space-y-2 text-[#8E8D8A] font-mono">
                   <li>Keep your digital QR badge accessible at all times on mobile or printed pass.</li>
                   <li>Volunteers will scan your QR badge at entry gates and tournament venues.</li>
                   <li>Only verified LNJPIT students and registered participants will be allowed in competition arenas.</li>

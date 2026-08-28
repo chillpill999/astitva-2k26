@@ -1,14 +1,7 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Team Invite Code Display & WhatsApp Sharing Card
-// Path: components/teams/InviteCodeCard.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import { Copy, Check, Share2, MessageSquare, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 interface InviteCodeCardProps {
   code: string;
@@ -33,7 +26,7 @@ export function InviteCodeCard({
     `🔥 Join my squad *${teamName}* for ${eventTitle || "ASTITVA 2K26"}!\n\n` +
     `⚡ Invite Code: *${code}*\n` +
     `👉 Direct Join Link: ${joinUrl}\n\n` +
-    `LNJPIT Chapra Annual Techno-Cultural & Sports Fest (4-8 Sept 2026)`
+    `LNJPIT Chapra Annual Mega Fest (4-8 Sept 2026)`
   );
 
   const whatsappUrl = `https://api.whatsapp.com/send?text=${shareText}`;
@@ -45,49 +38,48 @@ export function InviteCodeCard({
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } catch {
-        // clipboard fallback
+        // ignore
       }
     }
   };
 
   return (
-    <div className="p-6 rounded-2xl bg-gradient-to-br from-cyan-950/40 via-slate-900/90 to-purple-950/40 border border-cyan-500/30 shadow-2xl backdrop-blur-xl space-y-4">
+    <div className="p-6 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-4 text-[#1A1918]">
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <Badge variant="outline" className="text-[10px] font-mono bg-cyan-950/50 text-cyan-300 border-cyan-500/40">
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase border border-[#8E8D8A]/20">
             SQUAD INVITE CODE
-          </Badge>
-          <p className="text-xs text-slate-300">Share this 6-character code with your teammates.</p>
+          </span>
+          <p className="text-xs text-[#8E8D8A] font-mono mt-1">Share this 6-character code with your teammates.</p>
         </div>
-        <Sparkles className="h-5 w-5 text-cyan-400 animate-pulse" />
+        <Sparkles className="h-4 w-4 text-[#E85A4F]" />
       </div>
 
       {/* 6-Character Code Display Box */}
-      <div className="flex items-center justify-between p-4 rounded-xl bg-slate-950/90 border border-cyan-500/40 shadow-inner">
+      <div className="flex items-center justify-between p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 shadow-inner">
         <div className="space-y-0.5">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Access Token</span>
-          <div className="text-3xl sm:text-4xl font-mono font-black tracking-widest text-cyan-300 selection:bg-cyan-500">
+          <span className="text-[9px] font-mono text-[#8E8D8A] uppercase tracking-wider">Access Token</span>
+          <div className="text-3xl sm:text-4xl font-mono font-black tracking-widest text-[#E85A4F]">
             {code}
           </div>
         </div>
 
-        <Button
+        <button
           onClick={handleCopy}
-          size="sm"
-          className="text-xs font-mono font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30"
+          className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase bg-[#1A1918] hover:bg-[#E85A4F] text-[#EAE7DC] transition-colors flex items-center gap-1.5 cursor-pointer"
         >
           {copied ? (
             <>
-              <Check className="mr-1.5 h-3.5 w-3.5 text-emerald-300" />
-              Copied!
+              <Check className="h-3.5 w-3.5 text-[#E85A4F]" />
+              COPIED!
             </>
           ) : (
             <>
-              <Copy className="mr-1.5 h-3.5 w-3.5" />
-              Copy Code
+              <Copy className="h-3.5 w-3.5" />
+              COPY CODE
             </>
           )}
-        </Button>
+        </button>
       </div>
 
       {/* Direct Share Buttons */}
@@ -98,18 +90,17 @@ export function InviteCodeCard({
           rel="noopener noreferrer"
           className="w-full"
         >
-          <Button
+          <button
             type="button"
-            className="w-full text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20"
+            className="w-full py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
-            <MessageSquare className="mr-2 h-4 w-4" />
+            <MessageSquare className="h-3.5 w-3.5" />
             Share on WhatsApp
-          </Button>
+          </button>
         </a>
 
-        <Button
+        <button
           type="button"
-          variant="outline"
           onClick={async () => {
             if (typeof window !== "undefined") {
               try {
@@ -119,11 +110,11 @@ export function InviteCodeCard({
               } catch {}
             }
           }}
-          className="w-full text-xs font-bold border-white/15 bg-white/5 text-slate-200 hover:text-white"
+          className="w-full py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          <Share2 className="mr-2 h-4 w-4" />
+          <Share2 className="h-3.5 w-3.5" />
           Copy Direct Join Link
-        </Button>
+        </button>
       </div>
     </div>
   );
