@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - AI Fest Assistant (Local RAG over event knowledge)
+// ASTITVA 2K26 - AI Fest Assistant (Hybrid Gemini LLM + Local Grounded RAG)
 // Path: lib/ai/matcher.ts
 // ============================================================================
 
@@ -91,7 +91,7 @@ export async function getKnowledgeSnapshot(): Promise<KnowledgeSnapshot> {
 
 const INTENT_KEYWORDS: Array<{ intent: QueryIntent; regex: RegExp }> = [
   { intent: "GREETING", regex: /^(hi|hello|hey|namaste|hola|yo|sup)\b/i },
-  { intent: "EMERGENCY", regex: /\b(emergency|urgent|hospital|panic|evacuat|sos|911)\b/i },
+  { intent: "EMERGENCY", regex: /\b(emergency|urgent|hospital|panic|evacuat|sos|911|112)\b/i },
   { intent: "TEAM_HELP", regex: /\b(team|squad|invite|captain|roster|members?)\b/i },
   { intent: "REGISTRATION_HELP", regex: /\b(register|sign\s*up|enroll|entry)\b/i },
   { intent: "VENUE_QUERY", regex: /\b(where|venue|ground|hall|room|lab|stage|location|address)\b/i },
@@ -171,20 +171,126 @@ function formatDateTime(iso: string) {
   });
 }
 
+/**
+ * Invokes Google Gemini LLM with grounded festival context.
+ */
+async function callGeminiLlm(
+  message: string,
+  snapshot: KnowledgeSnapshot,
+  intent: QueryIntent
+): Promise<string | null> {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const eventsSummary = snapshot.events
+      .slice(0, 16)
+      .map(
+        (e) =>
+          `- ${e.title} (${e.categoryName}, ${e.eventType}): Day ${e.dayNumber} (Sept ${e.dayNumber + 3}), Venue: ${e.venue}, Format: ${e.eventType}`
+      )
+      .join("\n");
+
+    const faqsSummary = snapshot.faqs
+      .slice(0, 8)
+      .map((f) => `Q: ${f.question} | A: ${f.answer}`)
+      .join("\n");
+
+    const announcementsSummary = snapshot.announcements
+      .slice(0, 5)
+      .map((a) => `[${a.priority}] ${a.title}: ${a.content}`)
+      .join("\n");
+
+    const systemPrompt = `You are AstitvaBot, the official AI assistant for ASTITVA 2K26 — the annual Sports, Cultural, Gaming, and Literary Festival of LNJPIT Chapra (Lok Nayak Jai Prakash Institute of Technology, Chapra, Bihar) scheduled from 4 to 8 September 2026.
+
+[OFFICIAL FESTIVAL CONTEXT]
+EVENTS:
+${eventsSummary || "16 tournaments across Sports (Cricket, Football, Volleyball, Badminton, Chess), Cultural (Dance, Singing, Comedy, Ramp Walk), Gaming (BGMI, Free Fire), Literary (Debate, Quiz, Poetry, Creative Writing)."}
+
+FAQS & GUIDANCE:
+${faqsSummary || "Registration is 100% free for LNJPIT students. Digital QR attendee passes are issued upon registration. Verifiable digital certificates are awarded."}
+
+ANNOUNCEMENTS:
+${announcementsSummary || "All systems normal. Fest starts September 4, 2026."}
+
+[IMPORTANT POLICY]
+There is NO prize money or cash prizes in ASTITVA 2K26. Competitions award Championship Trophies, Medals (Gold, Silver, Bronze), and HMAC-SHA256 cryptographically verifiable Certificates (Winner, Runner-Up, Participation).
+
+User query: "${message}"
+
+Respond concisely, politely, and factually in 2-4 sentences using only the context provided. Format with markdown if helpful.`;
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: systemPrompt }] }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 600,
+        },
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return text ? text.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function askAssistant(message: string): Promise<AiResponse> {
   const snapshot = await getKnowledgeSnapshot();
   const intent = classifyIntent(message);
-  const relatedEvents = findEventByName(message, snapshot.events)
+  const matchedEvent = findEventByName(message, snapshot.events);
+
+  const relatedEvents = matchedEvent
     ? [
         {
-          id: findEventByName(message, snapshot.events)!.event.id,
-          title: findEventByName(message, snapshot.events)!.event.title,
-          venue: findEventByName(message, snapshot.events)!.event.venue,
-          scheduleStart: findEventByName(message, snapshot.events)!.event.scheduleStart,
+          id: matchedEvent.event.id,
+          title: matchedEvent.event.title,
+          venue: matchedEvent.event.venue,
+          scheduleStart: matchedEvent.event.scheduleStart,
         },
       ]
     : [];
 
+  // 1. Try Google Gemini LLM generation with database-grounded prompt
+  const geminiAnswer = await callGeminiLlm(message, snapshot, intent);
+  if (geminiAnswer) {
+    const suggestedActions: Array<{ label: string; url: string }> = [];
+    if (matchedEvent) {
+      suggestedActions.push({ label: "View Event", url: `/events/${matchedEvent.event.id}` });
+    }
+    if (intent === "SCHEDULE_QUERY") {
+      suggestedActions.push({ label: "Full Schedule", url: "/schedule" });
+    } else if (intent === "REGISTRATION_HELP" || intent === "TEAM_HELP") {
+      suggestedActions.push({ label: "Create Squad", url: "/teams/create" });
+      suggestedActions.push({ label: "Browse Catalog", url: "/events" });
+    } else if (intent === "CERTIFICATE_QUERY") {
+      suggestedActions.push({ label: "Verify Certificate", url: "/verify-certificate" });
+    } else {
+      suggestedActions.push({ label: "Explore Events", url: "/events" });
+    }
+
+    return {
+      answer: geminiAnswer,
+      intent,
+      relatedEvents,
+      suggestedActions,
+    };
+  }
+
+  // 2. Fallback to high-speed deterministic local RAG matcher
   switch (intent) {
     case "GREETING": {
       return {
@@ -227,7 +333,7 @@ export async function askAssistant(message: string): Promise<AiResponse> {
         intent,
         relatedEvents,
         suggestedActions: [
-          { label: "View Event", url: `/events/${e.slug}` },
+          { label: "View Event", url: `/events/${e.slug || e.id}` },
           { label: "Full Schedule", url: "/schedule" },
         ],
       };
@@ -248,8 +354,8 @@ export async function askAssistant(message: string): Promise<AiResponse> {
         intent,
         relatedEvents,
         suggestedActions: [
-          { label: "View Event", url: `/events/${e.slug}` },
-          { label: "Get Directions", url: `/events/${e.slug}` },
+          { label: "View Event", url: `/events/${e.slug || e.id}` },
+          { label: "Get Directions", url: `/events/${e.slug || e.id}` },
         ],
       };
     }
@@ -268,9 +374,7 @@ export async function askAssistant(message: string): Promise<AiResponse> {
         answer: `${e.title} rules:\n\n${e.rules.slice(0, 600)}${e.rules.length > 600 ? "…" : ""}`,
         intent,
         relatedEvents,
-        suggestedActions: [
-          { label: "Full Rules", url: `/events/${e.slug}` },
-        ],
+        suggestedActions: [{ label: "Full Rules", url: `/events/${e.slug || e.id}` }],
       };
     }
     case "REGISTRATION_HELP": {
