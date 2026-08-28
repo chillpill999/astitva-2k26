@@ -1,11 +1,11 @@
 // ============================================================================
-// ASTITVA 2K26 - Export Data Modal (Exteta Luxury Aesthetic)
+// ASTITVA 2K26 - Export Data Modal
 // Path: components/dashboard/ExportDataModal.tsx
 // ============================================================================
 
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,72 +21,70 @@ interface ExportDataModalProps {
   onClose: () => void;
 }
 
+const DATASETS = [
+  { id: "registrations", label: "Registrations" },
+  { id: "attendance", label: "Attendance logs" },
+  { id: "results", label: "Results" },
+  { id: "certificates", label: "Certificates" },
+  { id: "participants", label: "Participants" },
+  { id: "teams", label: "Teams" },
+];
+
 export function ExportDataModal({ isOpen, onClose }: ExportDataModalProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [exportType, setExportType] = useState<string>("registrations");
 
   const handleExport = () => {
     setIsExporting(true);
-    setTimeout(() => {
-      setIsExporting(false);
-      // Trigger CSV download
-      const csvContent =
-        "data:text/csv;charset=utf-8," +
-        encodeURIComponent(
-          "Participant ID,Full Name,Roll Number,Branch,Semester,Role,Status\n" +
-          "AST26-0001,Dr. Shailendra Kumar,LNJPIT-ADMIN-01,CSE,8,ADMIN,Active\n" +
-          "AST26-0002,Prof. Rajesh Ranjan,LNJPIT-FAC-042,ECE,8,EVENT_COORDINATOR,Active\n" +
-          "AST26-0003,Ananya Sharma,23105128014,EE,4,VOLUNTEER,Active\n" +
-          "AST26-0004,Aman Verma,22105128005,ME,6,TEAM_CAPTAIN,Active\n" +
-          "AST26-0005,Sneha Kumari,24105128032,CE,2,PARTICIPANT,Active\n"
-        );
-      const link = document.createElement("a");
-      link.setAttribute("href", csvContent);
-      link.setAttribute("download", `astitva_2k26_${exportType}_export.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      toast.success("CSV export generated and downloaded successfully!");
-      onClose();
-    }, 800);
+    const url = `/api/export/${exportType}?format=csv`;
+    fetch(url, { credentials: "include" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Export failed");
+        const blob = await res.blob();
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `astitva-2k26-${exportType}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+        toast.success("CSV download started.");
+        onClose();
+      })
+      .catch(() => toast.error("Export failed. Please try again."))
+      .finally(() => setIsExporting(false));
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[#1A1918] max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl">
+      <DialogContent className="border border-white/10 bg-slate-900 text-slate-100 max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold font-mono uppercase text-[#1A1918] flex items-center">
-            <FileSpreadsheet className="h-5 w-5 text-[#E85A4F] mr-2" />
+          <DialogTitle className="text-base font-bold uppercase flex items-center">
+            <FileSpreadsheet className="h-5 w-5 text-amber-300 mr-2" />
             Export Festival Data
           </DialogTitle>
-          <DialogDescription className="text-xs text-[#8E8D8A] font-mono">
-            Download filtered reports in standard CSV / Excel format.
+          <DialogDescription className="text-xs text-slate-400 font-mono">
+            Download operational data as CSV. The download is audit-logged.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2 text-xs font-mono">
           <div className="space-y-2">
-            <label className="font-bold uppercase text-[#1A1918]">Select Dataset</label>
+            <label className="font-bold uppercase">Select Dataset</label>
             <div className="grid grid-cols-1 gap-2">
-              {[
-                { id: "registrations", label: "Tournament Registrations & Rosters" },
-                { id: "attendance", label: "Live Gate & Venue Attendance Logs" },
-                { id: "results", label: "Winner Podium & Point Tallies" },
-                { id: "volunteers", label: "Volunteer Duty Allocations" },
-              ].map((item) => (
+              {DATASETS.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => setExportType(item.id)}
-                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  className={`p-3 rounded-xl border text-left flex items-center justify-between transition-colors ${
                     exportType === item.id
-                      ? "bg-[#EAE7DC] border-[#E85A4F] text-[#E85A4F] font-bold"
-                      : "bg-[#EAE7DC]/40 border-[#8E8D8A]/20 text-[#8E8D8A] hover:text-[#1A1918]"
+                      ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-200 font-bold"
+                      : "bg-slate-950/50 border-white/10 text-slate-400 hover:text-slate-200"
                   }`}
                 >
                   <span>{item.label}</span>
-                  {exportType === item.id && <Check className="h-4 w-4 text-[#E85A4F]" />}
+                  {exportType === item.id && <Check className="h-4 w-4 text-cyan-300" />}
                 </button>
               ))}
             </div>
@@ -96,7 +94,7 @@ export function ExportDataModal({ isOpen, onClose }: ExportDataModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
+              className="px-4 py-2.5 rounded-xl border border-white/10 bg-slate-950/50 text-xs font-bold uppercase hover:bg-slate-800 transition-colors"
             >
               Cancel
             </button>
@@ -104,11 +102,11 @@ export function ExportDataModal({ isOpen, onClose }: ExportDataModalProps) {
               type="button"
               disabled={isExporting}
               onClick={handleExport}
-              className="px-5 py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-5 py-2.5 rounded-xl bg-cyan-500 text-slate-950 text-xs font-bold uppercase hover:bg-cyan-400 transition-colors flex items-center gap-1.5 disabled:opacity-50"
             >
               {isExporting ? (
                 <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating...
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Downloading...
                 </>
               ) : (
                 <>Download CSV</>

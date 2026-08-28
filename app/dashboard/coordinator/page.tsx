@@ -1,264 +1,177 @@
 // ============================================================================
-// ASTITVA 2K26 - Event Coordinator Scoring & Ops Console (Exteta Luxury Aesthetic)
+// ASTITVA 2K26 - Event Coordinator Dashboard (real DB)
 // Path: app/dashboard/coordinator/page.tsx
 // ============================================================================
 
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
-import {
-  Trophy,
-  Users,
-  Award,
-  Play,
-  Save,
-  Radio,
-  FileCheck,
-} from "lucide-react";
-import { RoleBadge } from "@/components/dashboard/RoleBadge";
-import { toast } from "sonner";
+import { redirect } from "next/navigation";
+import { Trophy, Users, FileCheck, Award, Activity, ArrowRight, Info } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { getCurrentUser } from "@/lib/auth/auth";
+import { prisma } from "@/lib/db/prisma";
 
-const COORDINATED_EVENTS = [
-  {
-    id: "cricket",
-    title: "Cricket Tournament (11v11)",
-    category: "Sports",
-    venue: "Main Ground",
-    status: "ONGOING",
-    teamsRegistered: 16,
-    activeMatch: "LNJPIT Titans vs CE Mavericks (Quarter Final 2)",
-  },
-  {
-    id: "bgmi",
-    title: "BGMI LAN Invitational Battle (4v4)",
-    category: "Gaming",
-    venue: "Central Seminar Hall",
-    status: "REGISTRATION_CLOSED",
-    teamsRegistered: 32,
-    activeMatch: "Lobby 1 - Erangel Round 1 (14:00 hrs)",
-  },
-  {
-    id: "chess",
-    title: "Grandmaster Chess Blitz (1v1)",
-    category: "Sports",
-    venue: "Gymnasium Hall",
-    status: "ONGOING",
-    teamsRegistered: 64,
-    activeMatch: "Board 1: Aman Verma (ME) vs Sneha Kumari (CE)",
-  },
-];
+export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Coordinator Dashboard | ASTITVA 2K26",
+  description: "Manage your assigned events, score entry, and results.",
+};
 
-export default function CoordinatorDashboardPage() {
-  const [selectedEvent, setSelectedEvent] = useState("cricket");
-  const [scoreForm, setScoreForm] = useState({
-    teamA: "LNJPIT Titans",
-    teamB: "CE Mavericks",
-    scoreA: "142/4 (12.0 ov)",
-    scoreB: "98/7 (10.2 ov)",
-    round: "Quarter-Final",
-    winner: "LNJPIT Titans",
+function statusLabel(s: string) {
+  return s.replace(/_/g, " ");
+}
+
+export default async function CoordinatorDashboardPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?callbackUrl=/dashboard/coordinator");
+  if (!["EVENT_COORDINATOR", "ADMIN"].includes(user.role)) {
+    redirect("/unauthorized?attempted=/dashboard/coordinator");
+  }
+
+  // Admin sees all events; coordinators only their own (or unassigned)
+  const where =
+    user.role === "ADMIN"
+      ? undefined
+      : { OR: [{ coordinatorId: user.id }, { coordinatorId: null }] };
+
+  const events = await prisma.event.findMany({
+    where,
+    include: {
+      category: true,
+      _count: { select: { registrations: true, results: true, attendances: true } },
+    },
+    orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
+    take: 20,
   });
 
-  const [podiumForm, setPodiumForm] = useState({
-    winner: "LNJPIT Titans (ME/CSE)",
-    firstRunner: "CE Mavericks (CE)",
-    secondRunner: "EE Thunderbolts (EE)",
-  });
-
-  const handleScoreUpdate = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Match Score Updated & Broadcasted!", {
-      description: `${scoreForm.teamA}: ${scoreForm.scoreA} vs ${scoreForm.teamB}: ${scoreForm.scoreB}`,
-    });
-  };
-
-  const handlePublishPodium = () => {
-    toast.success("Official Podium Results Published!", {
-      description: `Winner: ${podiumForm.winner} • Certificates queued for generation`,
-    });
-  };
+  const totalRegs = events.reduce((sum, e) => sum + e._count.registrations, 0);
+  const totalScans = events.reduce((sum, e) => sum + e._count.attendances, 0);
+  const totalPublished = events.reduce((sum, e) => sum + e._count.results, 0);
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
-      {/* 1. Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
+    <div className="space-y-8 animate-in fade-in-50 duration-300">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
         <div>
-          <div className="flex items-center space-x-2 mb-1">
-            <RoleBadge role="EVENT_COORDINATOR" />
-            <span className="text-xs font-mono text-[#E85A4F] font-bold bg-[#EAE7DC] px-2 py-0.5 rounded border border-[#8E8D8A]/20">
-              Prof. Rajesh Ranjan
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono">
-            Coordinator Scoring &amp; Operations
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Coordinator Dashboard
           </h1>
-          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
-            Manage live match fixtures, push real-time score updates, and finalize official podium results.
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Manage assigned events, record scores, and publish results.
           </p>
         </div>
-
         <Link href="/dashboard/coordinator/results">
-          <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm">
-            <Trophy className="w-3.5 h-3.5" />
-            Official Results Entry
-          </button>
+          <Button variant="neonAmber" size="sm" className="text-xs font-bold">
+            <Trophy className="h-4 w-4 mr-1.5" /> Open Results Publisher
+          </Button>
         </Link>
       </div>
 
-      {/* 2. Coordinated Events Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {COORDINATED_EVENTS.map((evt) => (
-          <div
-            key={evt.id}
-            onClick={() => setSelectedEvent(evt.id)}
-            className={`p-5 rounded-3xl border transition-all cursor-pointer shadow-sm space-y-3 font-mono ${
-              selectedEvent === evt.id
-                ? "bg-[#F6F4EE] border-[#E85A4F] ring-1 ring-[#E85A4F]"
-                : "bg-[#F6F4EE] border-[#8E8D8A]/25 hover:border-[#E85A4F]"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#1A1918] uppercase">
-                {evt.category}
-              </span>
-              <span className="text-[9px] font-bold text-[#E85A4F]">
-                {evt.status}
-              </span>
-            </div>
-            <h3 className="text-sm font-bold text-[#1A1918] uppercase">{evt.title}</h3>
-            <p className="text-[11px] text-[#8E8D8A]">{evt.venue}</p>
-            <div className="pt-2 border-t border-[#8E8D8A]/15 text-[10px] text-[#8E8D8A] flex justify-between">
-              <span>{evt.teamsRegistered} Teams / Enrolled</span>
-              <span className="text-[#E85A4F] font-bold">Select →</span>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Kpi icon={<Trophy className="h-4 w-4 text-amber-300" />} label="Events" value={events.length} accent="text-amber-300" />
+        <Kpi icon={<Users className="h-4 w-4 text-cyan-300" />} label="Registrations" value={totalRegs} accent="text-cyan-300" />
+        <Kpi icon={<Activity className="h-4 w-4 text-emerald-300" />} label="Check-ins" value={totalScans} accent="text-emerald-300" />
+        <Kpi icon={<Award className="h-4 w-4 text-purple-300" />} label="Podiums" value={totalPublished} accent="text-purple-300" />
       </div>
 
-      {/* 3. Real-Time Score Updater Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:col-span-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-5">
-          <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
-            <div>
-              <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
-                <Radio className="w-4 h-4 text-[#E85A4F] mr-2" /> Live Match Telemetry
-              </h2>
-              <p className="text-xs text-[#8E8D8A] font-mono mt-1">
-                Push live scores to attendee dashboards and public tickers.
+      <Card className="glass-panel border-white/10 bg-slate-900/70">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold text-white">My Events</CardTitle>
+          <CardDescription className="text-xs text-slate-400">
+            Events assigned to you, or unassigned.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {events.length === 0 ? (
+            <div className="rounded-xl border border-white/10 bg-slate-950/60 p-6 text-center">
+              <Info className="h-6 w-6 text-slate-500 mx-auto mb-2" />
+              <p className="text-sm text-slate-300">No events assigned</p>
+              <p className="text-xs text-slate-500 mt-1">
+                Contact the admin to be assigned as the coordinator of an event.
               </p>
             </div>
-            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase border border-[#8E8D8A]/20">
-              LIVE BROADCAST
-            </span>
-          </div>
-
-          <form onSubmit={handleScoreUpdate} className="space-y-4 font-mono text-xs">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] text-[#8E8D8A] uppercase">Team / Participant A</label>
-                <input
-                  type="text"
-                  value={scoreForm.teamA}
-                  onChange={(e) => setScoreForm({ ...scoreForm, teamA: e.target.value })}
-                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-[#8E8D8A] uppercase">Team / Participant B</label>
-                <input
-                  type="text"
-                  value={scoreForm.teamB}
-                  onChange={(e) => setScoreForm({ ...scoreForm, teamB: e.target.value })}
-                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] text-[#8E8D8A] uppercase">Score A</label>
-                <input
-                  type="text"
-                  value={scoreForm.scoreA}
-                  onChange={(e) => setScoreForm({ ...scoreForm, scoreA: e.target.value })}
-                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-[#8E8D8A] uppercase">Score B</label>
-                <input
-                  type="text"
-                  value={scoreForm.scoreB}
-                  onChange={(e) => setScoreForm({ ...scoreForm, scoreB: e.target.value })}
-                  className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-                />
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center justify-center gap-2 shadow-sm"
-              >
-                <Save className="w-4 h-4" /> Broadcast Live Score
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Right: Quick Podium Finalization */}
-        <div className="lg:col-span-5 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
-          <div className="border-b border-[#8E8D8A]/20 pb-4">
-            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
-              <Award className="w-4 h-4 text-[#E85A4F] mr-2" /> Podium Finalization
-            </h2>
-            <p className="text-xs text-[#8E8D8A] font-mono mt-1">
-              Trigger automated merit certificate generation and leaderboard points.
-            </p>
-          </div>
-
-          <div className="space-y-3 font-mono text-xs">
-            <div className="space-y-1">
-              <label className="text-[10px] text-[#8E8D8A] uppercase">🥇 1st Place (Champion)</label>
-              <input
-                type="text"
-                value={podiumForm.winner}
-                onChange={(e) => setPodiumForm({ ...podiumForm, winner: e.target.value })}
-                className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] text-[#8E8D8A] uppercase">🥈 2nd Place (Runner-Up)</label>
-              <input
-                type="text"
-                value={podiumForm.firstRunner}
-                onChange={(e) => setPodiumForm({ ...podiumForm, firstRunner: e.target.value })}
-                className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] text-[#8E8D8A] uppercase">🥉 3rd Place (2nd Runner-Up)</label>
-              <input
-                type="text"
-                value={podiumForm.secondRunner}
-                onChange={(e) => setPodiumForm({ ...podiumForm, secondRunner: e.target.value })}
-                className="w-full p-2.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"
-              />
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={handlePublishPodium}
-                className="w-full py-2.5 rounded-xl bg-[#1A1918] text-[#EAE7DC] text-xs font-mono font-bold uppercase hover:bg-[#E85A4F] transition-colors flex items-center justify-center gap-2"
-              >
-                <FileCheck className="w-4 h-4" /> Publish Podium &amp; Issue Certs
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+          ) : (
+            <ul className="divide-y divide-white/5">
+              {events.map((e) => (
+                <li
+                  key={e.id}
+                  className="py-3 flex items-center justify-between gap-3 flex-wrap"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] font-mono border-white/10 text-slate-300"
+                      >
+                        {e.category.name}
+                      </Badge>
+                      <span className="font-mono text-[10px] text-slate-400">Day {e.dayNumber}</span>
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] font-mono ${
+                          e.status === "COMPLETED"
+                            ? "border-emerald-500/30 text-emerald-300"
+                            : e.status === "ONGOING"
+                            ? "border-cyan-500/30 text-cyan-300"
+                            : e.status === "CANCELLED"
+                            ? "border-red-500/30 text-red-300"
+                            : "border-white/10 text-slate-300"
+                        }`}
+                      >
+                        {statusLabel(e.status)}
+                      </Badge>
+                    </div>
+                    <Link
+                      href={`/events/${e.id}`}
+                      className="block text-sm font-bold text-white hover:text-cyan-300"
+                    >
+                      {e.title}
+                    </Link>
+                    <p className="text-[11px] text-slate-400">{e.venue}</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
+                    <span>{e._count.registrations} reg</span>
+                    <span>·</span>
+                    <span>{e._count.attendances} check-in</span>
+                    <Link
+                      href={`/events/${e.id}`}
+                      className="text-cyan-300 hover:text-cyan-200"
+                    >
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
+  );
+}
+
+function Kpi({
+  icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  accent?: string;
+}) {
+  return (
+    <Card className="glass-panel border-white/10 bg-slate-900/70">
+      <CardContent className="p-4 space-y-1">
+        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+          <span>{label}</span>
+          {icon}
+        </div>
+        <p className={`text-2xl font-black font-mono ${accent ?? "text-white"}`}>
+          {value.toLocaleString("en-IN")}
+        </p>
+      </CardContent>
+    </Card>
   );
 }

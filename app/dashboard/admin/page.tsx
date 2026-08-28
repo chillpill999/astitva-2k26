@@ -1,12 +1,10 @@
 // ============================================================================
-// ASTITVA 2K26 - Admin Control Center (Exteta Luxury Aesthetic)
+// ASTITVA 2K26 - Admin Control Center
 // Path: app/dashboard/admin/page.tsx
 // ============================================================================
 
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   Users,
   Trophy,
@@ -14,335 +12,219 @@ import {
   Search,
   Download,
   TrendingUp,
-  CheckCircle2,
-  AlertCircle,
+  Shield,
   FileSpreadsheet,
+  Megaphone,
+  Calendar,
+  Award,
+  Activity,
 } from "lucide-react";
-import { RoleBadge } from "@/components/dashboard/RoleBadge";
-import { ExportDataModal } from "@/components/dashboard/ExportDataModal";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { getCurrentUser } from "@/lib/auth/auth";
+import { getAdminAnalytics } from "@/lib/analytics/actions";
 
-const REGISTRATION_VELOCITY_DATA = [
-  { day: "Aug 20", registrations: 120, checkins: 0 },
-  { day: "Aug 22", registrations: 280, checkins: 0 },
-  { day: "Aug 24", registrations: 540, checkins: 0 },
-  { day: "Aug 26", registrations: 890, checkins: 0 },
-  { day: "Sept 1", registrations: 1120, checkins: 150 },
-  { day: "Sept 4 (D1)", registrations: 1248, checkins: 1080 },
-];
+export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Admin Control Center | ASTITVA 2K26",
+  description: "Festival-wide operations, analytics, and exports.",
+};
 
-const TOURNAMENT_CAPACITIES = [
-  { name: "Cricket Tournament (11v11)", registered: 16, capacity: 16, percentage: 100 },
-  { name: "BGMI LAN Championship (4v4)", registered: 32, capacity: 32, percentage: 100 },
-  { name: "Tark-Vitark Hindi Debate", registered: 42, capacity: 50, percentage: 84 },
-  { name: "Nrityangana Classical Dance", registered: 28, capacity: 30, percentage: 93 },
-  { name: "Grandmaster Chess Blitz", registered: 64, capacity: 64, percentage: 100 },
-];
+const ROLE_LABELS: Record<string, string> = {
+  ADMIN: "Admin",
+  EVENT_COORDINATOR: "Coordinator",
+  VOLUNTEER: "Volunteer",
+  TEAM_CAPTAIN: "Captain",
+  PARTICIPANT: "Participant",
+};
 
-const PARTICIPANTS_DATA = [
-  {
-    id: "AST26-0001",
-    name: "Dr. Shailendra Kumar",
-    roll: "LNJPIT-ADMIN-01",
-    branch: "CSE",
-    role: "ADMIN" as const,
-    events: 3,
-    status: "Checked In",
-  },
-  {
-    id: "AST26-0002",
-    name: "Prof. Rajesh Ranjan",
-    roll: "LNJPIT-FAC-042",
-    branch: "ECE",
-    role: "EVENT_COORDINATOR" as const,
-    events: 5,
-    status: "Checked In",
-  },
-  {
-    id: "AST26-0003",
-    name: "Ananya Sharma",
-    roll: "23105128014",
-    branch: "EE",
-    role: "VOLUNTEER" as const,
-    events: 2,
-    status: "Checked In",
-  },
-  {
-    id: "AST26-0004",
-    name: "Aman Verma",
-    roll: "22105128005",
-    branch: "ME",
-    role: "TEAM_CAPTAIN" as const,
-    events: 4,
-    status: "Checked In",
-  },
-  {
-    id: "AST26-0005",
-    name: "Sneha Kumari",
-    roll: "24105128032",
-    branch: "CE",
-    role: "PARTICIPANT" as const,
-    events: 3,
-    status: "Registered",
-  },
-];
+const EXPORT_KINDS = ["registrations", "attendance", "results", "certificates", "participants", "teams"] as const;
 
-export default function AdminDashboardPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("ALL");
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+export default async function AdminDashboardPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?callbackUrl=/dashboard/admin");
+  if (user.role !== "ADMIN") redirect("/unauthorized?attempted=/dashboard/admin");
 
-  const filteredParticipants = PARTICIPANTS_DATA.filter((p) => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.roll.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === "ALL" || p.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
+  const data = await getAdminAnalytics();
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
-      {/* 1. Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
+    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918] dark:text-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
         <div>
-          <div className="flex items-center space-x-2 mb-1">
-            <RoleBadge role="ADMIN" />
-            <span className="text-xs font-mono text-[#E85A4F] font-bold bg-[#EAE7DC] px-2 py-0.5 rounded border border-[#8E8D8A]/20">
-              Dr. Shailendra Kumar · Principal Admin
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono">
-            Executive Festival Control Center
-          </h1>
-          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
-            Platform governance, cross-branch telemetry, gate controls, and real-time database audits.
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Admin Control Center</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Signed in as {user.name}. Real-time festival metrics from the production database.
           </p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setIsExportModalOpen(true)}
-            className="px-4 py-2 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5 shadow-sm"
-          >
-            <Download className="w-3.5 h-3.5 text-[#E85A4F]" />
-            Export Reports
-          </button>
+        <div className="flex items-center gap-2">
           <Link href="/dashboard/admin/analytics">
-            <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm">
-              <TrendingUp className="w-3.5 h-3.5" />
-              Deep Analytics →
-            </button>
+            <Button variant="neonCyan" size="sm" className="text-xs font-bold">
+              <Activity className="h-4 w-4 mr-1.5" /> Analytics
+            </Button>
           </Link>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/api/export/registrations?format=csv">
+            <Button variant="outline" size="sm" className="text-xs font-bold">
+              <Download className="h-4 w-4 mr-1.5" /> Export
+            </Button>
+          </a>
         </div>
       </div>
 
-      {/* 2. Top Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
-        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
-            <span>Total Enrolled</span>
-            <Users className="w-4 h-4 text-[#1A1918]" />
-          </div>
-          <p className="text-3xl font-bold text-[#1A1918]">1,248</p>
-          <p className="text-[10px] text-[#E85A4F]">+18% vs last year</p>
-        </div>
-
-        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
-            <span>Total Checked In</span>
-            <UserCheck className="w-4 h-4 text-[#E85A4F]" />
-          </div>
-          <p className="text-3xl font-bold text-[#E85A4F]">1,080</p>
-          <p className="text-[10px] text-[#8E8D8A]">86.5% gate turnover</p>
-        </div>
-
-        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
-            <span>Tournaments Live</span>
-            <Trophy className="w-4 h-4 text-[#1A1918]" />
-          </div>
-          <p className="text-3xl font-bold text-[#1A1918]">16 / 16</p>
-          <p className="text-[10px] text-[#E85A4F]">100% capacity filled</p>
-        </div>
-
-        <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-5 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#8E8D8A]">
-            <span>Certificates Issued</span>
-            <CheckCircle2 className="w-4 h-4 text-[#E85A4F]" />
-          </div>
-          <p className="text-3xl font-bold text-[#1A1918]">412</p>
-          <p className="text-[10px] text-[#8E8D8A]">HMAC-SHA256 verified</p>
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <Kpi icon={<Users className="h-4 w-4 text-cyan-300" />} label="Users" value={data.totals.users} />
+        <Kpi icon={<UserCheck className="h-4 w-4 text-emerald-300" />} label="Registrations" value={data.totals.registrations} accent="text-emerald-300" />
+        <Kpi icon={<Trophy className="h-4 w-4 text-amber-300" />} label="Events" value={data.totals.events} accent="text-amber-300" />
+        <Kpi icon={<Award className="h-4 w-4 text-purple-300" />} label="Certificates" value={data.totals.certificates} accent="text-purple-300" />
+        <Kpi icon={<Megaphone className="h-4 w-4 text-rose-300" />} label="Active Announcements" value={data.totals.announcements} accent="text-rose-300" />
       </div>
 
-      {/* 3. Analytics Chart & Event Capacity Bento */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left: Registration Velocity Chart (7 cols) */}
-        <div className="lg:col-span-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
-            <div>
-              <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
-                <TrendingUp className="w-4 h-4 text-[#E85A4F] mr-2" /> Registration &amp; Check-In Velocity
-              </h2>
-              <p className="text-xs text-[#8E8D8A] font-mono mt-1">
-                Daily cumulative student enrollment vs gate scans.
-              </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className="glass-panel border-white/10 bg-slate-900/70 lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold text-white flex items-center">
+              <TrendingUp className="h-4 w-4 text-cyan-300 mr-2" /> 14-Day Registration Velocity
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-400">
+              New registrations per day.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {data.registrationVelocity.length === 0 ? (
+              <EmptyHint label="No registrations yet" />
+            ) : (
+              <div className="grid grid-cols-14 gap-1.5 h-32 items-end" style={{ gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
+                {(() => {
+                  const max = Math.max(1, ...data.registrationVelocity.map((v) => v.count));
+                  return data.registrationVelocity.map((v) => (
+                    <div key={v.day} className="flex flex-col items-center gap-1">
+                      <div
+                        className="w-full rounded-md bg-gradient-to-t from-cyan-500/30 to-cyan-300/90 border border-cyan-400/40"
+                        style={{ height: `${Math.max(4, (v.count / max) * 110)}px` }}
+                        title={`${v.count} registrations on ${v.day}`}
+                      />
+                      <span className="text-[8px] font-mono text-slate-500">{v.day}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel border-white/10 bg-slate-900/70">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold text-white">Attendance Rate</CardTitle>
+            <CardDescription className="text-xs text-slate-400">
+              {data.totals.attendance} scans / {data.totals.registrations} registrations
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-4xl font-black font-mono text-emerald-300">
+              {data.attendanceRate.toFixed(1)}%
+            </p>
+            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400"
+                style={{ width: `${Math.min(100, data.attendanceRate)}%` }}
+              />
             </div>
-          </div>
+            <p className="text-[11px] text-slate-400 pt-1">
+              {data.totals.teams} teams · {data.totals.announcements} active announcements
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-          <div className="h-64 w-full pt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={REGISTRATION_VELOCITY_DATA}>
-                <defs>
-                  <linearGradient id="colorReg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#E85A4F" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#E85A4F" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="colorCheck" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#1A1918" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#1A1918" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#8E8D8A" opacity={0.2} />
-                <XAxis dataKey="day" stroke="#8E8D8A" fontSize={10} />
-                <YAxis stroke="#8E8D8A" fontSize={10} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#F6F4EE",
-                    borderColor: "#8E8D8A",
-                    borderRadius: "16px",
-                    fontSize: "12px",
-                    fontFamily: "monospace",
-                    color: "#1A1918",
-                  }}
-                />
-                <Area type="monotone" dataKey="registrations" stroke="#E85A4F" fill="url(#colorReg)" />
-                <Area type="monotone" dataKey="checkins" stroke="#1A1918" fill="url(#colorCheck)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Right: Tournament Capacity Tracker (5 cols) */}
-        <div className="lg:col-span-5 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm space-y-4">
-          <div className="border-b border-[#8E8D8A]/20 pb-4">
-            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase">
-              Tournament Slot Utilization
-            </h2>
-            <p className="text-xs text-[#8E8D8A] font-mono mt-1">Live squad &amp; slot saturation rates.</p>
-          </div>
-
-          <div className="space-y-4 font-mono text-xs">
-            {TOURNAMENT_CAPACITIES.map((item) => (
-              <div key={item.name} className="space-y-1.5">
-                <div className="flex justify-between items-center text-[11px]">
-                  <span className="font-bold text-[#1A1918] truncate pr-2">{item.name}</span>
-                  <span className="text-[#E85A4F] font-bold shrink-0">{item.percentage}%</span>
-                </div>
-                <div className="w-full bg-[#EAE7DC] h-1.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-[#E85A4F] h-full rounded-full"
-                    style={{ width: `${item.percentage}%` }}
-                  />
-                </div>
-                <div className="flex justify-between text-[9px] text-[#8E8D8A]">
-                  <span>{item.registered} Registered</span>
-                  <span>Cap: {item.capacity}</span>
+      <Card className="glass-panel border-white/10 bg-slate-900/70">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold text-white flex items-center">
+            <FileSpreadsheet className="h-4 w-4 text-amber-300 mr-2" /> Data Export Center
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-400">
+            Download CSV or Excel of operational datasets. All downloads are audit-logged.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {EXPORT_KINDS.map((e) => (
+              <div key={e} className="rounded-xl border border-white/10 bg-slate-950/70 p-3 space-y-2">
+                <p className="text-sm font-bold text-white capitalize">{e}</p>
+                <p className="text-[10px] text-slate-400 font-mono">/api/export/{e}</p>
+                <div className="flex gap-2">
+                  <a href={`/api/export/${e}?format=csv`}>
+                    <Button size="sm" variant="outline" className="text-[10px] font-bold">
+                      <Download className="h-3 w-3 mr-1" /> CSV
+                    </Button>
+                  </a>
+                  <a href={`/api/export/${e}?format=xlsx`}>
+                    <Button size="sm" variant="neonCyan" className="text-[10px] font-bold">
+                      <Download className="h-3 w-3 mr-1" /> XLSX
+                    </Button>
+                  </a>
                 </div>
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="glass-panel border-white/10 bg-slate-900/70">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold text-white flex items-center">
+            <Shield className="h-4 w-4 text-rose-300 mr-2" /> Quick Links
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <Link href="/dashboard/admin/analytics" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
+            <Activity className="h-4 w-4 text-cyan-300 mb-1" /> Detailed Analytics
+          </Link>
+          <Link href="/announcements" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
+            <Megaphone className="h-4 w-4 text-rose-300 mb-1" /> Announcements
+          </Link>
+          <Link href="/results" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
+            <Trophy className="h-4 w-4 text-amber-300 mb-1" /> Results
+          </Link>
+          <Link href="/schedule" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
+            <Calendar className="h-4 w-4 text-emerald-300 mb-1" /> Schedule
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function Kpi({
+  icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  accent?: string;
+}) {
+  return (
+    <Card className="glass-panel border-white/10 bg-slate-900/70">
+      <CardContent className="p-4 space-y-1">
+        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+          <span>{label}</span>
+          {icon}
         </div>
-      </div>
+        <p className={`text-2xl font-black font-mono ${accent ?? "text-white"}`}>
+          {value.toLocaleString("en-IN")}
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
 
-      {/* 4. Filterable User Registry Table */}
-      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#8E8D8A]/20 pb-4">
-          <div>
-            <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase">
-              Master Participant &amp; Role Registry
-            </h2>
-            <p className="text-xs text-[#8E8D8A] font-mono mt-1">
-              Search and filter across all authenticated college stakeholders.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8D8A]" />
-              <input
-                type="text"
-                placeholder="Search name, roll, ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 pr-3 py-1.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] placeholder:text-[#8E8D8A]/60 focus:outline-none focus:border-[#E85A4F]"
-              />
-            </div>
-
-            <select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="p-1.5 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-xs font-mono text-[#1A1918] focus:outline-none"
-            >
-              <option value="ALL">All Roles</option>
-              <option value="ADMIN">Admin</option>
-              <option value="EVENT_COORDINATOR">Coordinator</option>
-              <option value="VOLUNTEER">Volunteer</option>
-              <option value="TEAM_CAPTAIN">Captain</option>
-              <option value="PARTICIPANT">Participant</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto font-mono text-xs">
-          <table className="w-full text-left">
-            <thead className="bg-[#EAE7DC] border-b border-[#8E8D8A]/20 uppercase text-[#1A1918]">
-              <tr>
-                <th className="py-3 px-4">Participant ID</th>
-                <th className="py-3 px-4">Full Name</th>
-                <th className="py-3 px-4">Roll / Dept</th>
-                <th className="py-3 px-4">Branch</th>
-                <th className="py-3 px-4">Assigned Role</th>
-                <th className="py-3 px-4">Tournaments</th>
-                <th className="py-3 px-4 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#8E8D8A]/15">
-              {filteredParticipants.map((user) => (
-                <tr key={user.id} className="hover:bg-[#EAE7DC]/50 transition-colors">
-                  <td className="py-3 px-4 font-bold text-[#E85A4F]">{user.id}</td>
-                  <td className="py-3 px-4 font-bold text-[#1A1918]">{user.name}</td>
-                  <td className="py-3 px-4 text-[#8E8D8A]">{user.roll}</td>
-                  <td className="py-3 px-4 text-[#8E8D8A]">{user.branch}</td>
-                  <td className="py-3 px-4">
-                    <RoleBadge role={user.role} />
-                  </td>
-                  <td className="py-3 px-4 text-[#1A1918] font-bold">{user.events} Events</td>
-                  <td className="py-3 px-4 text-right">
-                    <span className="text-[10px] font-bold text-[#E85A4F] uppercase">
-                      {user.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <ExportDataModal
-        isOpen={isExportModalOpen}
-        onClose={() => setIsExportModalOpen(false)}
-      />
+function EmptyHint({ label }: { label: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-slate-950/60 p-6 text-center">
+      <p className="text-sm text-slate-400">{label}</p>
     </div>
   );
 }

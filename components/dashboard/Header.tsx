@@ -18,7 +18,7 @@ interface HeaderProps {
 export function Header({
   title,
   role,
-  userName = "Sneha Kumari",
+  userName,
   onMobileMenuToggle,
 }: HeaderProps) {
   const pathname = usePathname();

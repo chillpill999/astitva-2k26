@@ -33,7 +33,7 @@ interface SidebarProps {
 
 export function Sidebar({
   userRole,
-  userName = "Sneha Kumari",
+  userName,
   userAvatar,
   participantId = "AST26-0005",
   isMobileOpen = false,

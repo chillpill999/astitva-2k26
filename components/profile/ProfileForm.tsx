@@ -180,7 +180,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               <Input
                 id="fullName"
                 {...register("fullName")}
-                placeholder="e.g. Sneha Kumari"
+                placeholder="e.g. Rohan Kumar"
                 className="bg-[#EAE7DC] border-[#8E8D8A]/30 text-[#1A1918] placeholder:text-[#8E8D8A]/60 text-xs font-mono rounded-xl focus-visible:ring-[#E85A4F]"
               />
               {errors.fullName && (

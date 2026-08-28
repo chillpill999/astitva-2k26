@@ -1,317 +1,253 @@
 // ============================================================================
-// ASTITVA 2K26 - Participant Command Center (Exteta Luxury Aesthetic)
+// ASTITVA 2K26 - Participant Dashboard (real DB)
 // Path: app/dashboard/participant/page.tsx
 // ============================================================================
 
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
-  Sparkles,
   QrCode,
-  Calendar,
+  Trophy,
   Award,
-  CheckCircle2,
+  Calendar,
   Clock,
   MapPin,
   ArrowRight,
-  Trophy,
-  Download,
-  ChevronRight,
+  Info,
 } from "lucide-react";
-import { RoleBadge } from "@/components/dashboard/RoleBadge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { getCurrentUser } from "@/lib/auth/auth";
+import { prisma } from "@/lib/db/prisma";
+import { getUserCertificates } from "@/lib/certificates/actions";
 
-const REGISTERED_EVENTS = [
-  {
-    id: "cricket-tournament",
-    title: "LNJPIT Premier Cricket League",
-    category: "Sports",
-    venue: "Main Sports Arena (Ground A)",
-    date: "4 Sept 2026, 09:00 AM",
-    day: "Day 01",
-    status: "Confirmed",
-    teamName: "LNJPIT Titans",
-  },
-  {
-    id: "bgmi-championship",
-    title: "BGMI LAN Invitational Battle",
-    category: "Gaming",
-    venue: "Central Seminar Hall (LAN Deck)",
-    date: "6 Sept 2026, 02:00 PM",
-    day: "Day 03",
-    status: "Squad Ready",
-    teamName: "Alpha Squad Chapra",
-  },
-  {
-    id: "tark-vitark",
-    title: "Tark-Vitark Hindi Parliamentary Debate",
-    category: "Literary",
-    venue: "Auditorium Room 102",
-    date: "5 Sept 2026, 11:30 AM",
-    day: "Day 02",
-    status: "Confirmed",
-    teamName: null,
-  },
-];
+export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Participant Dashboard | ASTITVA 2K26",
+  description: "Your registrations, QR pass, and certificates.",
+};
 
-const CERTIFICATES_DATA = [
-  {
-    title: "Certificate of Participation",
-    event: "ASTITVA 2025 - Annual Fest",
-    id: "AST25-CERT-8842",
-    status: "Verified & Downloadable",
-    date: "Issued Sept 2025",
-  },
-  {
-    title: "Certificate of Excellence (Runner-Up)",
-    event: "Inter-Branch Coding Hackathon",
-    id: "AST26-CERT-PENDING",
-    status: "In Progress (Sept 2026)",
-    date: "Awaiting Finals",
-  },
-];
+function formatDateTime(iso: string | Date) {
+  const d = typeof iso === "string" ? new Date(iso) : iso;
+  return d.toLocaleString("en-IN", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
-export default function ParticipantDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"my-events" | "today">("my-events");
+export default async function ParticipantDashboardPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?callbackUrl=/dashboard/participant");
+  if (user.role !== "PARTICIPANT" && user.role !== "TEAM_CAPTAIN" && user.role !== "ADMIN") {
+    redirect("/unauthorized?attempted=/dashboard/participant");
+  }
+
+  const [profile, registrations, certificates] = await Promise.all([
+    prisma.profile.findUnique({ where: { userId: user.id } }),
+    prisma.registration.findMany({
+      where: { userId: user.id },
+      include: {
+        event: { include: { category: true } },
+        team: true,
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    getUserCertificates(user.id),
+  ]);
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
-      {/* 1. Header Welcome Banner */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
+    <div className="space-y-8 animate-in fade-in-50 duration-300">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
         <div>
-          <div className="flex items-center space-x-2 mb-1">
-            <RoleBadge role="PARTICIPANT" />
-            <span className="font-mono text-xs text-[#E85A4F] font-bold bg-[#EAE7DC] px-2 py-0.5 rounded border border-[#8E8D8A]/20">
-              AST26-0005
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono">
-            Participant Command Center
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Participant Dashboard
           </h1>
-          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
-            Welcome back, <span className="text-[#1A1918] font-bold">Sneha Kumari</span> (CE • Sem 2). Track your passes, brackets, and check-in status.
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            Signed in as {user.name}. View your registrations, QR pass, and certificates.
           </p>
         </div>
-
         <Link href="/events">
-          <button className="px-4 py-2 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-colors flex items-center gap-1.5 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            Explore 16 Events
-          </button>
+          <Button variant="neonCyan" size="sm" className="text-xs font-bold">
+            <Trophy className="h-4 w-4 mr-1.5" /> Browse Events
+          </Button>
         </Link>
       </div>
 
-      {/* 2. Top Bento Grid: 4-Step Registration Tracker (8 cols) + Digital QR Pass Widget (4 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        {/* Left: 75% Complete Progress Tracker (8 cols) */}
-        <div className="lg:col-span-8 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm flex flex-col justify-between space-y-6">
-          <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
-            <div>
-              <h2 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
-                <CheckCircle2 className="w-4 h-4 text-[#E85A4F] mr-2" />
-                Festival Readiness &amp; Registration Lifecycle
-              </h2>
-              <p className="text-xs text-[#8E8D8A] font-mono mt-1">
-                Your credentials are verified. Complete remaining steps before Day 1 gate entry.
-              </p>
-            </div>
-            <span className="font-mono text-lg font-black text-[#E85A4F] bg-[#EAE7DC] px-3 py-1 rounded-xl border border-[#8E8D8A]/25">
-              75%
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            {/* Progress Bar */}
-            <div className="w-full bg-[#EAE7DC] h-2 rounded-full overflow-hidden">
-              <div className="bg-[#E85A4F] h-full rounded-full w-3/4" />
-            </div>
-
-            {/* 4-Step Progress Steps */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
-              <div className="p-3 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-1">
-                <span className="text-[10px] text-[#E85A4F] uppercase font-bold flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> Step 1
-                </span>
-                <p className="text-xs font-bold text-[#1A1918]">Profile Setup</p>
-                <span className="text-[10px] text-[#E85A4F] block">Completed</span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-1">
-                <span className="text-[10px] text-[#E85A4F] uppercase font-bold flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> Step 2
-                </span>
-                <p className="text-xs font-bold text-[#1A1918]">Pass Selection</p>
-                <span className="text-[10px] text-[#E85A4F] block">All-Access Pass</span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-1">
-                <span className="text-[10px] text-[#E85A4F] uppercase font-bold flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> Step 3
-                </span>
-                <p className="text-xs font-bold text-[#1A1918]">Team Alignment</p>
-                <span className="text-[10px] text-[#E85A4F] block">3 Events Confirmed</span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-1">
-                <span className="text-[10px] text-[#8E8D8A] uppercase font-bold flex items-center">
-                  <Clock className="w-3 h-3 mr-1" /> Step 4
-                </span>
-                <p className="text-xs font-bold text-[#1A1918]">Gate Check-In</p>
-                <span className="text-[10px] text-[#8E8D8A] block">Sept 4 Kickoff</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Digital QR Access Badge Card (4 cols) */}
-        <div className="lg:col-span-4 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 shadow-sm flex flex-col justify-between space-y-4">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-3">
-              <span className="text-xs font-bold font-mono text-[#1A1918] tracking-wider uppercase">
-                ASTITVA <span className="text-[#E85A4F]">2K26</span>
-              </span>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
-                PRO PASS
-              </span>
-            </div>
-
-            <div className="rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 p-5 text-center space-y-2">
-              <QrCode className="w-20 h-20 text-[#1A1918] mx-auto" />
-              <p className="font-mono text-sm font-black text-[#E85A4F] tracking-widest">
-                AST26-0005
-              </p>
-              <p className="text-[10px] text-[#8E8D8A] font-mono">
-                HMAC-SHA256 DIGITAL GATE PASS
-              </p>
-            </div>
-          </div>
-
-          <Link href="/profile">
-            <button className="w-full py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center justify-center gap-1 cursor-pointer">
-              View Holographic ID Card
-              <ChevronRight className="w-3.5 h-3.5 ml-1" />
-            </button>
-          </Link>
-        </div>
-      </div>
-
-      {/* 3. Horizontal Registered Tournaments Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Trophy className="w-5 h-5 text-[#E85A4F]" />
-            <h2 className="text-lg font-bold font-mono text-[#1A1918] uppercase">
-              My Registered Tournaments ({REGISTERED_EVENTS.length})
-            </h2>
-          </div>
-
-          <div className="flex gap-1 p-1 bg-[#F6F4EE] rounded-2xl border border-[#8E8D8A]/25 text-xs font-mono">
-            <button
-              onClick={() => setActiveTab("my-events")}
-              className={`px-3 py-1 rounded-xl font-bold transition-all ${
-                activeTab === "my-events" ? "bg-[#1A1918] text-[#EAE7DC]" : "text-[#8E8D8A]"
-              }`}
-            >
-              All Events
-            </button>
-            <button
-              onClick={() => setActiveTab("today")}
-              className={`px-3 py-1 rounded-xl font-bold transition-all ${
-                activeTab === "today" ? "bg-[#1A1918] text-[#EAE7DC]" : "text-[#8E8D8A]"
-              }`}
-            >
-              Schedule
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {REGISTERED_EVENTS.map((evt) => (
-            <div
-              key={evt.id}
-              className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 hover:border-[#E85A4F] transition-all p-5 space-y-4 shadow-sm flex flex-col justify-between"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#1A1918] uppercase">
-                    {evt.category}
-                  </span>
-                  <span className="text-[10px] font-mono text-[#8E8D8A]">{evt.day}</span>
-                </div>
-                <h3 className="text-sm font-bold font-mono text-[#1A1918] uppercase">
-                  {evt.title}
-                </h3>
-                <div className="space-y-1 text-xs font-mono text-[#8E8D8A]">
-                  <p className="flex items-center">
-                    <MapPin className="w-3.5 h-3.5 text-[#E85A4F] mr-1.5 flex-shrink-0" />
-                    {evt.venue}
-                  </p>
-                  <p className="flex items-center">
-                    <Calendar className="w-3.5 h-3.5 text-[#E85A4F] mr-1.5 flex-shrink-0" />
-                    {evt.date}
-                  </p>
-                  {evt.teamName && (
-                    <p className="text-[#E85A4F] font-bold text-[11px] pt-1">
-                      Squad: {evt.teamName}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-[#8E8D8A]/15 flex items-center justify-between font-mono">
-                <span className="text-[10px] font-bold text-[#E85A4F] flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
-                  {evt.status}
-                </span>
-                <Link href={`/events/${evt.id}`}>
-                  <span className="text-xs font-bold text-[#1A1918] hover:text-[#E85A4F] flex items-center">
-                    Details <ArrowRight className="w-3 h-3 ml-1" />
-                  </span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className="glass-panel border-white/10 bg-slate-900/70 lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold text-white flex items-center">
+              <Calendar className="h-4 w-4 text-cyan-300 mr-2" /> My Registrations
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-400">
+              {registrations.length === 0
+                ? "You have not registered for any events yet."
+                : `${registrations.length} event${registrations.length === 1 ? "" : "s"} registered`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {registrations.length === 0 ? (
+              <div className="rounded-xl border border-white/10 bg-slate-950/60 p-6 text-center">
+                <Info className="h-6 w-6 text-slate-500 mx-auto mb-2" />
+                <p className="text-sm text-slate-300">No registrations yet</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Visit the event catalog to register for individual or team events.
+                </p>
+                <Link href="/events" className="inline-block mt-3">
+                  <Button size="sm" variant="neonCyan" className="text-xs font-bold">
+                    Browse Event Catalog
+                  </Button>
                 </Link>
               </div>
+            ) : (
+              <ul className="divide-y divide-white/5">
+                {registrations.map((r) => (
+                  <li key={r.id} className="py-3 flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] font-mono border-white/10 text-slate-300"
+                        >
+                          {r.event.category.name}
+                        </Badge>
+                        <span className="font-mono text-[10px] text-slate-400">
+                          Day {r.event.dayNumber}
+                        </span>
+                      </div>
+                      <Link
+                        href={`/events/${r.event.id}`}
+                        className="block text-sm font-bold text-white hover:text-cyan-300 truncate"
+                      >
+                        {r.event.title}
+                      </Link>
+                      <p className="text-[11px] text-slate-400 flex items-center gap-1">
+                        <MapPin className="h-3 w-3" /> {r.event.venue}
+                      </p>
+                      <p className="text-[11px] text-slate-400 flex items-center gap-1">
+                        <Clock className="h-3 w-3" /> {formatDateTime(r.event.scheduleStart)}
+                      </p>
+                      {r.team && (
+                        <p className="text-[11px] text-cyan-300 font-mono mt-1">
+                          Squad: {r.team.name} ({r.team.code})
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] font-mono ${
+                          r.status === "ATTENDED"
+                            ? "border-emerald-500/30 text-emerald-300"
+                            : r.status === "CONFIRMED"
+                            ? "border-cyan-500/30 text-cyan-300"
+                            : r.status === "PENDING"
+                            ? "border-amber-500/30 text-amber-300"
+                            : "border-white/10 text-slate-300"
+                        }`}
+                      >
+                        {r.status}
+                      </Badge>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        {r.registrationNumber}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel border-white/10 bg-slate-900/70">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold text-white flex items-center">
+              <QrCode className="h-4 w-4 text-cyan-300 mr-2" /> Digital Pass
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-center">
+            <div className="rounded-2xl border border-cyan-500/30 bg-slate-950/80 p-6">
+              <QrCode className="w-20 h-20 text-cyan-300 mx-auto" />
+              <p className="font-mono text-sm font-black text-cyan-300 mt-2">
+                {profile?.participantId ?? user.participantId ?? "—"}
+              </p>
+              <p className="text-[10px] text-slate-400 font-mono">
+                HMAC-SHA256 encrypted pass
+              </p>
             </div>
-          ))}
-        </div>
+            <Link href="/profile">
+              <Button variant="outline" size="sm" className="text-xs w-full">
+                Manage Profile
+              </Button>
+            </Link>
+            <Link href="/api/qr/issue" target="_blank">
+              <Button variant="neonCyan" size="sm" className="text-xs w-full">
+                Issue / Refresh Pass
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* 4. Verifiable Credentials & Certificates Showcase */}
-      <div className="rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-7 shadow-sm space-y-4">
-        <div className="border-b border-[#8E8D8A]/20 pb-4">
-          <h3 className="text-base font-bold font-mono text-[#1A1918] uppercase flex items-center">
-            <Award className="w-4 h-4 text-[#E85A4F] mr-2" />
-            Verifiable Festival Credentials &amp; PDF Certificates
-          </h3>
-          <p className="text-xs text-[#8E8D8A] font-mono mt-1">
-            HMAC-SHA256 cryptographically signed certificates issued by LNJPIT Organizing Committee.
-          </p>
-        </div>
-        <div className="pt-2 divide-y divide-[#8E8D8A]/15 font-mono">
-          {CERTIFICATES_DATA.map((cert) => (
-            <div
-              key={cert.id}
-              className="py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-            >
-              <div className="space-y-0.5">
-                <h4 className="text-xs font-bold text-[#1A1918] uppercase">{cert.title}</h4>
-                <p className="text-[11px] text-[#8E8D8A]">
-                  {cert.event} • <span className="text-[#E85A4F] font-bold">{cert.id}</span>
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] text-[#8E8D8A]">{cert.date}</span>
-                <button
-                  disabled={cert.id.includes("PENDING")}
-                  className="px-3 py-1.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] disabled:opacity-50 transition-all flex items-center gap-1.5"
-                >
-                  <Download className="w-3 h-3 text-[#E85A4F]" />
-                  Download PDF
-                </button>
-              </div>
+      <Card className="glass-panel border-white/10 bg-slate-900/70">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-bold text-white flex items-center">
+            <Award className="h-4 w-4 text-amber-300 mr-2" /> Certificates
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-400">
+            Verifiable certificates with HMAC-SHA256 signatures.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {certificates.length === 0 ? (
+            <div className="rounded-xl border border-white/10 bg-slate-950/60 p-6 text-center">
+              <Info className="h-6 w-6 text-slate-500 mx-auto mb-2" />
+              <p className="text-sm text-slate-300">No certificates yet</p>
+              <p className="text-xs text-slate-500 mt-1">
+                Certificates are issued automatically when an event coordinator records
+                results.
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
+          ) : (
+            <ul className="divide-y divide-white/5">
+              {certificates.map((c) => (
+                <li
+                  key={c.id}
+                  className="py-3 flex items-center justify-between gap-3 flex-wrap"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-white">{c.title}</p>
+                    <p className="text-[11px] text-slate-400">
+                      {c.eventName} · {c.category}
+                    </p>
+                    <p className="text-[10px] font-mono text-cyan-300">{c.certificateNumber}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-slate-400">
+                      {new Date(c.issueDate).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <Link
+                      href={`/verify-certificate/${c.certificateNumber}`}
+                      target="_blank"
+                      className="text-cyan-300 hover:text-cyan-200"
+                    >
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

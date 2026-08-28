@@ -35,7 +35,7 @@ export default async function ResultsPage() {
               <Trophy className="mr-1.5 h-3 w-3 inline text-[#E85A4F]" /> LIVE PODIUM PUBLICATION
             </span>
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#1A1918] uppercase">
-              RESULTS. GLORY. <span className="text-[#E85A4F]">CHAMPIONS.</span>
+              Results &amp; <span className="text-[#E85A4F]">Podiums</span>
             </h1>
             <p className="text-sm sm:text-base text-[#8E8D8A] font-mono leading-relaxed">
               {published.length} of {events.length} events have published podium results. Each
