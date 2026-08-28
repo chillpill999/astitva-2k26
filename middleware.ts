@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Edge RBAC & Clerk Authentication Middleware
+// ASTITVA 2K26 - Edge RBAC & Authentication Middleware (Resilient Hybrid)
 // Path: middleware.ts
 // ============================================================================
 
@@ -17,14 +17,14 @@ const isProtectedRoute = createRouteMatcher([
 
 const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
-export default clerkMiddleware(async (auth, req) => {
+const hasClerkKeys =
+  Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) &&
+  Boolean(process.env.CLERK_SECRET_KEY);
+
+async function handleAppAuth(req: NextRequest, hasClerkSession = false) {
   const { pathname } = req.nextUrl;
 
-  // 1. Check Clerk auth session
-  const clerkAuth = await auth();
-  const hasClerkSession = !!clerkAuth?.userId;
-
-  // 2. Check Local / Mock session token
+  // 1. Check Local / Mock session token
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const secret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
   let user: SessionUser | null = null;
@@ -42,14 +42,14 @@ export default clerkMiddleware(async (auth, req) => {
           user = parsed;
         }
       } catch {
-        // ignore JSON parse error
+        // ignore parse error
       }
     }
   }
 
-  const isAuthenticated = hasClerkSession || !!user;
+  const isAuthenticated = hasClerkSession || Boolean(user);
 
-  // 3. Handle Protected Routes
+  // 2. Handle Protected Routes
   if (isProtectedRoute(req)) {
     if (!isAuthenticated) {
       const signInUrl = new URL("/sign-in", req.url);
@@ -57,7 +57,7 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(signInUrl);
     }
 
-    // Role-Based Route Access Control (when local user profile is present)
+    // Role-Based Route Access Control
     if (user) {
       const role = user.role;
       if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
@@ -96,7 +96,7 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // 4. Smart Redirect for Authenticated Users accessing /sign-in or /sign-up without ?switch=true
+  // 3. Smart Redirect for Authenticated Users accessing /sign-in or /sign-up without ?switch=true
   if (isAuthRoute(req) && user && !req.nextUrl.searchParams.has("switch")) {
     const callbackUrl = req.nextUrl.searchParams.get("callbackUrl");
     if (callbackUrl && callbackUrl.startsWith("/")) {
@@ -106,6 +106,19 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   return NextResponse.next();
+}
+
+export default clerkMiddleware(async (auth, req) => {
+  let hasClerkSession = false;
+  if (hasClerkKeys) {
+    try {
+      const clerkAuth = await auth();
+      hasClerkSession = Boolean(clerkAuth?.userId);
+    } catch {
+      // Fall back gracefully if Clerk session lookup fails
+    }
+  }
+  return handleAppAuth(req, hasClerkSession);
 });
 
 export const config = {
