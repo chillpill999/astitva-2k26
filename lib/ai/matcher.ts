@@ -207,8 +207,14 @@ function suggested(intent: QueryIntent, relatedEventId?: string) {
 }
 
 async function callGemini(message: string, snapshot: KnowledgeSnapshot): Promise<string | null> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  if (!apiKey) return null;
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn("callGemini: No API key found in process.env");
+    return null;
+  }
 
   try {
     const prompt = `You are AstitvaBot, the official intelligent AI Assistant for ASTITVA 2K26 (Annual Sports, Cultural, Gaming & Literary Festival of LNJPIT Chapra, September 4 to September 8, 2026).
@@ -244,10 +250,15 @@ Respond warmly, concisely, and accurately in markdown.`;
       }
     );
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Gemini API Error:", res.status, errText);
+      return null;
+    }
     const data = await res.json();
     return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-  } catch {
+  } catch (err) {
+    console.error("callGemini exception:", err);
     return null;
   }
 }
