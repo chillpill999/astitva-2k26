@@ -206,6 +206,51 @@ function suggested(intent: QueryIntent, relatedEventId?: string) {
   return actions;
 }
 
+async function callGemini(message: string, snapshot: KnowledgeSnapshot): Promise<string | null> {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const prompt = `You are AstitvaBot, the official intelligent AI Assistant for ASTITVA 2K26 (Annual Sports, Cultural, Gaming & Literary Festival of LNJPIT Chapra, September 4 to September 8, 2026).
+
+Festival Context:
+- Theme: Where Sports, Talent, Creativity & Entertainment Come Together
+- Categories: Sports (Cricket, Football, Volleyball, Badminton, Chess), Cultural (Dance, Singing, Stand-up Comedy, Ramp Walk), Gaming (BGMI, Free Fire), Literary (Debate, Quiz, Poetry Slam, Creative Writing).
+- Recognition & Awards: Winner Certificates, Runner-Up Certificates, Participation Certificates, Championship Trophies, and Medals. (Zero cash prizes / No prize pool money).
+- QR Passes: Tamper-resistant HMAC-SHA256 encrypted digital QR passes for check-in and attendance.
+- Certificate Verification: Authenticated at /verify-certificate/<id>.
+- Venues: LNJPIT Main Ground, Indoor Sports Arena, Central Auditorium, Seminar Hall 1, Computer Lab 3.
+
+Events & Knowledge:
+${JSON.stringify(snapshot.events.length > 0 ? snapshot.events : "Standard 16 Flagship Events (Cricket, Football, Volleyball, Badminton, Chess, Battle of Bands, Classical & Western Solo Dance, Standup Comedy, Fashion Ramp Walk, BGMI Esports Championship, Free Fire Battle Royale, National Debate, Mega Tech Quiz, Hindi/English Poetry Slam, Creative Writing)", null, 2)}
+
+User Question: ${message}
+
+Respond warmly, concisely, and accurately in markdown.`;
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 500,
+          },
+        }),
+      }
+    );
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function askAssistant(message: string): Promise<AiResponse> {
   const snapshot = await getKnowledgeSnapshot();
   const intent = classifyIntent(message);
@@ -220,6 +265,17 @@ export async function askAssistant(message: string): Promise<AiResponse> {
         },
       ]
     : [];
+
+  // Try live Gemini LLM first for rich conversational answers
+  const geminiText = await callGemini(message, snapshot);
+  if (geminiText) {
+    return {
+      answer: geminiText,
+      intent,
+      relatedEvents,
+      suggestedActions: suggested(intent, matched?.event?.slug || matched?.event?.id),
+    };
+  }
 
   switch (intent) {
     case "GREETING": {
