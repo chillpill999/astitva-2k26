@@ -3,6 +3,7 @@
 // Path: components/landing/index.ts
 // ============================================================================
 
+export * from "./EditorialHero";
 export { HeroShaderCanvas, ParticleHeroCanvas } from "./HeroShaderCanvas";
 export * from "./CountdownTimer";
 export * from "./FestivalStatsStrip";

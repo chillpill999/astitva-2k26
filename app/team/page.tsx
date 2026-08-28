@@ -1,26 +1,14 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Organizing Committee & Leadership Directory Portal
-// Path: app/team/page.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   Users,
   Mail,
-  Phone,
-  Linkedin,
-  Github,
   GraduationCap,
   Sparkles,
-  ShieldCheck,
-  Award,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { STATIC_COMMITTEE, FestCommitteeMember } from "@/lib/data/fest-data";
 
 export default function TeamPage() {
@@ -41,28 +29,29 @@ export default function TeamPage() {
   });
 
   return (
-    <div className="w-full min-h-screen bg-[#030712] text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-16">
+    <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-16">
       <div className="container max-w-7xl mx-auto space-y-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#8E8D8A]/20 pb-8">
           <div className="space-y-3 max-w-3xl">
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-purple-500/30 text-purple-400 bg-purple-950/30">
-              <GraduationCap className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
-              ORGANIZING COMMITTEE &amp; VOLUNTEERS
-            </Badge>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase">
-              FESTIVAL <span className="cyber-gradient-text">LEADERSHIP</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+              <GraduationCap className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+              <span>ORGANIZING COMMITTEE &amp; VOLUNTEERS</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              FESTIVAL <span className="text-[#E85A4F]">LEADERSHIP</span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-300">
+            <p className="text-sm sm:text-base text-[#8E8D8A]">
               The dedicated faculty advisory and student executive teams making ASTITVA 2K26 a grand reality.
             </p>
           </div>
 
           <div className="flex items-center space-x-3">
-            <Link href="/events">
-              <Button variant="outline" className="border-white/20 hover:border-cyan-400 text-xs font-bold">
-                View Tournaments
-              </Button>
+            <Link
+              href="/events"
+              className="px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase border border-[#8E8D8A]/35 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
+            >
+              VIEW TOURNAMENTS
             </Link>
           </div>
         </div>
@@ -74,10 +63,10 @@ export default function TeamPage() {
               key={c.value}
               type="button"
               onClick={() => setSelectedCategory(c.value)}
-              className={`px-4 py-2 rounded-full text-xs font-mono font-medium transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                 selectedCategory === c.value
-                  ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm shadow-purple-500/20"
-                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                  ? "bg-[#1A1918] text-[#EAE7DC] font-bold"
+                  : "bg-[#F6F4EE] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
               }`}
             >
               {c.label}
@@ -87,108 +76,50 @@ export default function TeamPage() {
 
         {/* Committee Members Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {filteredMembers.map((m) => {
-            const isFaculty = m.category === "FACULTY";
-
-            return (
-              <div
-                key={m.id}
-                className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0d1224]/90 border shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
-                  isFaculty
-                    ? "border-amber-500/30 hover:border-amber-500/60 hover:shadow-amber-500/10"
-                    : "border-white/10 hover:border-cyan-500/40 hover:shadow-cyan-500/10"
-                }`}
-              >
-                <div className="space-y-4">
-                  {/* Photo Avatar & Badge */}
-                  <div className="flex items-start justify-between">
-                    <div className="relative h-20 w-20 rounded-2xl overflow-hidden border-2 border-white/15 bg-slate-900 shadow-lg group-hover:scale-105 transition-transform">
-                      {m.photoUrl ? (
-                        <Image
-                          src={m.photoUrl}
-                          alt={m.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-slate-800 flex items-center justify-center text-slate-400">
-                          <Users className="h-8 w-8" />
-                        </div>
-                      )}
+          {filteredMembers.map((m) => (
+            <div
+              key={m.id}
+              className="group relative flex flex-col justify-between p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all duration-300 hover:-translate-y-1"
+            >
+              <div className="flex items-start space-x-4">
+                <div className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden border border-[#8E8D8A]/30 bg-[#EAE7DC]">
+                  {m.photoUrl ? (
+                    <Image
+                      src={m.photoUrl}
+                      alt={m.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-[#8E8D8A]">
+                      <Users className="h-8 w-8" />
                     </div>
-
-                    <Badge
-                      variant={isFaculty ? "amber" : "cyan"}
-                      className="text-[9px] font-mono font-bold uppercase"
-                    >
-                      {m.category.replace("_", " ")}
-                    </Badge>
-                  </div>
-
-                  {/* Name & Role */}
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-cyan-300 transition-colors">
-                      {m.name}
-                    </h3>
-                    <p className="text-xs font-mono font-bold text-cyan-400">
-                      {m.role}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {m.department}
-                    </p>
-                  </div>
+                  )}
                 </div>
 
-                {/* Contact & Social Strip */}
-                <div className="pt-4 border-t border-white/5 mt-6 flex items-center justify-between text-xs text-slate-400">
-                  <div className="flex items-center space-x-3">
-                    {m.email && (
-                      <a
-                        href={`mailto:${m.email}`}
-                        className="hover:text-cyan-400 transition-colors"
-                        title={m.email}
-                      >
-                        <Mail className="h-4 w-4" />
-                      </a>
-                    )}
-                    {m.phone && (
-                      <a
-                        href={`tel:${m.phone}`}
-                        className="hover:text-cyan-400 transition-colors"
-                        title={m.phone}
-                      >
-                        <Phone className="h-4 w-4" />
-                      </a>
-                    )}
-                    {m.linkedinUrl && (
-                      <a
-                        href={m.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-cyan-400 transition-colors"
-                        title="LinkedIn"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    )}
-                    {m.githubUrl && (
-                      <a
-                        href={m.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-cyan-400 transition-colors"
-                        title="GitHub"
-                      >
-                        <Github className="h-4 w-4" />
-                      </a>
-                    )}
-                  </div>
-
-                  <span className="text-[10px] font-mono text-slate-500">LNJPIT Chapra</span>
+                <div className="space-y-1 min-w-0">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase">
+                    {m.role}
+                  </span>
+                  <h3 className="text-base font-bold text-[#1A1918] group-hover:text-[#E85A4F] transition-colors truncate">
+                    {m.name}
+                  </h3>
+                  <p className="text-xs text-[#8E8D8A] truncate">
+                    {m.department}
+                  </p>
                 </div>
               </div>
-            );
-          })}
+
+              {m.email && (
+                <div className="pt-4 border-t border-[#8E8D8A]/15 mt-4 flex items-center justify-between text-xs text-[#8E8D8A] font-mono">
+                  <span className="truncate">{m.email}</span>
+                  <a href={`mailto:${m.email}`} className="text-[#E85A4F] hover:underline">
+                    CONTACT →
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

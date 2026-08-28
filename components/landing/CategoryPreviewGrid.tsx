@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - 4-Pillar Category Preview Cards Grid
-// Path: components/landing/CategoryPreviewGrid.tsx
-// ============================================================================
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,74 +15,64 @@ const CATEGORY_THEMES: Record<
   string,
   {
     icon: React.ElementType;
-    badgeVariant: "amber" | "purple" | "cyan" | "emerald";
-    accentColor: string;
-    borderGlow: string;
+    number: string;
     prizeTag: string;
-    gradient: string;
+    events: string[];
   }
 > = {
   sports: {
     icon: Trophy,
-    badgeVariant: "amber",
-    accentColor: "text-amber-400",
-    borderGlow: "group-hover:border-amber-500/50 group-hover:shadow-amber-500/10",
+    number: "01",
     prizeTag: "₹75,000+ Pool",
-    gradient: "from-amber-500/20 via-transparent to-transparent",
+    events: ["Cricket", "Football", "Volleyball", "Badminton", "Chess"],
   },
   cultural: {
     icon: Music,
-    badgeVariant: "purple",
-    accentColor: "text-purple-400",
-    borderGlow: "group-hover:border-purple-500/50 group-hover:shadow-purple-500/10",
+    number: "02",
     prizeTag: "₹72,000+ Pool",
-    gradient: "from-purple-500/20 via-transparent to-transparent",
+    events: ["Solo & Group Dance", "Singing", "Standup Comedy", "Ramp Walk"],
   },
   gaming: {
     icon: Gamepad2,
-    badgeVariant: "cyan",
-    accentColor: "text-cyan-400",
-    borderGlow: "group-hover:border-cyan-500/50 group-hover:shadow-cyan-500/10",
+    number: "03",
     prizeTag: "₹53,000+ Pool",
-    gradient: "from-cyan-500/20 via-transparent to-transparent",
+    events: ["BGMI Squad Battle", "Free Fire Championship"],
   },
   literary: {
     icon: BookOpen,
-    badgeVariant: "emerald",
-    accentColor: "text-emerald-400",
-    borderGlow: "group-hover:border-emerald-500/50 group-hover:shadow-emerald-500/10",
+    number: "04",
     prizeTag: "₹36,000+ Pool",
-    gradient: "from-emerald-500/20 via-transparent to-transparent",
+    events: ["Parliamentary Debate", "Mega Fest Quiz", "Poetry", "Creative Writing"],
   },
 };
 
 export function CategoryPreviewGrid({ categories }: CategoryPreviewProps) {
   return (
-    <section className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#030712] border-b border-white/10">
+    <section id="categories" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#EAE7DC] text-[#1A1918] border-b border-[#8E8D8A]/20">
       <div className="container max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-cyan-500/30 text-cyan-400 bg-cyan-950/30">
-              <Sparkles className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
-              THE 4 PILLARS OF EXCELLENCE
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase">
-              EXPLORE FESTIVAL <span className="cyber-gradient-text">ARENAS</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+              <Sparkles className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+              <span>THE 4 ARENAS OF EXCELLENCE</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              FESTIVAL <span className="text-[#E85A4F]">CATEGORIES</span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-300">
-              Select an arena to browse tournament rules, venue locations, team size constraints, and prize pools.
+            <p className="text-sm sm:text-base text-[#8E8D8A]">
+              Select an arena to explore tournament rulebooks, venues, team limits, and prize allocations.
             </p>
           </div>
 
           <Link href="/events">
-            <Badge variant="outline" className="text-xs font-mono py-2 px-4 border-white/20 text-slate-300 hover:border-cyan-400 hover:text-white transition-all cursor-pointer">
-              View All 16 Tournaments →
-            </Badge>
+            <span className="inline-flex items-center text-xs font-mono font-semibold py-2 px-4 rounded border border-[#8E8D8A]/40 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all cursor-pointer">
+              ALL 16 TOURNAMENTS →
+            </span>
           </Link>
         </div>
 
-        {/* 4 Cards Grid */}
+        {/* 4 Luxury Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => {
             const theme = CATEGORY_THEMES[category.slug.toLowerCase()] || CATEGORY_THEMES.sports;
@@ -99,57 +84,53 @@ export function CategoryPreviewGrid({ categories }: CategoryPreviewProps) {
                 href={`/events?category=${category.slug}`}
                 className="group block"
               >
-                <div
-                  className={`h-full relative overflow-hidden rounded-2xl bg-[#0d1224]/90 border border-white/10 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 ${theme.borderGlow} flex flex-col justify-between`}
-                >
-                  {/* Top Image Preview Banner */}
-                  <div className="relative h-44 w-full overflow-hidden bg-slate-900">
-                    {category.coverImage ? (
-                      <Image
-                        src={category.coverImage}
-                        alt={category.name}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-60 group-hover:opacity-80"
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-slate-900" />
-                    )}
-                    {/* Gradient Fade */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d1224] via-[#0d1224]/40 to-transparent" />
-
-                    {/* Top Floating Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950/80 border border-white/15 backdrop-blur-md">
-                        <Icon className={`h-4.5 w-4.5 ${theme.accentColor}`} />
+                <div className="relative flex flex-col justify-between h-full p-6 sm:p-7 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all duration-300 hover:-translate-y-1.5">
+                  <div className="space-y-4">
+                    {/* Top Index & Icon */}
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded border border-[#8E8D8A]/25 bg-[#EAE7DC] flex items-center justify-center text-[#E85A4F] group-hover:bg-[#E85A4F] group-hover:text-white transition-colors">
+                        <Icon className="w-5 h-5" />
                       </div>
-                      <Badge variant={theme.badgeVariant} className="text-[10px] font-mono font-bold">
-                        {theme.prizeTag}
-                      </Badge>
+                      <span className="font-mono text-xl font-bold text-[#D8C3A5] group-hover:text-[#E85A4F] transition-colors">
+                        {theme.number}
+                      </span>
                     </div>
-                  </div>
 
-                  {/* Body Content */}
-                  <div className="p-5 sm:p-6 space-y-3 flex-1 flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-black text-white tracking-wide group-hover:text-cyan-300 transition-colors">
-                          {category.name} Arena
-                        </h3>
-                        <span className="text-[11px] font-mono text-slate-400 font-bold">
-                          {category.eventCount || (category.slug === "sports" ? 5 : category.slug === "gaming" ? 3 : 4)} Events
-                        </span>
-                      </div>
-
-                      <p className="text-xs text-slate-400 leading-relaxed line-clamp-3">
-                        {category.description}
+                    <div>
+                      <h3 className="text-xl font-bold text-[#1A1918] tracking-tight group-hover:text-[#E85A4F] transition-colors uppercase">
+                        {category.name}
+                      </h3>
+                      <p className="text-xs font-mono text-[#E85A4F] font-semibold mt-0.5">
+                        {theme.prizeTag}
                       </p>
                     </div>
 
-                    {/* Card Footer CTA */}
-                    <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-bold text-slate-300 group-hover:text-cyan-400 transition-colors">
-                      <span>Enter Arena</span>
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <p className="text-xs text-[#8E8D8A] leading-relaxed line-clamp-2">
+                      {category.description}
+                    </p>
+
+                    {/* Featured Events Pill List */}
+                    <div className="pt-2 flex flex-wrap gap-1.5">
+                      {theme.events.slice(0, 3).map((eventName, eIdx) => (
+                        <span
+                          key={eIdx}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/20 text-[#1A1918]"
+                        >
+                          {eventName}
+                        </span>
+                      ))}
+                      {theme.events.length > 3 && (
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#EAE7DC] text-[#8E8D8A]">
+                          +{theme.events.length - 3} more
+                        </span>
+                      )}
                     </div>
+                  </div>
+
+                  {/* Bottom Action */}
+                  <div className="pt-5 border-t border-[#8E8D8A]/15 mt-5 flex items-center justify-between text-xs font-mono font-semibold text-[#1A1918] group-hover:text-[#E85A4F]">
+                    <span>BROWSE ARENA</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform text-[#E85A4F]" />
                   </div>
                 </div>
               </Link>

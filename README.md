@@ -398,12 +398,15 @@ erDiagram
 
 ### 🔴 Admin — `/dashboard/admin`
 Full system control with analytics, user management, event CRUD, sponsor management, audit logs, and data export.
+- `/dashboard/admin/analytics` — Live KPIs, registration velocity, branch & gender distribution, category popularity, top events, and the data export center (CSV / XLSX for registrations, attendance, results, certificates, participants, teams).
 
 ### 🟡 Event Coordinator — `/dashboard/coordinator`
 Manages assigned events: registration approvals, score entry, result publishing, attendance monitoring, and announcement creation.
+- `/dashboard/coordinator/results` — Live podium publisher with rank 1/2/3 entry, auto-certificate issuance on save, and event-completion lock.
 
 ### 🟢 Volunteer — `/dashboard/volunteer`
 QR code scanner terminal for participant check-ins with real-time validation, duplicate prevention, and attendance dashboard.
+- `/dashboard/volunteer/scanner` — Full-screen live camera (html5-qrcode) + manual lookup. Every scan writes an immutable `CheckInLog` + `AuditLog` entry; rate-limited to 30 scans/min/scanner; duplicate scans are blocked at the DB level.
 
 ### 🔵 Team Captain — `/dashboard/captain`
 Team creation hub with invite code generation, member approval/removal, roster management, and team event submissions.
@@ -452,43 +455,85 @@ The UI implements the **Astitva 2K26 Visual Framework** — a premium dark glass
 |--------|----------|-------------|
 | `POST` | `/api/auth/mock/login` | Authenticate with email/password |
 | `POST` | `/api/auth/mock/logout` | Clear session cookie |
-| `GET` | `/api/auth/mock/me` | Get current user session |
+| `GET`  | `/api/auth/mock/me` | Get current user session |
 | `POST` | `/api/auth/mock/switch-role` | Switch role (dev only) |
-| `GET` | `/api/auth/mock` | List available mock users |
+| `GET`  | `/api/auth/mock` | List available mock users |
+
+### QR / Scanner Routes
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/qr/issue` | Issue a signed participant QR pass |
+| `POST` | `/api/qr/scan` | Validate a scanned QR token + record attendance |
+
+### AI / Notifications / Export
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/ai/chat` | AstitvaBot conversational endpoint |
+| `GET`  | `/api/notifications` | List my in-app notifications |
+| `POST` | `/api/notifications` | Mark read / mark-all-read |
+| `GET`  | `/api/export/[type]?format=csv\|xlsx` | Download CSV/XLSX for registrations, attendance, results, certificates, participants, teams |
 
 ### Server Actions
 
 | Module | Actions | Description |
 |--------|---------|-------------|
-| `lib/events/actions.ts` | `getEvents`, `getEventById`, `registerForEvent` | Event catalog & registration |
-| `lib/teams/actions.ts` | `createTeam`, `joinTeam`, `approveTeamMember` | Team management |
-| `lib/profile/actions.ts` | `getProfile`, `updateProfile`, `generateParticipantId` | Profile CRUD |
+| `lib/events/actions.ts` | `getEventsCatalog`, `getEventBySlugOrId`, `registerSoloEvent`, `cancelRegistration` | Event catalog & registration |
+| `lib/teams/actions.ts` | `createTeam`, `getTeamDetails`, `joinTeamByCode`, `manageTeamMember`, `disbandTeam` | Team management |
+| `lib/profile/actions.ts` | `getProfile`, `updateProfile` | Profile CRUD |
+| `lib/attendance/actions.ts` | `scanQrToken`, `manualLookupCheckIn`, `revokeQrPass`, `getAttendanceMetrics` | Volunteer scanner (rate-limited, audit-logged) |
+| `lib/results/actions.ts` | `recordEventResults`, `deleteResult`, `getEventResults`, `getLeaderboard`, `getBranchStandings` | Podium publishing + multi-stream leaderboards |
+| `lib/certificates/actions.ts` | `issueCertificate`, `getPublicCertificate`, `getUserCertificates` | Verifiable AST26-CERT-XXXXX issuance + verification |
+| `lib/ai/actions.ts` | `askFestAssistant`, `createAnnouncement`, `createNotification`, `markNotificationRead` | AI chat, broadcasts, in-app notifications |
+| `lib/analytics/actions.ts` | `getAdminAnalytics` | Festival-wide metrics |
+| `lib/export/index.ts` | `exportAsCSV`, `exportAsXLSX` | Operational data export |
 
 ---
 
 ## 🧪 Testing
 
-The project includes a **4-tier automated test suite** with **167 test cases**:
+The project includes the master E2E suite plus M5–M9 unit/integration tests:
 
 ```bash
-# Run full test suite
+# Master E2E suite (167 cases across 4 tiers)
 npm run test:e2e
+
+# Milestone-specific
+npx tsx tests/m5/qr-crypto.test.ts             # 17 cases — HMAC token crypto
+npx tsx tests/m5/attendance-integration.test.ts # 10 cases — DB-backed scanner logic
+npx tsx tests/m7/certificate-crypto.test.ts    # 12 cases — certificate signing
+npx tsx tests/m8/ai-matcher.test.ts            # 14 cases — intent classification
+npx tsx tests/m9/export.test.ts                #  4 cases — export filename + format
 ```
 
-| Tier | Focus | Cases |
+| Suite | Focus | Cases |
 |------|-------|-------|
-| **Tier 1** | Core features (auth, events, teams, QR, certificates) | 70+ |
-| **Tier 2** | Boundary conditions & edge cases | 40+ |
-| **Tier 3** | Cross-feature pairwise workflows | 30+ |
-| **Tier 4** | Load simulation & stress tests | 25+ |
+| **M5 QR Crypto** | HMAC-SHA256 issue/verify, tampering, expiry | 17 |
+| **M5 Attendance Integration** | Pass issue, revoke, dedup, audit, rate-limit | 10 |
+| **M7 Certificate Crypto** | Cert signing, canonical payload, tamper detection | 12 |
+| **M8 AI Matcher** | Intent classification, word-boundary regexes | 14 |
+| **M9 Export** | Filename + format helpers | 4 |
+| **Tier 1–4 E2E** | Opaque-box master suite (PGlite) | 167 |
 
-Additional adversarial test suites verify security constraints, RBAC enforcement, and data integrity under concurrent operations.
+Adversarial suites live under `tests/adversarial/` and `tests/challenger_*.ts` for security stress-testing.
 
 ---
 
 ## 🚢 Deployment
 
-### Vercel (Recommended)
+### Docker (Recommended for self-hosting)
+
+```bash
+# Build and run app + PostgreSQL 16 + Adminer
+docker compose up -d
+
+# App on  http://localhost:3000
+# DB   on  localhost:5432 (postgres / postgres)
+# Adminer on http://localhost:8080
+```
+
+### Vercel (Recommended for production)
 
 ```bash
 # Install Vercel CLI

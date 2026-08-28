@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.github
+tests
+*.md
+.env
+.env.local
+.env.production
+.env.development
+.vscode
+.idea
+*.log
+.DS_Store
+prisma/seed.ts

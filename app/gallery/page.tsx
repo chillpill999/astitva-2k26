@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Multimedia Festival Highlights Gallery Portal
-// Path: app/gallery/page.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,12 +8,7 @@ import {
   Sparkles,
   Maximize2,
   Filter,
-  ArrowRight,
-  Share2,
-  Download,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { STATIC_GALLERY, FestGalleryItem } from "@/lib/data/fest-data";
 import { GalleryModal } from "@/components/landing/GalleryModal";
 
@@ -63,28 +53,29 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#030712] text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-12">
       <div className="container max-w-7xl mx-auto space-y-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#8E8D8A]/20 pb-8">
           <div className="space-y-3 max-w-3xl">
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-cyan-500/30 text-cyan-400 bg-cyan-950/30">
-              <Camera className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
-              VISUAL REPOSITORIES &amp; ARCHIVES
-            </Badge>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase">
-              FESTIVAL <span className="cyber-gradient-text">GALLERY</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+              <Camera className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+              <span>VISUAL REPOSITORIES &amp; ARCHIVES</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              FESTIVAL <span className="text-[#E85A4F]">GALLERY</span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-300">
+            <p className="text-sm sm:text-base text-[#8E8D8A]">
               High-resolution snapshots from thrilling athletic victories, theatrical stages, esports LAN arenas, and star night concerts.
             </p>
           </div>
 
           <div className="flex items-center space-x-3">
-            <Link href="/events">
-              <Button variant="outline" className="border-white/20 hover:border-cyan-400 text-xs font-bold">
-                Join 2026 Arenas
-              </Button>
+            <Link
+              href="/events"
+              className="px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+            >
+              JOIN 2026 ARENAS
             </Link>
           </div>
         </div>
@@ -96,10 +87,10 @@ export default function GalleryPage() {
               key={c.value}
               type="button"
               onClick={() => setSelectedCategory(c.value)}
-              className={`px-4 py-2 rounded-full text-xs font-mono font-medium transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                 selectedCategory === c.value
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                  ? "bg-[#1A1918] text-[#EAE7DC] font-bold"
+                  : "bg-[#F6F4EE] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
               }`}
             >
               {c.label}
@@ -107,62 +98,44 @@ export default function GalleryPage() {
           ))}
         </div>
 
-        {/* Gallery Grid */}
+        {/* Media Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((item) => (
             <div
               key={item.id}
               onClick={() => handleOpen(item)}
-              className="group relative h-80 rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl cursor-pointer transition-all duration-300 hover:border-cyan-500/50 hover:scale-[1.02]"
+              className="group relative h-64 sm:h-72 rounded-2xl overflow-hidden cursor-pointer bg-[#D8C3A5]/40 border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all"
             >
               <Image
                 src={item.mediaUrl}
                 alt={item.title}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-75 group-hover:opacity-100"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1918]/90 via-transparent to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-
-              {/* Hover Zoom Icon */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-cyan-500/90 text-black shadow-xl">
-                  <Maximize2 className="h-7 w-7" />
-                </div>
-              </div>
-
-              {/* Caption Overlay */}
-              <div className="absolute bottom-4 left-4 right-4 space-y-1.5">
-                <div className="flex items-center space-x-2">
-                  <Badge variant="cyan" className="text-[10px] font-mono font-bold">
-                    {item.category}
-                  </Badge>
-                  <span className="text-[11px] font-mono text-slate-400">
-                    ASTITVA {item.year}
-                  </span>
-                </div>
-                <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-1">
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded bg-[#E85A4F] uppercase font-bold">
+                  {item.category}
+                </span>
+                <h4 className="text-base font-bold mt-1.5 text-white">
                   {item.title}
-                </h3>
-                {item.description && (
-                  <p className="text-xs text-slate-300 line-clamp-2">
-                    {item.description}
-                  </p>
-                )}
+                </h4>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      <GalleryModal
-        item={activeItem}
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onNext={handleNext}
-        onPrev={handlePrev}
-      />
+      {modalOpen && activeItem && (
+        <GalleryModal
+          isOpen={modalOpen}
+          item={activeItem}
+          onClose={() => setModalOpen(false)}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+      )}
     </div>
   );
 }

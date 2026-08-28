@@ -17,8 +17,8 @@ export default async function DashboardLayout({
   const user = await getCurrentUser();
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-slate-100 flex overflow-hidden">
-      {/* Desktop Sidebar (Level 0) */}
+    <div className="min-h-screen bg-[#EAE7DC] text-[#1A1918] flex overflow-hidden">
+      {/* Desktop Sidebar */}
       <Sidebar
         userRole={user?.role}
         userName={user?.name}
@@ -26,8 +26,8 @@ export default async function DashboardLayout({
         participantId={user?.participantId || "AST26-0005"}
       />
 
-      {/* Main Workspace Canvas (Level 1) */}
-      <div className="flex-1 md:ml-64 flex flex-col h-screen overflow-y-auto">
+      {/* Main Workspace Canvas */}
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         <Header
           role={user?.role}
           userName={user?.name}

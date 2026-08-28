@@ -4,65 +4,65 @@
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 43 27% 89%; /* #EAE7DC - Warm Cream Canvas */
+    --foreground: 30 5% 10%; /* #1A1918 - Deep Editorial Charcoal */
 
-    --card: 222.2 84% 6.5%;
-    --card-foreground: 210 40% 98%;
+    --card: 40 28% 95%; /* #F6F4EE - Sand Card */
+    --card-foreground: 30 5% 10%;
 
-    --popover: 222.2 84% 6.5%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 40 28% 95%;
+    --popover-foreground: 30 5% 10%;
 
-    --primary: 189 94% 43%; /* Cyan #06b6d4 */
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 5 77% 61%; /* #E85A4F - Crimson Terracotta */
+    --primary-foreground: 43 27% 89%;
 
-    --secondary: 262 83% 58%; /* Purple #8b5cf6 */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 35 44% 75%; /* #D8C3A5 - Champagne Sand */
+    --secondary-foreground: 30 5% 10%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 38 12% 70%;
+    --muted-foreground: 4 2% 45%; /* #8E8D8A - Mineral Slate */
 
-    --accent: 38 92% 50%; /* Amber #f59e0b */
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 6 74% 68%; /* #E98074 - Coral Rose */
+    --accent-foreground: 43 27% 89%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 5 77% 61%;
+    --destructive-foreground: 43 27% 89%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 189 94% 43%;
+    --border: 40 10% 75%;
+    --input: 40 10% 80%;
+    --ring: 5 77% 61%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 30 5% 7%; /* #121110 - Deep Espresso Charcoal */
+    --foreground: 43 27% 89%; /* #EAE7DC */
 
-    --card: 222.2 84% 6.5%;
-    --card-foreground: 210 40% 98%;
+    --card: 30 5% 11%;
+    --card-foreground: 43 27% 89%;
 
-    --popover: 222.2 84% 6.5%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 30 5% 11%;
+    --popover-foreground: 43 27% 89%;
 
-    --primary: 189 94% 43%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 5 77% 61%;
+    --primary-foreground: 43 27% 89%;
 
-    --secondary: 262 83% 58%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 35 44% 75%;
+    --secondary-foreground: 30 5% 10%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 4 2% 45%;
+    --muted-foreground: 38 12% 70%;
 
-    --accent: 38 92% 50%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 6 74% 68%;
+    --accent-foreground: 43 27% 89%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 5 77% 61%;
+    --destructive-foreground: 43 27% 89%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 189 94% 43%;
+    --border: 30 5% 20%;
+    --input: 30 5% 20%;
+    --ring: 5 77% 61%;
   }
 }
 
@@ -71,73 +71,81 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-cyan-500 selection:text-black;
+    @apply bg-[#EAE7DC] text-[#1A1918] antialiased selection:bg-[#E85A4F] selection:text-white;
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow-x: hidden;
-    background-color: #020617;
   }
 }
 
-/* Glassmorphism & Cyberpunk Neon Custom Utilities */
+/* Luxury Editorial Design Utilities (Exteta Reference) */
 @layer utilities {
-  .glass-panel {
-    background: rgba(15, 23, 42, 0.7);
+  .luxury-canvas {
+    background-color: #EAE7DC;
+    color: #1A1918;
+  }
+
+  .luxury-card {
+    background: rgba(246, 244, 238, 0.85);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(142, 141, 138, 0.25);
+    box-shadow: 0 10px 30px -10px rgba(142, 141, 138, 0.15);
+  }
+
+  .luxury-card-dark {
+    background: rgba(26, 25, 24, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(216, 195, 165, 0.2);
+    color: #EAE7DC;
+  }
+
+  .glass-panel {
+    background: rgba(234, 231, 220, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(142, 141, 138, 0.2);
   }
 
   .glass-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    background: rgba(249, 248, 246, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(142, 141, 138, 0.2);
+    box-shadow: 0 4px 20px -2px rgba(142, 141, 138, 0.08);
   }
 
   .glass-card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .glass-card-hover:hover {
-    border-color: rgba(6, 182, 212, 0.4);
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2), 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    transform: translateY(-2px);
+    border-color: rgba(232, 90, 79, 0.4);
+    box-shadow: 0 12px 36px -8px rgba(232, 90, 79, 0.15);
+    transform: translateY(-3px);
   }
 
-  .glow-cyan {
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.45);
+  .editorial-title {
+    font-family: var(--font-sans, "Inter", sans-serif);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 
-  .glow-purple {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.45);
+  .editorial-sub {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: #8E8D8A;
   }
 
-  .glow-amber {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+  .terracotta-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#E85A4F] via-[#E98074] to-[#D8C3A5];
   }
 
-  .text-glow-cyan {
-    text-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 20px rgba(6, 182, 212, 0.4);
-  }
-
-  .text-glow-purple {
-    text-shadow: 0 0 10px rgba(139, 92, 246, 0.7), 0 0 20px rgba(139, 92, 246, 0.4);
-  }
-
-  .text-glow-amber {
-    text-shadow: 0 0 10px rgba(245, 158, 11, 0.7), 0 0 20px rgba(245, 158, 11, 0.4);
-  }
-
-  .cyber-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-amber-400;
-  }
-  .glow-blue {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.45);
-  }
-
-  .glow-gold {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+  .glow-terracotta {
+    box-shadow: 0 0 25px rgba(232, 90, 79, 0.3);
   }
 
   .status-dot {
@@ -148,39 +156,26 @@
     box-shadow: 0 0 8px currentColor;
   }
 
-  .fest-level0 {
-    background-color: #030712;
-  }
-
-  .fest-level1 {
-    background-color: #0a0a0a;
-  }
-
-  .fest-level2 {
-    background-color: rgba(17, 24, 39, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+  .hairline-border {
+    border-color: rgba(142, 141, 138, 0.25);
   }
 }
 
-/* Custom Cyber Scrollbars */
+/* Custom Editorial Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: #EAE7DC;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #D8C3A5;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #E85A4F;
 }
-

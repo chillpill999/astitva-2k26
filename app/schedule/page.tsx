@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - 5-Day Master Festival Schedule Matrix Portal
-// Path: app/schedule/page.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -17,20 +12,15 @@ import {
   Users,
   Filter,
   ArrowRight,
-  Download,
-  Share2,
-  CheckCircle2,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { STATIC_EVENTS, FestEvent } from "@/lib/data/fest-data";
 
 const FESTIVAL_DAYS = [
-  { day: 1, date: "4 Sept 2026", label: "Day 1", title: "Opening Ceremonies & Knockouts", focus: "Inauguration, Cricket, Debate, BGMI" },
-  { day: 2, date: "5 Sept 2026", label: "Day 2", title: "Indoor Sports & Stage Battles", focus: "Volleyball, Badminton, Dance, Valorant" },
-  { day: 3, date: "6 Sept 2026", label: "Day 3", title: "Quarterfinals & Comedy Gala", focus: "Singing, Comedy, Free Fire, Poetry" },
-  { day: 4, date: "7 Sept 2026", label: "Day 4", title: "Grand Finals & Fashion Runway", focus: "Cricket Finals, Glamour & Grace Ramp, Creative Writing" },
-  { day: 5, date: "8 Sept 2026", label: "Day 5", title: "Valedictory & Star Night", focus: "General Championship Trophy, Prize Distribution, DJ Concert" },
+  { day: 1, date: "4 Sept 2026", label: "Day 01", title: "Opening Ceremonies & Knockouts", focus: "Inauguration, Cricket, Debate, BGMI" },
+  { day: 2, date: "5 Sept 2026", label: "Day 02", title: "Indoor Sports & Stage Battles", focus: "Volleyball, Badminton, Dance, Free Fire" },
+  { day: 3, date: "6 Sept 2026", label: "Day 03", title: "Quarterfinals & Comedy Gala", focus: "Singing, Comedy, Chess, Poetry" },
+  { day: 4, date: "7 Sept 2026", label: "Day 04", title: "Grand Finals & Fashion Runway", focus: "Cricket Finals, Glamour Ramp, Creative Writing" },
+  { day: 5, date: "8 Sept 2026", label: "Day 05", title: "Valedictory & Star Night", focus: "General Championship Trophy, Prize Distribution, DJ Concert" },
 ];
 
 export default function SchedulePage() {
@@ -64,39 +54,41 @@ export default function SchedulePage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#030712] text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-12">
       <div className="container max-w-7xl mx-auto space-y-10">
         {/* Header Title */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#8E8D8A]/20 pb-8">
           <div className="space-y-3 max-w-3xl">
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-cyan-500/30 text-cyan-400 bg-cyan-950/30">
-              <Calendar className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
-              OFFICIAL FESTIVAL TIMETABLE
-            </Badge>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase">
-              5-DAY <span className="cyber-gradient-text">SCHEDULE MATRIX</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+              <Calendar className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+              <span>OFFICIAL FESTIVAL TIMETABLE</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              5-DAY <span className="text-[#E85A4F]">SCHEDULE MATRIX</span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-300">
+            <p className="text-sm sm:text-base text-[#8E8D8A]">
               All 16 canonical tournaments across LNJPIT Chapra campus venues (4–8 September 2026).
             </p>
           </div>
 
           <div className="flex items-center space-x-3">
-            <Link href="/events">
-              <Button variant="outline" className="border-white/20 hover:border-cyan-400 text-xs font-bold">
-                View Event Rules
-              </Button>
+            <Link
+              href="/events"
+              className="px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase border border-[#8E8D8A]/35 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
+            >
+              VIEW EVENT RULES
             </Link>
-            <Link href="/sign-in">
-              <Button variant="neonCyan" className="text-xs font-bold">
-                Get QR Pass
-              </Button>
+            <Link
+              href="/sign-in"
+              className="px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+            >
+              GET QR PASS
             </Link>
           </div>
         </div>
 
         {/* 5-Day Selector Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 p-2 rounded-2xl bg-[#0d1224]/90 border border-white/10 shadow-2xl backdrop-blur-xl">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 p-2 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm">
           {FESTIVAL_DAYS.map((d) => {
             const isSelected = selectedDay === d.day;
             return (
@@ -104,19 +96,19 @@ export default function SchedulePage() {
                 key={d.day}
                 type="button"
                 onClick={() => setSelectedDay(d.day)}
-                className={`flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-xl text-center transition-all cursor-pointer ${
+                className={`flex flex-col items-center justify-center p-4 rounded-xl text-center transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-xl shadow-blue-500/25 border border-cyan-400/40"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                    ? "bg-[#E85A4F] text-white shadow-sm border border-[#E85A4F]"
+                    : "text-[#8E8D8A] hover:text-[#1A1918] hover:bg-[#EAE7DC]"
                 }`}
               >
-                <Badge variant="outline" className={`text-[10px] font-mono mb-1 ${isSelected ? "border-white/40 text-white" : "border-white/10 text-slate-400"}`}>
+                <span className="text-[10px] font-mono font-bold tracking-wider uppercase opacity-85">
                   {d.label}
-                </Badge>
-                <span className="text-base sm:text-lg font-black tracking-tight">
+                </span>
+                <span className="text-sm sm:text-base font-bold tracking-tight mt-0.5">
                   {d.date}
                 </span>
-                <span className="text-[11px] truncate max-w-full font-medium opacity-80 mt-0.5">
+                <span className="text-[11px] font-mono opacity-80 mt-1 line-clamp-1">
                   {d.title}
                 </span>
               </button>
@@ -124,167 +116,91 @@ export default function SchedulePage() {
           })}
         </div>
 
-        {/* Search & Filter Toolbar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#0d1224]/60 border border-white/10">
-          {/* Category Filter Chips */}
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            {categories.map((cat) => (
-              <button
-                key={cat.value}
-                type="button"
-                onClick={() => setSelectedCategory(cat.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all cursor-pointer ${
-                  selectedCategory === cat.value
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Box */}
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        {/* Search & Category Filter Bar */}
+        <div className="p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 space-y-4">
+          <div className="relative w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8E8D8A]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tournament or venue..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-950/80 border border-white/10 text-white placeholder:text-slate-500 text-xs focus:outline-none focus:border-cyan-500/50"
+              placeholder="Search schedule by event name, venue, or coordinator..."
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#1A1918] placeholder:text-[#8E8D8A]/70 text-xs font-mono focus:outline-none focus:border-[#E85A4F]"
             />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {categories.map((c) => (
+              <button
+                key={c.value}
+                type="button"
+                onClick={() => setSelectedCategory(c.value)}
+                className={`px-3 py-1.5 rounded text-xs font-mono transition-colors ${
+                  selectedCategory === c.value
+                    ? "bg-[#1A1918] text-[#EAE7DC] font-bold"
+                    : "bg-[#EAE7DC] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Day 5 Special Valedictory Showcase */}
-        {selectedDay === 5 && (
-          <div className="p-8 sm:p-10 rounded-2xl bg-gradient-to-br from-purple-950/50 via-blue-950/40 to-[#0d1224] border border-purple-500/30 shadow-2xl space-y-6">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="h-6 w-6 text-amber-400 animate-pulse" />
-              <Badge variant="amber" className="text-xs font-mono font-bold">
-                GRAND VALEDICTORY &amp; CLOSING CEREMONY
-              </Badge>
+        {/* Schedule Fixture Cards */}
+        <div className="space-y-4">
+          {filteredEvents.length === 0 ? (
+            <div className="p-12 text-center rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25">
+              <Calendar className="h-10 w-10 text-[#8E8D8A] mx-auto mb-2" />
+              <p className="text-sm font-mono text-[#8E8D8A]">No tournaments match this schedule query.</p>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-white">
-              Grand Valedictory, Championship Rolling Shield &amp; Star Cultural Concert
-            </h2>
-            <p className="text-sm sm:text-base text-slate-300 max-w-4xl leading-relaxed">
-              The grand culmination of ASTITVA 2K26. Hon’ble Principal Dr. Shailendra Kumar awards the coveted Inter-Branch General Championship Shield to the highest-scoring engineering branch. Distribution of ₹1.5L+ cash prizes, medals, HMAC signed certificates, followed by a live star concert and EDM DJ night.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-xs font-mono">
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-white/10">
-                <span className="text-slate-400 block">Timings</span>
-                <span className="text-cyan-300 font-bold text-sm">05:00 PM – 10:30 PM IST</span>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-white/10">
-                <span className="text-slate-400 block">Venue</span>
-                <span className="text-purple-300 font-bold text-sm">Open Air Theatre (OAT Main Stage)</span>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-white/10">
-                <span className="text-slate-400 block">Entry Requirement</span>
-                <span className="text-emerald-300 font-bold text-sm">Verified Participant Pass / ID</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Schedule Cards Matrix */}
-        {filteredEvents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredEvents.map((evt) => {
-              const startTimeStr = new Date(evt.scheduleStart).toLocaleTimeString("en-IN", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              });
-              const endTimeStr = new Date(evt.scheduleEnd).toLocaleTimeString("en-IN", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              });
-
-              return (
-                <div
-                  key={evt.id}
-                  className="group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0d1224]/90 border border-white/10 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-cyan-500/40 hover:bg-[#141c38]/90"
-                >
-                  <div className="space-y-4">
-                    {/* Top Time & Category Badge */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <span className="flex h-2.5 w-2.5 rounded-full bg-cyan-400 animate-pulse" />
-                        <span className="text-xs font-mono font-bold text-cyan-300">
-                          {startTimeStr} – {endTimeStr}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="text-[10px] font-mono border-white/15 text-slate-300">
-                          {evt.category?.name || "General"}
-                        </Badge>
-                        <Badge variant="amber" className="text-[10px] font-mono font-bold">
-                          ₹{evt.prizePool.toLocaleString("en-IN")}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Event Title */}
-                    <div>
-                      <h3 className="text-xl font-black text-white group-hover:text-cyan-300 transition-colors">
-                        {evt.title}
-                      </h3>
-                      <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                        {evt.subtitle || evt.description}
-                      </p>
-                    </div>
-
-                    {/* Venue & Capacity specs */}
-                    <div className="grid grid-cols-2 gap-3 pt-2 text-xs font-mono text-slate-300">
-                      <div className="flex items-center space-x-1.5 truncate">
-                        <MapPin className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
-                        <span className="truncate">{evt.venue}</span>
-                      </div>
-                      <div className="flex items-center space-x-1.5">
-                        <Users className="h-3.5 w-3.5 text-purple-400 shrink-0" />
-                        <span>{evt.eventType === "TEAM" ? `${evt.minTeamSize}-${evt.maxTeamSize} Members` : "Individual Solo"}</span>
-                      </div>
-                    </div>
+          ) : (
+            filteredEvents.map((evt) => (
+              <div
+                key={evt.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 hover:border-[#E85A4F] transition-all gap-4"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/20 text-[#E85A4F] uppercase">
+                      {evt.category?.name}
+                    </span>
+                    <span className="text-xs font-mono text-[#8E8D8A] flex items-center">
+                      <Clock className="w-3 h-3 mr-1 text-[#E85A4F]" />
+                      {new Date(evt.scheduleStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {new Date(evt.scheduleEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
 
-                  {/* Footer Action */}
-                  <div className="pt-4 border-t border-white/5 mt-4 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
-                        Coordinator
-                      </span>
-                      <span className="text-xs font-semibold text-slate-300">
-                        {evt.coordinatorName || "LNJPIT Desk"}
-                      </span>
-                    </div>
+                  <h3 className="text-lg font-bold text-[#1A1918]">
+                    {evt.title}
+                  </h3>
 
-                    <Link href={`/events/${evt.slug}`}>
-                      <Button variant="neonCyan" size="sm" className="text-xs font-bold">
-                        {evt.eventType === "TEAM" ? "Register Squad" : "Register Solo"}
-                      </Button>
-                    </Link>
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-[#8E8D8A] font-mono">
+                    <span className="flex items-center">
+                      <MapPin className="w-3 h-3 mr-1 text-[#E85A4F]" />
+                      {evt.venue}
+                    </span>
+                    {evt.coordinatorName && (
+                      <span>Coord: {evt.coordinatorName}</span>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          selectedDay !== 5 && (
-            <div className="p-16 text-center rounded-2xl bg-[#0d1224]/50 border border-white/5 space-y-3">
-              <p className="text-base text-slate-300 font-bold">
-                No fixtures found for Day {selectedDay} matching your criteria.
-              </p>
-              <p className="text-xs text-slate-500 font-mono">
-                Try switching streams or clearing the search query.
-              </p>
-            </div>
-          )
-        )}
+
+                <div className="flex items-center space-x-3 self-end sm:self-center">
+                  <span className="text-xs font-mono font-bold text-[#E85A4F]">
+                    ₹{evt.prizePool?.toLocaleString("en-IN") || 0}
+                  </span>
+                  <Link
+                    href={`/events/${evt.id}`}
+                    className="px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase border border-[#8E8D8A]/35 text-[#1A1918] bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-colors"
+                  >
+                    DETAILS →
+                  </Link>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

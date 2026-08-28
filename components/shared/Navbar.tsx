@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Main Glassmorphic Navigation Header & Role Switcher Shortcut
-// Path: components/shared/Navbar.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,20 +10,16 @@ import {
   Trophy,
   Calendar,
   Layers,
-  Bell,
   Award,
   Users,
-  ShieldCheck,
+  Grid,
   Zap,
   Camera,
   HelpCircle,
   KeyRound,
   RefreshCw,
-  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const NAV_LINKS = [
@@ -44,11 +35,11 @@ const NAV_LINKS = [
 ];
 
 const DEMO_ROLES = [
-  { role: "ADMIN", name: "Dr. Shailendra Kumar (Admin)", route: "/dashboard/admin", badgeColor: "bg-rose-500/20 text-rose-300 border-rose-500/40" },
-  { role: "EVENT_COORDINATOR", name: "Prof. Rajesh Ranjan (Coord)", route: "/dashboard/coordinator", badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/40" },
-  { role: "VOLUNTEER", name: "Ananya Sharma (Volunteer)", route: "/dashboard/volunteer", badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/40" },
-  { role: "TEAM_CAPTAIN", name: "Aman Verma (Captain)", route: "/dashboard/captain", badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40" },
-  { role: "PARTICIPANT", name: "Sneha Kumari (Participant)", route: "/dashboard/participant", badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/40" },
+  { role: "ADMIN", name: "Dr. Shailendra Kumar (Admin)", route: "/dashboard/admin" },
+  { role: "EVENT_COORDINATOR", name: "Prof. Rajesh Ranjan (Coord)", route: "/dashboard/coordinator" },
+  { role: "VOLUNTEER", name: "Ananya Sharma (Volunteer)", route: "/dashboard/volunteer" },
+  { role: "TEAM_CAPTAIN", name: "Aman Verma (Captain)", route: "/dashboard/captain" },
+  { role: "PARTICIPANT", name: "Sneha Kumari (Participant)", route: "/dashboard/participant" },
 ];
 
 export function Navbar() {
@@ -84,227 +75,164 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#030712]/85 backdrop-blur-xl transition-all">
+      <header className="sticky top-0 z-50 w-full border-b border-[#8E8D8A]/25 bg-[#EAE7DC]/90 backdrop-blur-xl transition-all text-[#1A1918]">
         <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 via-purple-600 to-amber-500 p-0.5 shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition-transform">
-              <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-slate-950">
-                <Sparkles className="h-5 w-5 text-cyan-400 animate-pulse" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center space-x-2">
-                <span className="text-lg font-black tracking-wider text-white">
-                  ASTITVA <span className="text-cyan-400">2K26</span>
-                </span>
-                <Badge variant="cyan" className="text-[10px] py-0 px-1.5 font-bold">
-                  LNJPIT
-                </Badge>
-              </div>
-              <span className="text-[10px] tracking-widest text-slate-400 uppercase font-medium">
-                4–8 Sept 2026
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center space-x-1">
-            {NAV_LINKS.map((link) => {
-              const Icon = link.icon;
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "flex items-center space-x-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all",
-                    isActive
-                      ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-sm shadow-cyan-500/20"
-                      : "text-slate-300 hover:text-white hover:bg-slate-800/60"
-                  )}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Right CTA Actions & 1-Click Role Switcher */}
-          <div className="hidden sm:flex items-center space-x-2.5">
-            {/* Quick 1-Click Role Switcher Modal Button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setRoleModalOpen(true)}
-              className="text-xs font-mono font-bold border-amber-500/30 text-amber-300 bg-amber-950/20 hover:bg-amber-950/40 hover:border-amber-400"
+          {/* Left Outlined Pill Buttons */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Link
+              href="/events"
+              className={`px-3 py-1 rounded text-xs font-mono font-medium tracking-wider uppercase border transition-colors ${
+                pathname.startsWith("/events")
+                  ? "bg-[#1A1918] text-[#EAE7DC] border-[#1A1918]"
+                  : "border-[#8E8D8A]/35 text-[#1A1918] hover:bg-[#F6F4EE]"
+              }`}
             >
-              <KeyRound className="mr-1.5 h-3.5 w-3.5 text-amber-400" />
-              Demo Roles
-            </Button>
-
-            <Link href="/verify-certificate/AST26-CERT-10492">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs font-semibold border-white/10 hover:border-purple-500/50 hover:text-purple-400"
-              >
-                <ShieldCheck className="mr-1.5 h-3.5 w-3.5 text-purple-400" />
-                Verify Cert
-              </Button>
+              EVENTS
             </Link>
-
-            <Link href="/sign-in">
-              <Button
-                variant="neonCyan"
-                size="sm"
-                className="text-xs font-bold px-3.5"
-              >
-                Sign In / Pass
-              </Button>
+            <Link
+              href="/schedule"
+              className={`px-3 py-1 rounded text-xs font-mono font-medium tracking-wider uppercase border transition-colors ${
+                pathname.startsWith("/schedule")
+                  ? "bg-[#1A1918] text-[#EAE7DC] border-[#1A1918]"
+                  : "border-[#8E8D8A]/35 text-[#1A1918] hover:bg-[#F6F4EE]"
+              }`}
+            >
+              SCHEDULE
+            </Link>
+            <Link
+              href="/teams"
+              className={`px-3 py-1 rounded text-xs font-mono font-medium tracking-wider uppercase border transition-colors ${
+                pathname.startsWith("/teams")
+                  ? "bg-[#1A1918] text-[#EAE7DC] border-[#1A1918]"
+                  : "border-[#8E8D8A]/35 text-[#1A1918] hover:bg-[#F6F4EE]"
+              }`}
+            >
+              SQUADS
             </Link>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <div className="flex xl:hidden items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
+          {/* Center Brand Title */}
+          <div className="flex flex-col items-center text-center">
+            <Link href="/" className="group">
+              <span className="font-mono text-base sm:text-lg tracking-[0.35em] sm:tracking-[0.45em] font-bold text-[#1A1918] group-hover:text-[#E85A4F] transition-colors uppercase">
+                A S T I T V A
+              </span>
+              <span className="block text-[8px] sm:text-[9px] font-mono tracking-[0.25em] text-[#8E8D8A] uppercase mt-0.5">
+                LNJPIT CHAPRA · SEPT 4–8, 2026
+              </span>
+            </Link>
+          </div>
+
+          {/* Right Action Controls */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <button
+              type="button"
               onClick={() => setRoleModalOpen(true)}
-              className="sm:hidden text-[11px] font-mono border-amber-500/30 text-amber-300 py-1 px-2"
+              className="px-2.5 py-1 rounded text-xs font-mono font-semibold border border-[#E85A4F]/40 text-[#E85A4F] bg-[#F6F4EE] hover:bg-[#E85A4F] hover:text-white transition-colors"
+              title="Dev Role Switcher"
             >
-              Roles
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
+              <span className="hidden sm:inline">ROLES ⚙</span>
+              <span className="sm:hidden">⚙</span>
+            </button>
+
+            <Link
+              href="/dashboard"
+              className="w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#8E8D8A] hover:text-[#1A1918] hover:border-[#1A1918] transition-colors"
+              title="Dashboard"
+            >
+              <Grid className="w-4 h-4" />
+            </Link>
+
+            <Link
+              href="/sign-in"
+              className="hidden sm:inline-flex items-center px-4 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+            >
+              LOGIN
+            </Link>
+
+            {/* Mobile Menu Button */}
+            <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-slate-300 hover:text-white"
+              className="md:hidden w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#1A1918]"
+              aria-label="Toggle Menu"
             >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Mobile Drawer Navigation */}
+        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="xl:hidden border-b border-white/10 bg-slate-950/95 px-4 pt-2 pb-6 backdrop-blur-2xl animate-in slide-in-from-top-2">
-            <div className="flex flex-col space-y-2">
-              {NAV_LINKS.map((link) => {
-                const Icon = link.icon;
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(
-                      "flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
-                      isActive
-                        ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
-                        : "text-slate-300 hover:text-white hover:bg-slate-900"
-                    )}
-                  >
-                    <Icon className="h-4.5 w-4.5 text-cyan-400" />
-                    <span>{link.label}</span>
-                  </Link>
-                );
-              })}
-              <div className="pt-4 flex flex-col space-y-2 border-t border-white/10">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setRoleModalOpen(true);
-                  }}
-                  className="w-full justify-center text-xs font-mono font-bold border-amber-500/40 text-amber-300"
-                >
-                  <KeyRound className="mr-2 h-4 w-4 text-amber-400" />
-                  1-Click Role Switcher (5 Roles)
-                </Button>
+          <div className="md:hidden border-t border-[#8E8D8A]/20 bg-[#F6F4EE] px-4 py-6 space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              {NAV_LINKS.map((link) => (
                 <Link
-                  href="/verify-certificate/AST26-CERT-10492"
+                  key={link.href}
+                  href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 rounded text-xs font-mono uppercase border border-[#8E8D8A]/25 text-[#1A1918] bg-[#EAE7DC]"
                 >
-                  <Button
-                    variant="outline"
-                    className="w-full justify-center text-xs font-semibold border-white/15"
-                  >
-                    <ShieldCheck className="mr-2 h-4 w-4 text-purple-400" />
-                    Verify Certificate
-                  </Button>
+                  {link.label}
                 </Link>
-                <Link href="/sign-in" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="neonCyan" className="w-full justify-center text-xs font-bold">
-                    Sign In / Participant Pass
-                  </Button>
-                </Link>
-              </div>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t border-[#8E8D8A]/20">
+              <Link
+                href="/sign-in"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center py-2.5 rounded text-xs font-mono font-bold uppercase bg-[#E85A4F] text-white"
+              >
+                SIGN IN / REGISTER
+              </Link>
             </div>
           </div>
         )}
       </header>
 
-      {/* 1-Click Role Switcher Modal */}
+      {/* Role Switcher Modal (Luxury Style) */}
       {roleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-2xl bg-[#0d1224] border border-amber-500/30 p-6 shadow-2xl space-y-5 relative">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center space-x-2">
-                <KeyRound className="h-5 w-5 text-amber-400" />
-                <h3 className="text-lg font-black text-white">1-Click RBAC Role Switcher</h3>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-md rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/30 p-6 shadow-2xl space-y-5 text-[#1A1918]">
+            <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-3">
+              <div>
+                <h3 className="text-base font-bold font-mono uppercase tracking-wider text-[#1A1918]">
+                  SWITCH DEMO ROLE
+                </h3>
+                <p className="text-xs text-[#8E8D8A]">Test all 5 RBAC portal flows instantly</p>
               </div>
               <button
                 type="button"
                 onClick={() => setRoleModalOpen(false)}
-                className="text-slate-400 hover:text-white text-sm cursor-pointer"
+                className="text-[#8E8D8A] hover:text-[#1A1918]"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-300">
-              Select any canonical demo profile to instantly log in and access its dedicated dashboard console:
-            </p>
-
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {DEMO_ROLES.map((r) => (
                 <button
                   key={r.role}
-                  type="button"
                   disabled={switchingRole}
+                  type="button"
                   onClick={() => handleRoleSwitch(r)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400 hover:bg-cyan-950/30 transition-all text-left cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl border border-[#8E8D8A]/25 bg-[#EAE7DC] hover:border-[#E85A4F] hover:bg-[#F6F4EE] transition-all text-left cursor-pointer group"
                 >
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-white group-hover:text-cyan-300">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
+                      {r.role}
+                    </span>
+                    <p className="text-xs font-semibold text-[#1A1918] mt-1 group-hover:text-[#E85A4F]">
                       {r.name}
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400">
-                      Route: {r.route}
-                    </span>
+                    </p>
                   </div>
-                  <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border ${r.badgeColor}`}>
-                    {r.role}
+                  <span className="text-xs font-mono text-[#E85A4F] group-hover:translate-x-1 transition-transform">
+                    ENTER →
                   </span>
                 </button>
               ))}
-            </div>
-
-            <div className="pt-2 flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setRoleModalOpen(false)}
-                className="text-xs border-white/20"
-              >
-                Close
-              </Button>
             </div>
           </div>
         </div>

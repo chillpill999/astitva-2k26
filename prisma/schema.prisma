@@ -202,6 +202,9 @@ model User {
   coordinatedEvents  Event[]          @relation("EventCoordinators")
   markedAttendances  Attendance[]     @relation("MarkedByVolunteer")
   attendances        Attendance[]     @relation("UserAttendance")
+  qrPasses           QrPass[]         @relation("UserQrPasses")
+  revokedPasses      QrPass[]         @relation("RevokedByUser")
+  scannerLogs        CheckInLog[]     @relation("ScannerLogs")
   results            Result[]
   certificates       Certificate[]
   announcements      Announcement[]
@@ -310,6 +313,8 @@ model Event {
   registrations        Registration[]
   teams                Team[]
   attendances          Attendance[]
+  qrPasses             QrPass[]      @relation("EventQrPasses")
+  checkInLogs          CheckInLog[]  @relation("EventCheckInLogs")
   results              Result[]
   certificates         Certificate[]
 
@@ -400,6 +405,95 @@ model TeamMember {
 }
 
 // ----------------------------------------------------------------------------
+// 8A. QR PASS (Encrypted Participant Check-in Badge)
+// ----------------------------------------------------------------------------
+
+model QrPass {
+  id            String    @id @default(cuid())
+  participantId String    // AST26-XXXX
+  userId        String
+  eventId       String?   // Null = "All-Access" festival pass
+  token         String    @unique // AST26.<eventId>.<payload>.<sig>
+  signatureHash String    // HMAC-SHA256 over canonical payload
+  payload       String    // JSON canonical payload
+  issuedAt      DateTime  @default(now())
+  expiresAt     DateTime
+  isRevoked     Boolean   @default(false)
+  revokedReason String?
+  revokedAt     DateTime?
+  revokedById   String?
+  lastScannedAt DateTime?
+  scanCount     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation("UserQrPasses", fields: [userId], references: [id], onDelete: Cascade)
+  event         Event?    @relation("EventQrPasses", fields: [eventId], references: [id], onDelete: Cascade)
+  revokedBy     User?     @relation("RevokedByUser", fields: [revokedById], references: [id], onDelete: SetNull)
+  attendanceLogs Attendance[]
+  checkInLogs   CheckInLog[] @relation("QrPassLogs")
+
+  @@index([participantId])
+  @@index([userId])
+  @@index([eventId])
+  @@index([expiresAt])
+  @@index([isRevoked])
+  @@index([participantId, eventId])
+}
+
+// ----------------------------------------------------------------------------
+// 8B. CHECK-IN LOG (Immutable scan audit trail)
+// ----------------------------------------------------------------------------
+
+model CheckInLog {
+  id             String           @id @default(cuid())
+  scannerId      String           // Volunteer / Coordinator user ID
+  scannerName    String?
+  participantId  String           // AST26-XXXX
+  eventId        String?
+  action         String           // SCAN_SUCCESS | DUPLICATE | INVALID | EXPIRED | REVOKED | NOT_REGISTERED | RATE_LIMITED
+  result         String           // SUCCESS | WARNING | REJECTED
+  deviceInfo     String?
+  ipAddress      String?
+  userAgent      String?
+  qrTokenDigest  String?          // SHA-256 of token, never the raw token
+  qrPassId       String?
+  attendanceId   String?
+  reason         String?
+  timestamp      DateTime         @default(now())
+
+  scanner        User             @relation("ScannerLogs", fields: [scannerId], references: [id], onDelete: Cascade)
+  event          Event?           @relation("EventCheckInLogs", fields: [eventId], references: [id], onDelete: SetNull)
+  qrPass         QrPass?          @relation("QrPassLogs", fields: [qrPassId], references: [id], onDelete: SetNull)
+  attendance     Attendance?      @relation("AttendanceLog", fields: [attendanceId], references: [id], onDelete: SetNull)
+
+  @@index([scannerId])
+  @@index([participantId])
+  @@index([eventId])
+  @@index([action])
+  @@index([timestamp])
+  @@index([result])
+}
+
+// ----------------------------------------------------------------------------
+// 8C. RATE LIMIT (Edge middleware brute-force protection)
+// ----------------------------------------------------------------------------
+
+model RateLimitEntry {
+  id        String   @id @default(cuid())
+  bucket    String   // e.g. "scan:<scannerId>:<eventId>" or "verify:<ip>"
+  count     Int      @default(0)
+  windowStart DateTime @default(now())
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([bucket])
+  @@index([bucket])
+  @@index([expiresAt])
+}
+
+// ----------------------------------------------------------------------------
 // 8. ATTENDANCE (Volunteer Scanner & Check-in System)
 // ----------------------------------------------------------------------------
 
@@ -418,6 +512,10 @@ model Attendance {
   event         Event?           @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user          User             @relation("UserAttendance", fields: [userId], references: [id], onDelete: Cascade)
   scannedBy     User             @relation("MarkedByVolunteer", fields: [scannedById], references: [id], onDelete: Cascade)
+  qrPass        QrPass?          @relation(fields: [qrPassId], references: [id], onDelete: SetNull)
+  checkInLogs   CheckInLog[]     @relation("AttendanceLog")
+
+  qrPassId      String?
 
   @@unique([participantId, eventId, checkInType])
   @@index([eventId])
@@ -426,6 +524,7 @@ model Attendance {
   @@index([scannedById])
   @@index([scannedAt])
   @@index([checkInType])
+  @@index([qrPassId])
 }
 
 // ----------------------------------------------------------------------------

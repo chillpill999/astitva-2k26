@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Flagship Tournaments Showcase Grid
-// Path: components/landing/FeaturedTournaments.tsx
-// ============================================================================
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,10 +12,9 @@ import {
   Coins,
   ArrowRight,
   Sparkles,
-  ShieldAlert,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { FestEvent } from "@/lib/data/fest-data";
 
 interface FeaturedTournamentsProps {
@@ -32,27 +26,27 @@ export function FeaturedTournaments({ events }: FeaturedTournamentsProps) {
   const displayEvents = featuredEvents.length > 0 ? featuredEvents : events.slice(0, 6);
 
   return (
-    <section className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#05070f] border-b border-white/10">
+    <section id="tournaments" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#EAE7DC] text-[#1A1918] border-b border-[#8E8D8A]/20">
       <div className="container max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-amber-500/30 text-amber-400 bg-amber-950/30">
-              <Flame className="mr-1.5 h-3.5 w-3.5 text-amber-400" />
-              FLAGSHIP COMPETITIONS
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase">
-              FEATURED <span className="cyber-gradient-text">TOURNAMENTS</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+              <Flame className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+              <span>FLAGSHIP COMPETITIONS</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              FEATURED <span className="text-[#E85A4F]">TOURNAMENTS</span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-300">
+            <p className="text-sm sm:text-base text-[#8E8D8A]">
               The highest-stakes championships with maximum branch pride, rolling trophies, and verified certificates on the line.
             </p>
           </div>
 
           <Link href="/events">
-            <Button variant="outline" className="border-white/20 hover:border-cyan-400 text-xs font-bold">
-              View All 16 Events <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <span className="inline-flex items-center text-xs font-mono font-semibold py-2 px-4 rounded border border-[#8E8D8A]/40 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all cursor-pointer">
+              ALL 16 EVENTS →
+            </span>
           </Link>
         </div>
 
@@ -65,78 +59,72 @@ export function FeaturedTournaments({ events }: FeaturedTournamentsProps) {
             return (
               <div
                 key={evt.id}
-                className="group relative flex flex-col justify-between rounded-2xl bg-[#0d1224]/90 border border-white/10 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-cyan-500/40 hover:-translate-y-1 hover:shadow-cyan-500/10 overflow-hidden"
+                className="group relative flex flex-col justify-between rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all duration-300 hover:-translate-y-1 overflow-hidden"
               >
                 {/* Banner Thumbnail */}
-                <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
+                <div className="relative h-48 w-full bg-[#D8C3A5]/40 overflow-hidden">
                   {evt.bannerImage ? (
                     <Image
                       src={evt.bannerImage}
                       alt={evt.title}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-70 group-hover:opacity-90"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
                     />
                   ) : (
-                    <div className="h-full w-full bg-slate-900" />
+                    <div className="h-full w-full bg-[#D8C3A5]/30 flex items-center justify-center">
+                      <Trophy className="w-12 h-12 text-[#8E8D8A]/50" />
+                    </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1224] via-transparent to-black/60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#F6F4EE] via-transparent to-black/30" />
 
                   {/* Top Badges */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                    <Badge variant="cyan" className="text-[10px] font-mono font-bold">
-                      Day {evt.dayNumber} (Sept {evt.dayNumber + 3})
-                    </Badge>
-                    <Badge variant="amber" className="text-[10px] font-mono font-bold">
-                      {formattedPrize} Pool
-                    </Badge>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC]">
+                      DAY {evt.dayNumber} (SEPT {evt.dayNumber + 3})
+                    </span>
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#E85A4F] text-white">
+                      {formattedPrize} POOL
+                    </span>
                   </div>
 
                   {/* Category Chip */}
                   <div className="absolute bottom-3 left-3">
-                    <span className="inline-block text-[11px] font-mono uppercase tracking-wider text-cyan-300 font-semibold px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-white/15 backdrop-blur-md">
+                    <span className="inline-block text-[10px] font-mono uppercase tracking-wider text-[#1A1918] font-bold px-2.5 py-0.5 rounded bg-[#EAE7DC]/90 border border-[#8E8D8A]/30">
                       {evt.category?.name || "Tournament"}
                     </span>
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="p-5 sm:p-6 space-y-4 flex-1 flex flex-col justify-between">
-                  <div className="space-y-2.5">
-                    <h3 className="text-lg sm:text-xl font-black text-white group-hover:text-cyan-300 transition-colors line-clamp-1">
+                {/* Content */}
+                <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-bold text-[#1A1918] group-hover:text-[#E85A4F] transition-colors">
                       {evt.title}
                     </h3>
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                      {evt.subtitle || evt.description}
+                    <p className="text-xs text-[#8E8D8A] line-clamp-2 leading-relaxed">
+                      {evt.description}
                     </p>
                   </div>
 
-                  {/* Meta Specs Strip */}
-                  <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/5 text-[11px] font-mono text-slate-300">
-                    <div className="flex items-center space-x-1.5 truncate">
-                      <MapPin className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
-                      <span className="truncate">{evt.venue}</span>
-                    </div>
-                    <div className="flex items-center space-x-1.5">
-                      <Users className="h-3.5 w-3.5 text-purple-400 shrink-0" />
-                      <span>{isTeam ? `${evt.minTeamSize}-${evt.maxTeamSize} Players` : "Individual Solo"}</span>
-                    </div>
+                  {/* Metadata Bar */}
+                  <div className="pt-4 border-t border-[#8E8D8A]/15 flex items-center justify-between text-xs font-mono text-[#8E8D8A]">
+                    <span className="flex items-center">
+                      <MapPin className="w-3.5 h-3.5 mr-1 text-[#E85A4F]" />
+                      {evt.venue}
+                    </span>
+                    <span className="flex items-center">
+                      <Users className="w-3.5 h-3.5 mr-1 text-[#D8C3A5]" />
+                      {isTeam ? `Squad (${evt.minTeamSize}-${evt.maxTeamSize})` : "Solo"}
+                    </span>
                   </div>
 
-                  {/* Coordinator & Registration CTA */}
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">
-                        Coordinator
-                      </span>
-                      <span className="text-xs font-semibold text-slate-300 truncate">
-                        {evt.coordinatorName || "Fest Office"}
-                      </span>
-                    </div>
-
-                    <Link href={`/events/${evt.slug}`}>
-                      <Button variant="neonCyan" size="sm" className="text-xs font-bold shrink-0">
-                        {isTeam ? "Register Squad" : "Register"}
-                      </Button>
+                  {/* Registration CTA */}
+                  <div className="pt-2">
+                    <Link
+                      href={`/events/${evt.id}`}
+                      className="w-full flex items-center justify-center py-2.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#EAE7DC] border border-[#8E8D8A]/35 text-[#1A1918] group-hover:bg-[#E85A4F] group-hover:text-white group-hover:border-[#E85A4F] transition-all"
+                    >
+                      VIEW TOURNAMENT &amp; REGISTER →
                     </Link>
                   </div>
                 </div>

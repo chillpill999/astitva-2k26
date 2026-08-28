@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Filterable Multimedia Gallery Preview
-// Path: components/landing/GalleryPreview.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -56,27 +51,27 @@ export function GalleryPreview({ items }: GalleryPreviewProps) {
   };
 
   return (
-    <section className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#030712] border-b border-white/10">
+    <section id="gallery" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#EAE7DC] text-[#1A1918] border-b border-[#8E8D8A]/20">
       <div className="container max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-cyan-500/30 text-cyan-400 bg-cyan-950/30">
-              <Camera className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
-              MEMORIES &amp; MOMENTS
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase">
-              FESTIVAL <span className="cyber-gradient-text">GALLERY</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+              <Camera className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+              <span>MEMORIES &amp; HIGHLIGHTS</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+              FESTIVAL <span className="text-[#E85A4F]">GALLERY</span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-300">
-              Relive the electric atmosphere, nail-biting matches, stage performances, and victory celebrations.
+            <p className="text-sm sm:text-base text-[#8E8D8A]">
+              Relive the atmosphere, nail-biting matches, stage performances, and victory celebrations.
             </p>
           </div>
 
           <Link href="/gallery">
-            <Button variant="outline" className="border-white/20 hover:border-cyan-400 text-xs font-bold">
-              Full Multimedia Vault <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <span className="inline-flex items-center text-xs font-mono font-semibold py-2 px-4 rounded border border-[#8E8D8A]/40 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all cursor-pointer">
+              FULL VAULT →
+            </span>
           </Link>
         </div>
 
@@ -87,10 +82,10 @@ export function GalleryPreview({ items }: GalleryPreviewProps) {
               key={cat.value}
               type="button"
               onClick={() => setSelectedCategory(cat.value)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
                 selectedCategory === cat.value
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                  ? "bg-[#1A1918] text-[#EAE7DC] font-semibold"
+                  : "bg-[#F6F4EE] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
               }`}
             >
               {cat.label}
@@ -98,36 +93,27 @@ export function GalleryPreview({ items }: GalleryPreviewProps) {
           ))}
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredItems.slice(0, 8).map((item) => (
+        {/* Masonry / Grid Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredItems.slice(0, 6).map((item) => (
             <div
               key={item.id}
               onClick={() => handleOpenModal(item)}
-              className="group relative h-64 rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-xl cursor-pointer transition-all duration-300 hover:border-cyan-500/50 hover:scale-[1.02]"
+              className="group relative h-64 sm:h-72 rounded-2xl overflow-hidden cursor-pointer bg-[#D8C3A5]/40 border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all duration-300"
             >
               <Image
                 src={item.mediaUrl}
                 alt={item.title}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1918]/90 via-transparent to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-
-              {/* Hover Zoom Icon */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500/80 text-black shadow-lg">
-                  <Maximize2 className="h-6 w-6" />
-                </div>
-              </div>
-
-              {/* Caption Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 space-y-1">
-                <Badge variant="cyan" className="text-[9px] font-mono font-bold">
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded bg-[#E85A4F] uppercase">
                   {item.category}
-                </Badge>
-                <h4 className="text-sm font-bold text-white line-clamp-1 group-hover:text-cyan-300 transition-colors">
+                </span>
+                <h4 className="text-base font-bold mt-1.5 text-white">
                   {item.title}
                 </h4>
               </div>
@@ -136,14 +122,15 @@ export function GalleryPreview({ items }: GalleryPreviewProps) {
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      <GalleryModal
-        item={activeItem}
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onNext={handleNext}
-        onPrev={handlePrev}
-      />
+      {modalOpen && activeItem && (
+        <GalleryModal
+          isOpen={modalOpen}
+          item={activeItem}
+          onClose={() => setModalOpen(false)}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+      )}
     </section>
   );
 }

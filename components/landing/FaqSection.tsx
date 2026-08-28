@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Searchable FAQ Accordion Portal
-// Path: components/landing/FaqSection.tsx
-// ============================================================================
-
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -55,18 +50,18 @@ export function FaqSection({ faqs }: FaqSectionProps) {
   };
 
   return (
-    <section className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#05070f] border-b border-white/10">
+    <section id="faq" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#EAE7DC] text-[#1A1918] border-b border-[#8E8D8A]/20">
       <div className="container max-w-4xl mx-auto space-y-12">
         {/* Header */}
         <div className="flex flex-col items-center text-center space-y-4 max-w-2xl mx-auto">
-          <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-cyan-500/30 text-cyan-400 bg-cyan-950/30">
-            <HelpCircle className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
-            FREQUENTLY ASKED QUESTIONS
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase">
-            HAVE <span className="cyber-gradient-text">QUESTIONS?</span>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+            <HelpCircle className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
+            <span>KNOWLEDGE BASE &amp; FAQS</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+            FREQUENTLY ASKED <span className="text-[#E85A4F]">QUESTIONS</span>
           </h2>
-          <p className="text-sm sm:text-base text-slate-300">
+          <p className="text-sm sm:text-base text-[#8E8D8A]">
             Find immediate answers on tournament rules, team formation, campus QR passes, and certificates.
           </p>
         </div>
@@ -74,19 +69,19 @@ export function FaqSection({ faqs }: FaqSectionProps) {
         {/* Search Bar & Category Filters */}
         <div className="space-y-4">
           <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8E8D8A]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by keyword (e.g. invite code, fee, attendance, certificate)..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#0d1224] border border-white/10 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-cyan-500/50 shadow-inner"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-[#1A1918] placeholder:text-[#8E8D8A]/70 text-xs font-mono focus:outline-none focus:border-[#E85A4F]"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-mono text-[#8E8D8A] hover:text-[#1A1918]"
               >
                 Clear
               </button>
@@ -99,10 +94,10 @@ export function FaqSection({ faqs }: FaqSectionProps) {
                 key={c.value}
                 type="button"
                 onClick={() => setSelectedCategory(c.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
                   selectedCategory === c.value
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                    ? "bg-[#1A1918] text-[#EAE7DC] font-semibold"
+                    : "bg-[#F6F4EE] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
                 }`}
               >
                 {c.label}
@@ -111,19 +106,20 @@ export function FaqSection({ faqs }: FaqSectionProps) {
           </div>
         </div>
 
-        {/* FAQ Accordion List */}
+        {/* Accordion Questions List */}
         <div className="space-y-3">
-          {filteredFaqs.length > 0 ? (
+          {filteredFaqs.length === 0 ? (
+            <div className="text-center py-12 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25">
+              <p className="text-xs font-mono text-[#8E8D8A]">No matching questions found.</p>
+            </div>
+          ) : (
             filteredFaqs.map((faq) => {
               const isExpanded = expandedId === faq.id;
+
               return (
                 <div
                   key={faq.id}
-                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
-                    isExpanded
-                      ? "bg-[#0d1224] border-cyan-500/40 shadow-xl shadow-cyan-500/5"
-                      : "bg-[#0d1224]/60 border-white/10 hover:border-white/20"
-                  }`}
+                  className="rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 overflow-hidden transition-all duration-200"
                 >
                   <button
                     type="button"
@@ -131,56 +127,27 @@ export function FaqSection({ faqs }: FaqSectionProps) {
                     className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
                   >
                     <div className="flex items-center space-x-3">
-                      <Badge variant="outline" className="text-[10px] font-mono border-white/15 text-cyan-400 shrink-0 hidden sm:inline-flex">
-                        {faq.category}
-                      </Badge>
-                      <span className="text-base sm:text-lg font-bold text-white tracking-wide">
+                      <span className="text-xs font-mono text-[#E85A4F] font-bold">Q.</span>
+                      <span className="text-sm sm:text-base font-bold text-[#1A1918]">
                         {faq.question}
                       </span>
                     </div>
-
                     <ChevronDown
-                      className={`h-5 w-5 text-slate-400 shrink-0 transition-transform duration-200 ${
-                        isExpanded ? "rotate-180 text-cyan-400" : ""
+                      className={`h-4 w-4 text-[#8E8D8A] transition-transform duration-200 shrink-0 ${
+                        isExpanded ? "rotate-180 text-[#E85A4F]" : ""
                       }`}
                     />
                   </button>
 
                   {isExpanded && (
-                    <div className="px-5 sm:px-6 pb-6 text-sm text-slate-300 leading-relaxed border-t border-white/5 pt-4 animate-in fade-in-50">
+                    <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-1 border-t border-[#8E8D8A]/15 text-xs sm:text-sm text-[#8E8D8A] leading-relaxed">
                       {faq.answer}
                     </div>
                   )}
                 </div>
               );
             })
-          ) : (
-            <div className="p-12 text-center rounded-2xl bg-[#0d1224]/50 border border-white/5 space-y-2">
-              <p className="text-sm text-slate-300 font-bold">No answers match your search term.</p>
-              <p className="text-xs text-slate-500 font-mono">
-                Try searching for &quot;team&quot;, &quot;QR&quot;, or &quot;prize&quot;.
-              </p>
-            </div>
           )}
-        </div>
-
-        {/* Bottom Helpdesk CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-between p-6 rounded-2xl bg-[#0d1224]/90 border border-white/10 shadow-xl backdrop-blur-xl gap-4">
-          <div className="flex items-center space-x-3 text-center sm:text-left">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              <MessageSquare className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-white">Still have questions?</h4>
-              <p className="text-xs text-slate-400">Ask the AI Fest Assistant or reach out to the helpdesk team.</p>
-            </div>
-          </div>
-
-          <Link href="/faq">
-            <Button variant="neonCyan" size="sm" className="text-xs font-bold shrink-0">
-              Ask AI Assistant / Support Desk
-            </Button>
-          </Link>
         </div>
       </div>
     </section>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { AiChatWidget } from "@/components/ai/AiChatWidget";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,6 +67,9 @@ export default function RootLayout({
 
         {/* Sonner Toast Notification Center */}
         <Toaster position="bottom-right" richColors />
+
+        {/* AI Fest Assistant (floating chat widget) */}
+        <AiChatWidget />
       </body>
     </html>
   );

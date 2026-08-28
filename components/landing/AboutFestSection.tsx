@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - LNJPIT Heritage & Festival Vision Section
-// Path: components/landing/AboutFestSection.tsx
-// ============================================================================
-
 import React from "react";
 import Link from "next/link";
 import {
@@ -28,44 +23,40 @@ export function AboutFestSection() {
       description: "Established under the Department of Science, Technology & Technical Education (Govt. of Bihar), LNJPIT Chapra fosters engineering rigor and leadership.",
       icon: Building2,
       badge: "Govt. of Bihar",
-      color: "text-cyan-400",
+      number: "01",
     },
     {
       title: "5-Day Inter-Branch Clash",
       description: "Students from CSE, Mechanical, Civil, Electrical, and Electronics branches compete across 16 championships for the prestigious General Championship Trophy.",
       icon: Users2,
       badge: "5 Branches",
-      color: "text-purple-400",
+      number: "02",
     },
     {
       title: "Digital-First Smart Festival",
       description: "Features encrypted QR entry passes, contactless camera scanners, live streaming scoreboards, and HMAC-SHA256 cryptographically verifiable certificates.",
       icon: ShieldCheck,
       badge: "NextGen Tech",
-      color: "text-emerald-400",
+      number: "03",
     },
   ];
 
   return (
-    <section className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-[#05070f]">
-      {/* Background radial glow */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
-
+    <section id="about" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-[#EAE7DC] text-[#1A1918]">
       <div className="container max-w-7xl mx-auto space-y-16">
-        {/* Header Title */}
+        {/* Header Title with Editorial Styling */}
         <div className="flex flex-col items-center text-center space-y-4 max-w-3xl mx-auto">
-          <Badge variant="outline" className="px-3.5 py-1 text-xs font-mono font-semibold border-cyan-500/30 text-cyan-400 bg-cyan-950/30">
-            <Sparkles className="mr-1.5 h-3.5 w-3.5 text-cyan-400" />
-            THE LNJPIT LEGACY
-          </Badge>
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
+            <Sparkles className="h-3 w-3 text-[#E85A4F]" />
+            <span>THE LNJPIT HERITAGE · 2026</span>
+          </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase">
-            ABOUT <span className="cyber-gradient-text">ASTITVA 2K26</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
+            ABOUT <span className="text-[#E85A4F]">ASTITVA 2K26</span>
           </h2>
 
-          <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
-            ASTITVA is the flagship annual celebration of Lok Nayak Jai Prakash Institute of Technology (LNJPIT), Chapra. Over 5 electrifying days from 4 to 8 September 2026, the campus transforms into a battlefield of sporting stamina, cultural brilliance, esports firepower, and literary intellect.
+          <p className="text-base sm:text-lg text-[#8E8D8A] leading-relaxed max-w-2xl">
+            ASTITVA is the flagship annual festival of Lok Nayak Jai Prakash Institute of Technology (LNJPIT), Chapra. Over 5 electrifying days from 4 to 8 September 2026, the campus transforms into a grand arena of sporting stamina, cultural brilliance, esports firepower, and literary intellect.
           </p>
         </div>
 
@@ -76,29 +67,33 @@ export function AboutFestSection() {
             return (
               <div
                 key={idx}
-                className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#0d1224]/80 border border-white/10 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-cyan-500/40 hover:-translate-y-1"
+                className="group relative flex flex-col justify-between p-8 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F]/60 transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="space-y-4">
+                <div className="space-y-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform">
-                      <Icon className={`h-6 w-6 ${item.color}`} />
-                    </div>
-                    <Badge variant="outline" className="text-[11px] font-mono border-white/15 text-slate-300">
+                    <span className="font-mono text-2xl font-bold text-[#D8C3A5] group-hover:text-[#E85A4F] transition-colors">
+                      {item.number}
+                    </span>
+                    <span className="text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded border border-[#8E8D8A]/30 text-[#8E8D8A] uppercase">
                       {item.badge}
-                    </Badge>
+                    </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white tracking-wide">
+                  <div className="w-10 h-10 rounded border border-[#8E8D8A]/20 flex items-center justify-center text-[#E85A4F] bg-[#EAE7DC]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+
+                  <h3 className="text-lg font-bold text-[#1A1918] tracking-tight">
                     {item.title}
                   </h3>
 
-                  <p className="text-sm text-slate-400 leading-relaxed">
+                  <p className="text-sm text-[#8E8D8A] leading-relaxed">
                     {item.description}
                   </p>
                 </div>
 
-                <div className="pt-6 border-t border-white/5 mt-6 flex items-center text-xs font-semibold text-cyan-400 group-hover:text-cyan-300">
-                  <span>Learn more in fest guide</span>
+                <div className="pt-6 border-t border-[#8E8D8A]/15 mt-6 flex items-center text-xs font-mono font-semibold text-[#E85A4F] group-hover:text-[#C94A40]">
+                  <span>DISCOVER INITIATIVE</span>
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -106,28 +101,23 @@ export function AboutFestSection() {
           })}
         </div>
 
-        {/* Heritage Quote Banner */}
-        <div className="relative p-6 sm:p-10 rounded-2xl bg-gradient-to-r from-blue-950/40 via-purple-950/30 to-slate-900/50 border border-white/15 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center md:text-left">
-            <h4 className="text-lg sm:text-xl font-bold text-white">
-              &quot;Where Passion Meets Engineering Discipline&quot;
-            </h4>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
-              Organized under the patronage of Principal Dr. Shailendra Kumar and Faculty Convener Prof. Rajesh Ranjan, ASTITVA unites 2,500+ future engineers in the spirit of fair play, innovation, and unity.
-            </p>
+        {/* Bento Stats Matrix */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-4">
+          <div className="p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-[#E85A4F] font-mono">1000+</div>
+            <div className="text-xs font-mono tracking-wider text-[#8E8D8A] uppercase">STUDENT PARTICIPANTS</div>
           </div>
-
-          <div className="flex items-center space-x-3 shrink-0">
-            <Link href="/team">
-              <Button variant="outline" className="text-xs font-semibold border-white/20 hover:border-cyan-400">
-                View Committee
-              </Button>
-            </Link>
-            <Link href="/events">
-              <Button variant="neonCyan" className="text-xs font-bold">
-                Join Tournaments
-              </Button>
-            </Link>
+          <div className="p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-[#1A1918] font-mono">16+</div>
+            <div className="text-xs font-mono tracking-wider text-[#8E8D8A] uppercase">CHAMPIONSHIPS</div>
+          </div>
+          <div className="p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-[#1A1918] font-mono">5</div>
+            <div className="text-xs font-mono tracking-wider text-[#8E8D8A] uppercase">DAYS OF GLORY</div>
+          </div>
+          <div className="p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-[#E85A4F] font-mono">₹10L+</div>
+            <div className="text-xs font-mono tracking-wider text-[#8E8D8A] uppercase">PRIZE POOL &amp; MEDALS</div>
           </div>
         </div>
       </div>
