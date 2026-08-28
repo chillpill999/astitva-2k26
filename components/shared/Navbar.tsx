@@ -4,6 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  SignInButton,
+  SignUpButton,
+  Show,
+  UserButton,
+} from "@clerk/nextjs";
+import {
   Sparkles,
   Menu,
   X,
@@ -125,6 +131,7 @@ export function Navbar() {
 
           {/* Right Action Controls */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Dev Role Quick Switcher */}
             <button
               type="button"
               onClick={() => setRoleModalOpen(true)}
@@ -135,6 +142,7 @@ export function Navbar() {
               <span className="sm:hidden">⚙</span>
             </button>
 
+            {/* Dashboard Quick Link */}
             <Link
               href="/dashboard"
               className="w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#8E8D8A] hover:text-[#1A1918] hover:border-[#1A1918] transition-colors"
@@ -143,12 +151,29 @@ export function Navbar() {
               <Grid className="w-4 h-4" />
             </Link>
 
-            <Link
-              href="/sign-in"
-              className="hidden sm:inline-flex items-center px-4 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
-            >
-              LOGIN
-            </Link>
+            {/* Clerk Authentication Controls */}
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <button className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm cursor-pointer">
+                  SIGN IN
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="hidden lg:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase border border-[#8E8D8A]/40 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all cursor-pointer">
+                  REGISTER
+                </button>
+              </SignUpButton>
+            </Show>
+
+            <Show when="signed-in">
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8 rounded-full border border-[#8E8D8A]/40",
+                  },
+                }}
+              />
+            </Show>
 
             {/* Mobile Menu Button */}
             <button
@@ -178,14 +203,20 @@ export function Navbar() {
               ))}
             </div>
 
-            <div className="pt-3 border-t border-[#8E8D8A]/20">
-              <Link
-                href="/sign-in"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center py-2.5 rounded text-xs font-mono font-bold uppercase bg-[#E85A4F] text-white"
-              >
-                SIGN IN / REGISTER
-              </Link>
+            <div className="pt-3 border-t border-[#8E8D8A]/20 space-y-2">
+              <Show when="signed-out">
+                <SignInButton mode="modal">
+                  <button className="w-full flex items-center justify-center py-2.5 rounded text-xs font-mono font-bold uppercase bg-[#E85A4F] text-white cursor-pointer">
+                    SIGN IN WITH CLERK
+                  </button>
+                </SignInButton>
+              </Show>
+              <Show when="signed-in">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/25">
+                  <span className="text-xs font-mono text-[#1A1918] font-bold">MY ACCOUNT</span>
+                  <UserButton />
+                </div>
+              </Show>
             </div>
           </div>
         )}

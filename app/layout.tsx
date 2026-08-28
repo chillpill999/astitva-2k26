@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#020617",
+  themeColor: "#EAE7DC",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -54,22 +55,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
-      <body className="min-h-screen bg-slate-950 font-sans text-slate-100 antialiased flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
-        {/* Top Navbar */}
-        <Navbar />
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen bg-[#EAE7DC] font-sans text-[#1A1918] antialiased flex flex-col justify-between selection:bg-[#E85A4F] selection:text-white">
+        <ClerkProvider>
+          {/* Top Navbar */}
+          <Navbar />
 
-        {/* Main Application Slot */}
-        <main className="flex-1 w-full relative">{children}</main>
+          {/* Main Application Slot */}
+          <main className="flex-1 w-full relative">{children}</main>
 
-        {/* Global Footer */}
-        <Footer />
+          {/* Global Footer */}
+          <Footer />
 
-        {/* Sonner Toast Notification Center */}
-        <Toaster position="bottom-right" richColors />
+          {/* Sonner Toast Notification Center */}
+          <Toaster position="bottom-right" richColors />
 
-        {/* AI Fest Assistant (floating chat widget) */}
-        <AiChatWidget />
+          {/* AI Fest Assistant (floating chat widget) */}
+          <AiChatWidget />
+        </ClerkProvider>
       </body>
     </html>
   );
