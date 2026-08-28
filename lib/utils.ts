@@ -9,12 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Formats numbers into Indian Rupee currency format (e.g. ₹1,50,000)
+ * Formats numbers into currency format
  */
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
+    style: "decimal",
     maximumFractionDigits: 0,
   }).format(amount);
 }

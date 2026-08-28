@@ -13,23 +13,21 @@ import {
   Layers,
   ArrowRight,
   ShieldCheck,
+  Medal,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { getEventsCatalog } from "@/lib/events/actions";
 import { EventCatalogGrid } from "@/components/events/EventCatalogGrid";
 
 export const metadata = {
   title: "Event Catalog & Tournaments | ASTITVA 2K26 - LNJPIT Chapra",
   description:
-    "Explore 16 high-voltage inter-branch competitions across Sports, Cultural, Gaming, and Literary categories at LNJPIT Chapra with ₹10L+ in prize pools.",
+    "Explore 16 high-voltage inter-branch competitions across Sports, Cultural, Gaming, and Literary categories at LNJPIT Chapra with championship trophies, medals, and verified certificates.",
 };
 
 export default async function EventsPage() {
   const eventsResult = await getEventsCatalog();
   const events = eventsResult.data || [];
 
-  const totalPrizePool = events.reduce((sum, e) => sum + (e.prizePool || 0), 0);
   const teamEventsCount = events.filter((e) => e.eventType === "TEAM").length;
   const soloEventsCount = events.filter((e) => e.eventType === "INDIVIDUAL").length;
 
@@ -46,7 +44,7 @@ export default async function EventsPage() {
               </div>
               <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#EAE7DC] text-[11px] font-mono font-bold text-[#1A1918] uppercase">
                 <Trophy className="h-3 w-3 text-[#D8C3A5]" />
-                <span>₹10,00,000+ CASH PRIZE POOL</span>
+                <span>16 CHAMPIONSHIP CUPS &amp; MEDALS</span>
               </div>
             </div>
 
@@ -66,8 +64,8 @@ export default async function EventsPage() {
                 <p className="text-2xl font-black font-mono text-[#1A1918]">{events.length || 16}</p>
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] font-mono text-[#8E8D8A] uppercase">Cash Prize Pool</span>
-                <p className="text-2xl font-black font-mono text-[#E85A4F]">₹{(totalPrizePool || 236000).toLocaleString("en-IN")}</p>
+                <span className="text-[10px] font-mono text-[#8E8D8A] uppercase">Podium Honors</span>
+                <p className="text-2xl font-black font-mono text-[#E85A4F]">50+ Awards</p>
               </div>
               <div className="space-y-0.5">
                 <span className="text-[10px] font-mono text-[#8E8D8A] uppercase">Squad Events</span>

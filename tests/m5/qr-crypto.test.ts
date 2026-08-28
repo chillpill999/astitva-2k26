@@ -32,8 +32,8 @@ export async function runQrCryptoTests(): Promise<{ passed: number; failed: numb
     const t = issueQrToken({
       participantId: "AST26-1042",
       userId: "u1",
-      collegeId: "22105128005",
-      name: "Sneha Kumari",
+      collegeId: "TEST-COLL-001",
+      name: "Test Fixture · Participant",
       branch: "CE",
       eventId: "evt_cricket",
       ttlSeconds: 60,
@@ -51,8 +51,8 @@ export async function runQrCryptoTests(): Promise<{ passed: number; failed: numb
     const t = issueQrToken({
       participantId: "AST26-1042",
       userId: "u1",
-      collegeId: "22105128005",
-      name: "Sneha Kumari",
+      collegeId: "TEST-COLL-001",
+      name: "Test Fixture · Participant",
       branch: "CE",
       eventId: "evt_cricket",
       ttlSeconds: 60,
@@ -72,8 +72,8 @@ export async function runQrCryptoTests(): Promise<{ passed: number; failed: numb
     const t = issueQrToken({
       participantId: "AST26-1042",
       userId: "u1",
-      collegeId: "22105128005",
-      name: "Sneha",
+      collegeId: "TEST-COLL-001",
+      name: "Test Fixture",
       branch: "CSE",
       eventId: "evt",
       ttlSeconds: -1, // already expired
@@ -134,4 +134,5 @@ if (typeof require !== "undefined" && require.main === module) {
     process.exit(r.failed === 0 ? 0 : 1);
   })();
 }
+
 

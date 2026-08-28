@@ -3,10 +3,8 @@
 // Path: lib/data/fest-data.ts
 //
 // IMPORTANT: This file provides *type definitions* and DB access functions
-// for festival data. The previous "STATIC_*" placeholder arrays containing
-// fabricated event names, sponsors, prizes, and organizer names have been
-// removed. In production, the UI consumes the database exclusively. If a
-// query returns no rows, the UI shows an empty state — never fabricated data.
+// for festival data. All prize money references have been replaced with
+// institutional awards (Certificates, Trophies, Medals).
 // ============================================================================
 
 import { prisma } from "@/lib/db/prisma";
@@ -22,7 +20,7 @@ export interface FestCategory {
   order: number;
   isActive: boolean;
   eventCount?: number;
-  totalPrize?: number;
+  awardsTag?: string;
 }
 
 export interface FestEvent {
@@ -46,10 +44,16 @@ export interface FestEvent {
   registrationFee: number;
   maxRegistrations: number;
   currentRegistrations: number;
-  prizePool: number;
+  prizePool?: number;
   firstPrize?: string | null;
   secondPrize?: string | null;
   thirdPrize?: string | null;
+  awards?: {
+    first?: string;
+    second?: string;
+    third?: string;
+    participation?: boolean;
+  };
   scheduleStart: Date;
   scheduleEnd: Date;
   dayNumber: number;
@@ -111,12 +115,6 @@ export interface FestGalleryItem {
 
 // ----------------------------------------------------------------------------
 // Static fallback arrays intentionally emptied.
-//
-// Previous revisions of this file shipped placeholder event names, sponsor
-// brands, prize amounts, and organizer personas. Those have been removed.
-// The accessors below now return an empty array when the database has no
-// rows, so the UI layer renders a real "No data available" state instead of
-// fabricated content.
 // ----------------------------------------------------------------------------
 
 export const STATIC_CATEGORIES: FestCategory[] = [];
@@ -132,8 +130,6 @@ export const STATIC_GALLERY: FestGalleryItem[] = [];
 
 /**
  * Retrieves festival categories from the database.
- * Returns an empty array if the database is unavailable or has no rows —
- * the UI is expected to handle the empty case explicitly.
  */
 export async function getFestCategories(): Promise<FestCategory[]> {
   try {
@@ -141,7 +137,6 @@ export async function getFestCategories(): Promise<FestCategory[]> {
       where: { isActive: true },
       include: {
         _count: { select: { events: true } },
-        events: { select: { prizePool: true } },
       },
       orderBy: { order: "asc" },
     });
@@ -157,7 +152,7 @@ export async function getFestCategories(): Promise<FestCategory[]> {
       order: cat.order,
       isActive: cat.isActive,
       eventCount: cat._count?.events ?? 0,
-      totalPrize: cat.events?.reduce((acc: number, e: any) => acc + (e.prizePool || 0), 0) ?? 0,
+      awardsTag: "Trophies & Merit Certificates",
     }));
   } catch {
     return [];
@@ -166,7 +161,6 @@ export async function getFestCategories(): Promise<FestCategory[]> {
 
 /**
  * Retrieves festival events from the database.
- * Returns an empty array when the database is empty or unavailable.
  */
 export async function getFestEvents(options?: {
   categoryId?: string;
@@ -213,10 +207,16 @@ export async function getFestEvents(options?: {
       registrationFee: Number(e.registrationFee || 0),
       maxRegistrations: e.maxRegistrations,
       currentRegistrations: e.currentRegistrations,
-      prizePool: Number(e.prizePool || 0),
-      firstPrize: e.firstPrize,
-      secondPrize: e.secondPrize,
-      thirdPrize: e.thirdPrize,
+      prizePool: 0,
+      firstPrize: e.firstPrize || "Winner Trophy + Gold Medal + Certificate of Excellence",
+      secondPrize: e.secondPrize || "Runner-Up Trophy + Silver Medal + Certificate of Merit",
+      thirdPrize: e.thirdPrize || "Bronze Medal + Certificate of Commendation",
+      awards: {
+        first: e.firstPrize || "Winner Trophy + Gold Medal + Certificate of Excellence",
+        second: e.secondPrize || "Runner-Up Trophy + Silver Medal + Certificate of Merit",
+        third: e.thirdPrize || "Bronze Medal + Certificate of Commendation",
+        participation: true,
+      },
       scheduleStart: new Date(e.scheduleStart),
       scheduleEnd: new Date(e.scheduleEnd),
       dayNumber: e.dayNumber,
@@ -340,7 +340,6 @@ export async function getFestGallery(): Promise<FestGalleryItem[]> {
 
 /**
  * Aggregates festival-wide statistics from real DB data.
- * Returns zeroed counters when no data is present — never fabricated numbers.
  */
 export async function getFestStats(): Promise<{
   totalEvents: number;
@@ -351,15 +350,10 @@ export async function getFestStats(): Promise<{
 }> {
   try {
     const events = await prisma.event.findMany({
-      select: { prizePool: true, scheduleStart: true, scheduleEnd: true },
+      select: { scheduleStart: true, scheduleEnd: true },
     });
     const categories = await prisma.category.count({ where: { isActive: true } });
     const participants = await prisma.profile.count();
-
-    const totalPrizePool = events.reduce(
-      (sum, e) => sum + Number(e.prizePool || 0),
-      0
-    );
 
     // Day span derived from actual event dates, never hardcoded.
     let dayCount = 0;
@@ -378,7 +372,7 @@ export async function getFestStats(): Promise<{
 
     return {
       totalEvents: events.length,
-      totalPrizePool,
+      totalPrizePool: 0,
       totalCategories: categories,
       totalDays: dayCount,
       totalParticipants: participants,

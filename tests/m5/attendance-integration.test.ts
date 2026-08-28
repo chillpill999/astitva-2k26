@@ -51,26 +51,26 @@ async function setupDb(): Promise<PGlite> {
   const passwordHash = await bcrypt.hash("Password@123", 10);
   await db.query(
     `INSERT INTO "User" (id, email, name, role, "passwordHash", "isActive", "createdAt", "updatedAt") VALUES
-     ('u_vol', 'vol@lnjpit.ac.in', 'Ananya Sharma', 'VOLUNTEER', $1, true, NOW(), NOW()),
-     ('u_part', 'part@lnjpit.ac.in', 'Sneha Kumari', 'PARTICIPANT', $1, true, NOW(), NOW()),
-     ('u_unreg', 'unreg@lnjpit.ac.in', 'Test Unreg', 'PARTICIPANT', $1, true, NOW(), NOW())`,
+     ('u_vol', 'vol.test@lnjpit.local', 'Test Fixture · Volunteer', 'VOLUNTEER', $1, true, NOW(), NOW()),
+     ('u_part', 'part.test@lnjpit.local', 'Test Fixture · Participant', 'PARTICIPANT', $1, true, NOW(), NOW()),
+     ('u_unreg', 'unreg.test@lnjpit.local', 'Test Fixture · Unregistered', 'PARTICIPANT', $1, true, NOW(), NOW())`,
     [passwordHash]
   );
   await db.query(
     `INSERT INTO "Profile" (id, "userId", "participantId", "collegeId", "collegeName", branch, semester, phone, gender, "isHosteler", bio, "createdAt", "updatedAt") VALUES
-     ('p1', 'u_part', 'AST26-9001', '24105128032', 'LNJPIT Chapra', 'CE', 2, '+91 90000 00001', 'FEMALE', false, '', NOW(), NOW())`
+     ('p1', 'u_part', 'AST26-TEST-001', 'TEST-COLL-001', 'LNJPIT Chapra', 'CSE', 1, '', 'OTHER', false, '', NOW(), NOW())`
   );
   await db.query(
     `INSERT INTO "Category" (id, slug, name, type, description, "order", "isActive", "createdAt", "updatedAt") VALUES
-     ('cat1', 'sports', 'Sports', 'SPORTS', 'Sports', 1, true, NOW(), NOW())`
+     ('cat1', 'sports', 'Sports', 'SPORTS', 'Sports category', 1, true, NOW(), NOW())`
   );
   await db.query(
     `INSERT INTO "Event" (id, slug, title, description, rules, "categoryId", venue, "eventType", "minTeamSize", "maxTeamSize", "prizePool", "scheduleStart", "scheduleEnd", "dayNumber", status, "isFeatured", "createdAt", "updatedAt") VALUES
-     ('evt1', 'cricket', 'Cricket', 'desc', 'rules', 'cat1', 'Ground', 'INDIVIDUAL', 1, 1, 1000, NOW(), NOW(), 1, 'REGISTRATION_OPEN', false, NOW(), NOW())`
+     ('evt1', 'test-event-1', 'Test Event 1', 'Test description', 'Test rules', 'cat1', 'Test venue', 'INDIVIDUAL', 1, 1, 0, NOW(), NOW(), 1, 'REGISTRATION_OPEN', false, NOW(), NOW())`
   );
   await db.query(
     `INSERT INTO "Registration" (id, "eventId", "userId", "registrationNumber", status, "qrTicketCode", "createdAt", "updatedAt") VALUES
-     ('reg1', 'evt1', 'u_part', 'AST26-REG-9001', 'CONFIRMED', 'tk', NOW(), NOW())`
+     ('reg1', 'evt1', 'u_part', 'AST26-REG-TEST001', 'CONFIRMED', 'tk', NOW(), NOW())`
   );
   return db;
 }
@@ -81,17 +81,17 @@ export async function runAttendanceIntegrationTests() {
   // 1. Crypto roundtrip
   await test("QR token issues and verifies", () => {
     const tok = issueQrToken({
-      participantId: "AST26-9001",
+      participantId: "AST26-TEST-001",
       userId: "u_part",
-      collegeId: "24105128032",
-      name: "Sneha Kumari",
-      branch: "CE",
+      collegeId: "TEST-COLL-001",
+      name: "Test Fixture · Participant",
+      branch: "CSE",
       eventId: "evt1",
       ttlSeconds: 300,
     });
     const v = verifyQrToken(tok.token);
     if (!v.valid) throw new Error("expected valid token, got " + v.reason);
-    if (v.payload?.participantId !== "AST26-9001") {
+    if (v.payload?.participantId !== "AST26-TEST-001") {
       throw new Error("payload mismatch");
     }
   });
@@ -99,7 +99,7 @@ export async function runAttendanceIntegrationTests() {
   // 2. Tampered signature fails
   await test("Tampered payload fails verification", () => {
     const tok = issueQrToken({
-      participantId: "AST26-9001",
+      participantId: "AST26-TEST-001",
       userId: "u_part",
       collegeId: "1",
       name: "x",
@@ -125,10 +125,10 @@ export async function runAttendanceIntegrationTests() {
     const sig = createHmac("sha256", SECRET).update("payload").digest("hex");
     await db.query(
       `INSERT INTO "QrPass" (id, "participantId", "userId", "eventId", token, "signatureHash", payload, "expiresAt", "scanCount", "isRevoked", "createdAt", "updatedAt")
-       VALUES ('qp1', 'AST26-9001', 'u_part', 'evt1', $1, $2, 'payload', $3, 0, false, NOW(), NOW())`,
+       VALUES ('qp1', 'AST26-TEST-001', 'u_part', 'evt1', $1, $2, 'payload', $3, 0, false, NOW(), NOW())`,
       [`AST26.payload.${sig}`, sig, exp]
     );
-    const r = await db.query(`SELECT count(*)::int as c FROM "QrPass" WHERE "participantId" = 'AST26-9001'`);
+    const r = await db.query(`SELECT count(*)::int as c FROM "QrPass" WHERE "participantId" = 'AST26-TEST-001'`);
     if (row(r).c !== 1) throw new Error("expected 1 pass row");
   });
 
@@ -145,13 +145,13 @@ export async function runAttendanceIntegrationTests() {
   await test("Duplicate check-in is blocked by unique constraint", async () => {
     await db.query(
       `INSERT INTO "Attendance" (id, "eventId", "userId", "participantId", "scannedById", "checkInType", status, "scannedAt")
-       VALUES ('att1', 'evt1', 'u_part', 'AST26-9001', 'u_vol', 'EVENT_ENTRY', 'PRESENT', NOW())`
+       VALUES ('att1', 'evt1', 'u_part', 'AST26-TEST-001', 'u_vol', 'EVENT_ENTRY', 'PRESENT', NOW())`
     );
     let threw = false;
     try {
       await db.query(
         `INSERT INTO "Attendance" (id, "eventId", "userId", "participantId", "scannedById", "checkInType", status, "scannedAt")
-         VALUES ('att2', 'evt1', 'u_part', 'AST26-9001', 'u_vol', 'EVENT_ENTRY', 'PRESENT', NOW())`
+         VALUES ('att2', 'evt1', 'u_part', 'AST26-TEST-001', 'u_vol', 'EVENT_ENTRY', 'PRESENT', NOW())`
       );
     } catch (err) {
       threw = true;
@@ -163,7 +163,7 @@ export async function runAttendanceIntegrationTests() {
   await test("CheckInLog row inserted and queryable", async () => {
     await db.query(
       `INSERT INTO "CheckInLog" (id, "scannerId", "scannerName", "participantId", "eventId", action, result, "timestamp")
-       VALUES ('cl1', 'u_vol', 'Ananya', 'AST26-9001', 'evt1', 'QR_SCAN_SUCCESS', 'SUCCESS', NOW())`
+       VALUES ('cl1', 'u_vol', 'Test Volunteer', 'AST26-TEST-001', 'evt1', 'QR_SCAN_SUCCESS', 'SUCCESS', NOW())`
     );
     const r = await db.query(`SELECT count(*)::int as c FROM "CheckInLog" WHERE "scannerId" = 'u_vol'`);
     if (row(r).c < 1) throw new Error("no log");
@@ -225,3 +225,4 @@ if (typeof require !== "undefined" && require.main === module) {
     process.exit(r.failed === 0 ? 0 : 1);
   })();
 }
+

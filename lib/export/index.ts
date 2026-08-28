@@ -96,7 +96,7 @@ async function fetchData(kind: ExportKind) {
         rank: r.rank,
         positionTitle: r.positionTitle,
         score: r.score ?? "",
-        prizeAwarded: r.prizeAwarded ?? "",
+        awardAwarded: r.prizeAwarded ?? "",
         winnerName: r.user?.name ?? r.team?.name ?? "",
         winnerId: r.userId ?? r.teamId ?? "",
         certificateIssued: r.certificateIssued,

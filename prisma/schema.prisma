@@ -292,9 +292,9 @@ model Event {
   maxRegistrations     Int           @default(100)
   currentRegistrations Int           @default(0)
   prizePool            Float         @default(0.0)
-  firstPrize           String?       // e.g. "₹10,000 + Gold Trophy + Certificate"
-  secondPrize          String?       // e.g. "₹5,000 + Silver Medal + Certificate"
-  thirdPrize           String?       // e.g. "₹2,500 + Bronze Medal + Certificate"
+  firstPrize           String?       // e.g. "Champions Trophy + Gold Medal + Certificate of Excellence"
+  secondPrize          String?       // e.g. "Runner-Up Trophy + Silver Medal + Certificate of Merit"
+  thirdPrize           String?       // e.g. "Bronze Medal + Certificate of Commendation"
   scheduleStart        DateTime      // Start Date & Time
   scheduleEnd          DateTime      // End Date & Time
   dayNumber            Int           @default(1) // Day 1 to Day 5 (Sept 4 - Sept 8, 2026)
@@ -539,7 +539,7 @@ model Result {
   userId            String?        // For individual events
   teamId            String?        // For team events
   score             String?        // e.g. "21-18, 21-19" or "45 pts"
-  prizeAwarded      String?        // e.g. "₹10,000 + Trophy"
+  prizeAwarded      String?        // e.g. "Winner Trophy + Gold Medal + Certificate"
   certificateIssued Boolean        @default(false)
   publishedAt       DateTime       @default(now())
   notes             String?

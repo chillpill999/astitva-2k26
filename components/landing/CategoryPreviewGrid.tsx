@@ -2,9 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Trophy, Music, Gamepad2, BookOpen, ArrowRight, Sparkles, Flame, Coins } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Trophy, Music, Gamepad2, BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { FestCategory } from "@/lib/data/fest-data";
 
 interface CategoryPreviewProps {
@@ -16,32 +14,32 @@ const CATEGORY_THEMES: Record<
   {
     icon: React.ElementType;
     number: string;
-    prizeTag: string;
+    awardsTag: string;
     events: string[];
   }
 > = {
   sports: {
     icon: Trophy,
     number: "01",
-    prizeTag: "₹75,000+ Pool",
+    awardsTag: "Trophies & Gold Medals",
     events: ["Cricket", "Football", "Volleyball", "Badminton", "Chess"],
   },
   cultural: {
     icon: Music,
     number: "02",
-    prizeTag: "₹72,000+ Pool",
+    awardsTag: "Trophies & Merit Certificates",
     events: ["Solo & Group Dance", "Singing", "Standup Comedy", "Ramp Walk"],
   },
   gaming: {
     icon: Gamepad2,
     number: "03",
-    prizeTag: "₹53,000+ Pool",
+    awardsTag: "Champions Cup & Medals",
     events: ["BGMI Squad Battle", "Free Fire Championship"],
   },
   literary: {
     icon: BookOpen,
     number: "04",
-    prizeTag: "₹36,000+ Pool",
+    awardsTag: "Commendation & Certificates",
     events: ["Parliamentary Debate", "Mega Fest Quiz", "Poetry", "Creative Writing"],
   },
 };
@@ -61,7 +59,7 @@ export function CategoryPreviewGrid({ categories }: CategoryPreviewProps) {
               FESTIVAL <span className="text-[#E85A4F]">CATEGORIES</span>
             </h2>
             <p className="text-sm sm:text-base text-[#8E8D8A]">
-              Select an arena to explore tournament rulebooks, venues, team limits, and prize allocations.
+              Select an arena to explore tournament rulebooks, venues, team limits, and championship accolades.
             </p>
           </div>
 
@@ -75,7 +73,7 @@ export function CategoryPreviewGrid({ categories }: CategoryPreviewProps) {
         {/* 4 Luxury Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => {
-            const theme = CATEGORY_THEMES[category.slug.toLowerCase()] || CATEGORY_THEMES.sports;
+            const theme = CATEGORY_THEMES[category.slug?.toLowerCase()] || CATEGORY_THEMES.sports;
             const Icon = theme.icon;
 
             return (
@@ -101,7 +99,7 @@ export function CategoryPreviewGrid({ categories }: CategoryPreviewProps) {
                         {category.name}
                       </h3>
                       <p className="text-xs font-mono text-[#E85A4F] font-semibold mt-0.5">
-                        {theme.prizeTag}
+                        {theme.awardsTag}
                       </p>
                     </div>
 

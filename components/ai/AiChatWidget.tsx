@@ -22,7 +22,7 @@ const SUGGESTED_PROMPTS = [
   "Where is Chess?",
   "How do I create a team?",
   "Verify my certificate",
-  "What's the prize pool?",
+  "What awards are given?",
 ];
 
 export function AiChatWidget() {

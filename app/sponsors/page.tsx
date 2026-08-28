@@ -19,7 +19,7 @@ import { STATIC_SPONSORS, FestSponsor } from "@/lib/data/fest-data";
 const SPONSORSHIP_TIERS = [
   {
     tier: "TITLE SPONSOR",
-    investment: "₹3,00,000+",
+    investment: "Principal Festival Partner",
     perks: [
       "Naming rights: 'ASTITVA 2K26 Powered by [Brand]'",
       "Prominent logo on main stage, all posters & banners",
@@ -40,7 +40,7 @@ const SPONSORSHIP_TIERS = [
   },
   {
     tier: "GOLD SPONSOR",
-    investment: "₹1,00,000",
+    investment: "Tournament Title Partner",
     perks: [
       "Exclusive naming of Cricket or Football Championship",
       "Logo placement on festival website header & stage LED walls",
@@ -50,7 +50,7 @@ const SPONSORSHIP_TIERS = [
   },
   {
     tier: "SILVER / ENERGY PARTNER",
-    investment: "₹50,000",
+    investment: "Arena & Energy Partner",
     perks: [
       "Official Esports & LAN Arena energy sponsor",
       "Product distribution lounge in indoor sports complex",

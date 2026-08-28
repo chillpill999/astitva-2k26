@@ -2,17 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Trophy,
-  Sparkles,
-  ArrowRight,
-  Filter,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Calendar, Clock, MapPin, ArrowRight, Filter, CalendarOff } from "lucide-react";
 import { FestEvent } from "@/lib/data/fest-data";
 
 interface ScheduleMatrixProps {
@@ -20,11 +10,11 @@ interface ScheduleMatrixProps {
 }
 
 const FESTIVAL_DAYS = [
-  { day: 1, date: "4 Sept 2026", title: "Inauguration & Heats", badge: "Day 01" },
-  { day: 2, date: "5 Sept 2026", title: "Stage & Esports", badge: "Day 02" },
-  { day: 3, date: "6 Sept 2026", title: "Semis & Comedy", badge: "Day 03" },
-  { day: 4, date: "7 Sept 2026", title: "Grand Finals & Ramp", badge: "Day 04" },
-  { day: 5, date: "8 Sept 2026", title: "Valedictory & Star Night", badge: "Day 05" },
+  { day: 1, date: "4 Sept 2026" },
+  { day: 2, date: "5 Sept 2026" },
+  { day: 3, date: "6 Sept 2026" },
+  { day: 4, date: "7 Sept 2026" },
+  { day: 5, date: "8 Sept 2026" },
 ];
 
 export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
@@ -34,7 +24,8 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
   const dayEvents = events.filter((e) => {
     const matchesDay = e.dayNumber === selectedDay;
     const matchesCategory =
-      selectedCategory === "all" || e.category?.slug.toLowerCase() === selectedCategory.toLowerCase();
+      selectedCategory === "all" ||
+      e.category?.slug.toLowerCase() === selectedCategory.toLowerCase();
     return matchesDay && matchesCategory;
   });
 
@@ -47,31 +38,33 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
   ];
 
   return (
-    <section id="schedule" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#EAE7DC] text-[#1A1918] border-b border-[#8E8D8A]/20">
+    <section
+      id="schedule"
+      className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative bg-[#EAE7DC] text-[#1A1918] border-b border-[#8E8D8A]/20"
+    >
       <div className="container max-w-7xl mx-auto space-y-12">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded border border-[#8E8D8A]/30 bg-[#F6F4EE] text-[11px] font-mono tracking-widest text-[#8E8D8A] uppercase">
               <Calendar className="mr-1.5 h-3.5 w-3.5 text-[#E85A4F]" />
-              <span>5-DAY FESTIVAL CHRONICLE</span>
+              <span>Schedule</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#1A1918] uppercase">
-              FESTIVAL <span className="text-[#E85A4F]">TIMELINE</span>
+              Festival <span className="text-[#E85A4F]">Timeline</span>
             </h2>
             <p className="text-sm sm:text-base text-[#8E8D8A]">
-              Explore match times, venue locations, and tournament fixtures across all 5 festival days (4–8 Sept 2026).
+              Browse the 5-day programme (4–8 September 2026). The schedule below reflects events
+              added by the organizing committee.
             </p>
           </div>
 
           <Link href="/schedule">
             <span className="inline-flex items-center text-xs font-mono font-semibold py-2 px-4 rounded border border-[#8E8D8A]/40 text-[#1A1918] bg-[#F6F4EE] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all cursor-pointer">
-              FULL MATRIX →
+              Full Schedule →
             </span>
           </Link>
         </div>
 
-        {/* 5-Day Day Selectors (Exteta Minimalist Bar) */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 p-1.5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25">
           {FESTIVAL_DAYS.map((d) => {
             const isSelected = selectedDay === d.day;
@@ -87,20 +80,16 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
                 }`}
               >
                 <span className="text-[10px] font-mono font-bold tracking-wider uppercase opacity-85">
-                  {d.badge}
+                  Day {String(d.day).padStart(2, "0")}
                 </span>
                 <span className="text-sm sm:text-base font-bold tracking-tight mt-0.5">
                   {d.date}
-                </span>
-                <span className="text-[10px] font-mono opacity-75 mt-0.5 hidden sm:inline">
-                  {d.title}
                 </span>
               </button>
             );
           })}
         </div>
 
-        {/* Category Filters */}
         <div className="flex flex-wrap items-center gap-2">
           {categories.map((c) => (
             <button
@@ -118,11 +107,14 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
           ))}
         </div>
 
-        {/* Timeline Event Cards List */}
         <div className="space-y-4">
           {dayEvents.length === 0 ? (
             <div className="text-center py-12 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25">
-              <p className="text-sm font-mono text-[#8E8D8A]">No fixtures scheduled for this selection.</p>
+              <CalendarOff className="h-8 w-8 text-[#8E8D8A] mx-auto mb-2" />
+              <p className="text-sm font-bold text-[#1A1918]">No fixtures scheduled for this day</p>
+              <p className="text-xs text-[#8E8D8A] mt-1">
+                The organizing committee will publish the full programme before registrations open.
+              </p>
             </div>
           ) : (
             dayEvents.map((event) => (
@@ -133,18 +125,17 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
                 <div className="space-y-1.5">
                   <div className="flex items-center space-x-2.5">
                     <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/20 text-[#E85A4F] font-bold uppercase">
-                      {event.category?.name || "General"}
+                      {event.category?.name ?? "Event"}
                     </span>
                     <span className="text-xs font-mono text-[#8E8D8A] flex items-center">
                       <Clock className="w-3 h-3 mr-1" />
-                      {new Date(event.scheduleStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(event.scheduleStart).toLocaleTimeString("en-IN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                   </div>
-
-                  <h4 className="text-base sm:text-lg font-bold text-[#1A1918]">
-                    {event.title}
-                  </h4>
-
+                  <h4 className="text-base sm:text-lg font-bold text-[#1A1918]">{event.title}</h4>
                   <p className="text-xs text-[#8E8D8A] flex items-center">
                     <MapPin className="w-3 h-3 mr-1 text-[#E85A4F]" />
                     {event.venue}
@@ -152,14 +143,11 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
                 </div>
 
                 <div className="flex items-center space-x-3 self-end sm:self-center">
-                  <span className="text-xs font-mono text-[#E85A4F] font-semibold">
-                    {event.prizePool ? `₹${event.prizePool.toLocaleString()}` : "Medals & Trophies"}
-                  </span>
                   <Link
                     href={`/events/${event.id}`}
                     className="px-3.5 py-1.5 rounded text-xs font-mono font-medium border border-[#8E8D8A]/35 text-[#1A1918] bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-colors"
                   >
-                    DETAILS →
+                    Details →
                   </Link>
                 </div>
               </div>

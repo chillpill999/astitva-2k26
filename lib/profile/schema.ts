@@ -17,13 +17,10 @@ export const TshirtSizeEnum = z.enum(["S", "M", "L", "XL", "XXL"], {
   errorMap: () => ({ message: "Please select a valid T-shirt size (S, M, L, XL, XXL)" }),
 });
 
-export const LNJPIT_HOSTELS = [
-  "Aryabhata Boys Hostel",
-  "Ramanujan Boys Hostel",
-  "Gargi Girls Hostel",
-  "Maitreyi Girls Hostel",
-  "Other / Outside PG",
-] as const;
+// Hostel names are not maintained by the platform. Students type their
+// hostel name in a free-text field. The list below is intentionally empty
+// — please contact your hostel warden for the official name.
+export const LNJPIT_HOSTELS = [] as const;
 
 export const BRANCH_METADATA: Record<
   z.infer<typeof BranchEnum>,

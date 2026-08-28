@@ -27,7 +27,7 @@ export async function runCertificateCryptoTests() {
 
   const input = {
     certificateNumber: "AST26-CERT-10492",
-    recipientName: "Sneha Kumari",
+    recipientName: "Test Fixture · Participant",
     participantId: "AST26-0005",
     eventName: "Cricket Tournament",
     category: "Sports",
@@ -97,3 +97,4 @@ if (typeof require !== "undefined" && require.main === module) {
     process.exit(r.failed === 0 ? 0 : 1);
   })();
 }
+

@@ -142,9 +142,9 @@ export function RegisterSoloModal({
               </div>
               <div className="flex items-center justify-between text-[#8E8D8A]">
                 <span className="flex items-center gap-1.5">
-                  <Trophy className="h-3.5 w-3.5 text-[#E85A4F]" /> Cash Bounty
+                  <Trophy className="h-3.5 w-3.5 text-[#E85A4F]" /> Awards
                 </span>
-                <span className="font-bold text-[#E85A4F]">₹{event.prizePool?.toLocaleString("en-IN") || 0}</span>
+                <span className="font-bold text-[#E85A4F]">Trophies &amp; Certificates</span>
               </div>
             </div>
 

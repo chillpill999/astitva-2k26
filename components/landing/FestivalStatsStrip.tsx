@@ -1,12 +1,7 @@
 "use client";
 
-// ============================================================================
-// ASTITVA 2K26 - Bento Pill Festival Statistics Strip
-// Path: components/landing/FestivalStatsStrip.tsx
-// ============================================================================
-
 import React from "react";
-import { Trophy, Flame, Layers, Users, Calendar, Coins } from "lucide-react";
+import { Trophy, Award, Layers, Users, ShieldCheck } from "lucide-react";
 
 interface FestivalStatsProps {
   stats?: {
@@ -18,43 +13,56 @@ interface FestivalStatsProps {
   };
 }
 
+function formatInr(n: number) {
+  if (n === 0) return "—";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
+
 export function FestivalStatsStrip({ stats }: FestivalStatsProps) {
+  const s = stats ?? {
+    totalEvents: 0,
+    totalPrizePool: 0,
+    totalCategories: 0,
+    totalDays: 5,
+    totalParticipants: 0,
+  };
+
   const metricItems = [
     {
-      icon: Coins,
-      value: stats?.totalPrizePool ? `₹${(stats.totalPrizePool / 100000).toFixed(1)}L+` : "₹1.5L+",
-      label: "TOTAL CASH PRIZES",
-      detail: "Rolling Shields & Medals",
-      color: "text-amber-400",
-      bgGlow: "group-hover:border-amber-500/40",
-      iconBg: "bg-amber-500/10 text-amber-400",
+      icon: Trophy,
+      value: s.totalEvents > 0 ? `${s.totalEvents}` : "—",
+      label: "EVENTS PUBLISHED",
+      detail: "Sports, Cultural, Gaming, Lit",
+      color: "text-[#E85A4F]",
+      borderHover: "hover:border-[#E85A4F]",
     },
     {
-      icon: Trophy,
-      value: stats?.totalEvents ? `${stats.totalEvents}+` : "16+",
-      label: "TOURNAMENTS",
-      detail: "Sports, Gaming & Stage",
-      color: "text-cyan-400",
-      bgGlow: "group-hover:border-cyan-500/40",
-      iconBg: "bg-cyan-500/10 text-cyan-400",
+      icon: Award,
+      value: formatInr(s.totalPrizePool),
+      label: "TOTAL PRIZE POOL",
+      detail: "From published events",
+      color: "text-[#1A1918]",
+      borderHover: "hover:border-[#1A1918]",
     },
     {
       icon: Layers,
-      value: "4 PILLARS",
-      label: "COMPETITIVE STREAMS",
-      detail: "Sports, Cultural, Gaming, Lit",
-      color: "text-purple-400",
-      bgGlow: "group-hover:border-purple-500/40",
-      iconBg: "bg-purple-500/10 text-purple-400",
+      value: s.totalCategories > 0 ? `${s.totalCategories}` : "—",
+      label: "CATEGORIES",
+      detail: "Sports · Cultural · Gaming · Lit",
+      color: "text-[#1A1918]",
+      borderHover: "hover:border-[#E85A4F]",
     },
     {
       icon: Users,
-      value: "2,500+",
-      label: "COLLEGIATE ATHLETES",
-      detail: "5 Engineering Branches",
-      color: "text-emerald-400",
-      bgGlow: "group-hover:border-emerald-500/40",
-      iconBg: "bg-emerald-500/10 text-emerald-400",
+      value: s.totalParticipants > 0 ? `${s.totalParticipants}` : "—",
+      label: "REGISTERED",
+      detail: "Profiles in the database",
+      color: "text-[#E85A4F]",
+      borderHover: "hover:border-[#E85A4F]",
     },
   ];
 
@@ -66,22 +74,19 @@ export function FestivalStatsStrip({ stats }: FestivalStatsProps) {
           return (
             <div
               key={idx}
-              className={`group relative flex items-center space-x-3.5 sm:space-x-4 p-4 sm:p-5 rounded-2xl bg-[#0d1224]/90 border border-white/10 shadow-xl backdrop-blur-xl transition-all duration-300 ${item.bgGlow} hover:-translate-y-0.5 hover:shadow-cyan-500/10`}
+              className={`group relative flex items-center space-x-3.5 sm:space-x-4 p-4 sm:p-5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm transition-all duration-300 ${item.borderHover} hover:-translate-y-0.5 hover:shadow-md`}
             >
-              {/* Icon Capsule */}
-              <div className={`flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl ${item.iconBg} border border-white/10 group-hover:scale-110 transition-transform`}>
-                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/20 text-[#E85A4F] group-hover:scale-105 transition-transform">
+                <Icon className="h-5 w-5 sm:h-6 sm:h-6" />
               </div>
-
-              {/* Metric Text */}
               <div className="flex flex-col min-w-0">
-                <span className={`font-mono text-xl sm:text-2xl lg:text-3xl font-black tracking-tight ${item.color}`}>
+                <span className={`font-mono text-lg sm:text-xl lg:text-2xl font-black tracking-tight ${item.color}`}>
                   {item.value}
                 </span>
-                <span className="text-[11px] sm:text-xs font-bold text-white tracking-wide truncate">
+                <span className="text-[11px] sm:text-xs font-bold text-[#1A1918] tracking-wide truncate uppercase">
                   {item.label}
                 </span>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 truncate">
+                <span className="text-[10px] sm:text-[11px] text-[#8E8D8A] truncate font-mono">
                   {item.detail}
                 </span>
               </div>

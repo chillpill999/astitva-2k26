@@ -56,7 +56,7 @@
 | **College** | LNJPIT Chapra |
 | **Dates** | September 4 – 8, 2026 |
 | **Categories** | Sports · Cultural · Gaming · Literary |
-| **Prize Pool** | ₹10,00,000+ |
+| **Awards** | Championship Trophies, Medals & Verified Certificates |
 
 ### Event Categories
 
@@ -76,7 +76,7 @@
 - **WebGL Particle Shader** — Interactive Three.js canvas with dual blue/purple pulse animation
 - **Live Countdown Timer** — Real-time countdown to September 4, 2026
 - **Glassmorphism UI** — Premium glass cards with `backdrop-filter: blur(12px)` and obsidian tonal layering
-- **16 Section Components** — Hero, About, Categories, Schedule Timeline, Featured Events, Prize Pool, Sponsors, Team, Gallery, FAQ, CTA
+- **16 Section Components** — Hero, About, Categories, Schedule Timeline, Featured Events, Awards & Accolades, Sponsors, Team, Gallery, FAQ, CTA
 
 ### 🔐 Role-Based Access Control (RBAC)
 - **5 distinct roles** with dedicated dashboards and middleware-enforced route protection

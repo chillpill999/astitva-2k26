@@ -356,7 +356,7 @@ export async function getEventBySlugOrId(
     registrationFee: fallback.registrationFee,
     maxRegistrations: fallback.maxRegistrations,
     currentRegistrations: fallback.currentRegistrations,
-    prizePool: fallback.prizePool,
+    prizePool: fallback.prizePool || 0,
     firstPrize: fallback.firstPrize,
     secondPrize: fallback.secondPrize,
     thirdPrize: fallback.thirdPrize,

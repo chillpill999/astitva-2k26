@@ -6,6 +6,7 @@ import {
   Trophy,
   FileText,
   Award,
+  Medal,
   Users,
   User,
   MapPin,
@@ -18,9 +19,9 @@ import {
   QrCode,
   ShieldCheck,
   Share2,
+  FileCheck2,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import { EventDetailData } from "@/lib/events/types";
 import { RegisterSoloModal } from "./RegisterSoloModal";
 import { FestEvent } from "@/lib/data/fest-data";
@@ -70,10 +71,10 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
     registrationFee: event.registrationFee,
     maxRegistrations: event.maxRegistrations,
     currentRegistrations: event.currentRegistrations,
-    prizePool: event.prizePool,
-    firstPrize: event.firstPrize,
-    secondPrize: event.secondPrize,
-    thirdPrize: event.thirdPrize,
+    prizePool: 0,
+    firstPrize: event.firstPrize || "Winner Trophy + Gold Medal + Certificate of Excellence",
+    secondPrize: event.secondPrize || "Runner-Up Trophy + Silver Medal + Certificate of Merit",
+    thirdPrize: event.thirdPrize || "Bronze Medal + Certificate of Commendation",
     scheduleStart: new Date(event.scheduleStart),
     scheduleEnd: new Date(event.scheduleEnd),
     dayNumber: event.dayNumber,
@@ -107,11 +108,11 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
                 RULES
               </TabsTrigger>
               <TabsTrigger
-                value="prizes"
+                value="awards"
                 className="text-xs font-mono font-bold data-[state=active]:bg-[#1A1918] data-[state=active]:text-[#EAE7DC] rounded-xl py-2"
               >
                 <Trophy className="mr-1.5 h-3.5 w-3.5 hidden sm:inline" />
-                PRIZES
+                AWARDS
               </TabsTrigger>
               <TabsTrigger
                 value="coordinator"
@@ -192,15 +193,15 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
               </div>
             </TabsContent>
 
-            {/* TAB 3: PRIZE POOL */}
-            <TabsContent value="prizes" className="space-y-6 pt-6">
+            {/* TAB 3: AWARDS & HONORS */}
+            <TabsContent value="awards" className="space-y-6 pt-6">
               <div className="space-y-3">
                 <h3 className="text-lg font-bold text-[#1A1918] uppercase tracking-wider font-mono flex items-center gap-2">
                   <Trophy className="h-4 w-4 text-[#E85A4F]" />
-                  Podium Rewards &amp; Bounty
+                  Podium Honors &amp; Accolades
                 </h3>
                 <p className="text-xs text-[#8E8D8A] font-mono">
-                  Total Tournament Cash Pool: <strong className="text-[#E85A4F] text-sm">₹{event.prizePool.toLocaleString("en-IN")}</strong>
+                  Official trophies, cast medals, and verifiable excellence certificates awarded to top finishers.
                 </p>
               </div>
 
@@ -211,7 +212,7 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
                   </span>
                   <p className="text-xs font-mono text-[#8E8D8A] font-bold mt-1">Champion</p>
                   <p className="text-sm font-bold text-[#1A1918]">
-                    {event.firstPrize || "Gold Trophy + Cash + Merit Certificate"}
+                    {event.firstPrize || "Winner Trophy + Gold Medals + Certificate of Excellence"}
                   </p>
                 </div>
 
@@ -221,7 +222,7 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
                   </span>
                   <p className="text-xs font-mono text-[#8E8D8A] font-bold mt-1">Runner Up</p>
                   <p className="text-sm font-bold text-[#1A1918]">
-                    {event.secondPrize || "Silver Trophy / Medal + Cash"}
+                    {event.secondPrize || "Runner-Up Trophy + Silver Medals + Certificate of Merit"}
                   </p>
                 </div>
 
@@ -231,8 +232,19 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
                   </span>
                   <p className="text-xs font-mono text-[#8E8D8A] font-bold mt-1">2nd Runner Up</p>
                   <p className="text-sm font-bold text-[#1A1918]">
-                    {event.thirdPrize || "Bronze Memento + Merit Certificate"}
+                    {event.thirdPrize || "Bronze Medals + Certificate of Commendation"}
                   </p>
+                </div>
+              </div>
+
+              {/* Participation Certificate Banner */}
+              <div className="p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 flex items-center space-x-3 text-xs font-mono text-[#1A1918]">
+                <FileCheck2 className="h-5 w-5 text-[#E85A4F] shrink-0" />
+                <div>
+                  <strong className="block font-bold uppercase">Participation Certificate for All Attendees</strong>
+                  <span className="text-[#8E8D8A]">
+                    Every registered participant who checks in via the QR scanner receives an official digitally verifiable Participation Certificate.
+                  </span>
                 </div>
               </div>
             </TabsContent>
@@ -396,7 +408,7 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
           <button
             type="button"
             onClick={handleShare}
-            className="w-full py-2 text-xs font-mono text-[#8E8D8A] hover:text-[#1A1918] transition-colors flex items-center justify-center gap-1.5"
+            className="w-full py-2 text-xs font-mono text-[#8E8D8A] hover:text-[#1A1918] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <Share2 className="h-3.5 w-3.5" />
             <span>{copiedLink ? "Link Copied to Clipboard!" : "Share Tournament Link"}</span>

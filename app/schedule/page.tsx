@@ -187,8 +187,8 @@ export default function SchedulePage() {
                 </div>
 
                 <div className="flex items-center space-x-3 self-end sm:self-center">
-                  <span className="text-xs font-mono font-bold text-[#E85A4F]">
-                    ₹{evt.prizePool?.toLocaleString("en-IN") || 0}
+                  <span className="text-xs font-mono font-bold text-[#E85A4F] uppercase">
+                    {evt.eventType === "TEAM" ? "Squad" : "Solo"}
                   </span>
                   <Link
                     href={`/events/${evt.id}`}

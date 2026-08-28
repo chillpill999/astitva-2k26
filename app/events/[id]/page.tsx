@@ -15,6 +15,7 @@ import {
   Users,
   User,
   Sparkles,
+  Award,
 } from "lucide-react";
 import { getEventBySlugOrId } from "@/lib/events/actions";
 import { EventDetailTabs } from "@/components/events/EventDetailTabs";
@@ -124,8 +125,8 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                 <span>Day 0{event.dayNumber}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-[#EAE7DC] px-3 py-1.5 rounded-xl border border-[#8E8D8A]/20">
-                <Trophy className="h-3.5 w-3.5 text-[#E85A4F]" />
-                <span className="font-bold text-[#E85A4F]">₹{event.prizePool?.toLocaleString("en-IN") || 0}</span>
+                <Award className="h-3.5 w-3.5 text-[#E85A4F]" />
+                <span className="font-bold text-[#E85A4F]">Trophies &amp; Certificates</span>
               </div>
             </div>
           </div>

@@ -143,14 +143,14 @@ export function ResultsEntryClient({ events, initialResultsByEvent }: ResultsEnt
                     #{r.rank} · {r.winnerName ?? "Unknown"} ({r.positionTitle})
                   </p>
                   <p className="text-[10px] text-[#8E8D8A]">
-                    Score: {r.score ?? "—"} · Prize: {r.prizeAwarded ?? "—"}
+                    Score: {r.score ?? "—"} · Award: {r.prizeAwarded ?? "—"}
                   </p>
                 </div>
                 <button
                   type="button"
                   disabled={pending}
                   onClick={() => handleDelete(r.id)}
-                  className="p-1.5 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
+                  className="p-1.5 rounded-lg text-red-600 hover:bg-red-100 transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -179,7 +179,7 @@ export function ResultsEntryClient({ events, initialResultsByEvent }: ResultsEnt
             >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[#E85A4F] uppercase">
-                  {row.rank === 1 ? "🥇 Winner (1st)" : row.rank === 2 ? "🥈 1st Runner-Up (2nd)" : "🥉 2nd Runner-Up (3rd)"}
+                  {row.rank === 1 ? "🥇 Winner (1st Place)" : row.rank === 2 ? "🥈 1st Runner-Up (2nd Place)" : "🥉 2nd Runner-Up (3rd Place)"}
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -210,10 +210,10 @@ export function ResultsEntryClient({ events, initialResultsByEvent }: ResultsEnt
                   />
                 </div>
                 <div>
-                  <label className="text-[9px] uppercase text-[#8E8D8A] block mb-1">Prize Awarded</label>
+                  <label className="text-[9px] uppercase text-[#8E8D8A] block mb-1">Honor / Award Conferred</label>
                   <input
                     type="text"
-                    placeholder="e.g. ₹15,000 + Trophy"
+                    placeholder="e.g. Winner Trophy + Gold Medal + Certificate"
                     value={row.prizeAwarded}
                     onChange={(e) => setRow(idx, { prizeAwarded: e.target.value })}
                     className="w-full p-2.5 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/30 text-[#1A1918] focus:outline-none focus:border-[#E85A4F]"

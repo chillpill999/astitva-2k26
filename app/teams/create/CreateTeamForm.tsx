@@ -172,8 +172,8 @@ export function CreateTeamForm({ teamEvents, defaultEventId }: CreateTeamFormPro
               <span className="font-bold text-[#1A1918] truncate block">{selectedEvent.venue}</span>
             </div>
             <div>
-              <span className="text-[9px] text-[#8E8D8A] uppercase block">Prize Pool</span>
-              <span className="font-bold text-[#E85A4F]">₹{selectedEvent.prizePool?.toLocaleString("en-IN") || 0}</span>
+              <span className="text-[9px] text-[#8E8D8A] uppercase block">Schedule</span>
+              <span className="font-bold text-[#E85A4F]">Day 0{selectedEvent.dayNumber}</span>
             </div>
           </div>
         )}
