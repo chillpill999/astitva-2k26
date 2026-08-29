@@ -220,7 +220,7 @@ Festival Context:
 - Theme: Where Sports, Talent, Creativity & Entertainment Come Together
 - Categories: Sports (Cricket, Football, Volleyball, Badminton, Chess), Cultural (Dance, Singing, Stand-up Comedy, Ramp Walk), Gaming (BGMI, Free Fire), Literary (Debate, Quiz, Poetry Slam, Creative Writing).
 - Recognition & Awards: Winner Certificates, Runner-Up Certificates, Participation Certificates, Championship Trophies, and Medals. (Zero cash prizes / No prize pool money).
-- QR Passes: Tamper-resistant HMAC-SHA256 encrypted digital QR passes for check-in and attendance.
+- QR Passes: Tamper-resistant encrypted digital QR passes for check-in and attendance.
 - Certificate Verification: Authenticated at /verify-certificate/<id>.
 - Venues: LNJPIT Main Ground, Indoor Sports Arena, Central Auditorium, Seminar Hall 1, Computer Lab 3.
 
@@ -400,7 +400,7 @@ export async function askAssistant(message: string): Promise<AiResponse> {
     case "CERTIFICATE_QUERY": {
       return {
         answer:
-          "Every certificate carries a unique ID and an HMAC-SHA256 signature. Verify any certificate at /verify-certificate/<id>.",
+          "Every certificate carries a unique certificate ID and digital verification signature. Verify any certificate at /verify-certificate/<id>.",
         intent,
         relatedEvents: [],
         suggestedActions: suggested(intent),

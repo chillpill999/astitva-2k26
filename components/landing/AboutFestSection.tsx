@@ -43,7 +43,7 @@ export function AboutFestSection({
 
           <p className="text-base sm:text-lg text-[#8E8D8A] leading-relaxed max-w-2xl">
             ASTITVA is the annual fest of Lok Nayak Jai Prakash Institute of Technology, Chapra. From
-            4 to 8 September 2026, students from the five engineering branches meet for five days of
+            4 to 8 September 2026, students from across all departments meet for five days of
             sport, culture, gaming, and literature.
           </p>
         </div>
@@ -62,8 +62,8 @@ export function AboutFestSection({
               </div>
               <h3 className="text-lg font-bold text-[#1A1918] tracking-tight">Lok Nayak Jai Prakash Institute of Technology</h3>
               <p className="text-sm text-[#8E8D8A] leading-relaxed">
-                A government engineering college in Chapra, Bihar, offering undergraduate programmes
-                in Computer Science, Mechanical, Civil, Electrical, and Electronics Engineering.
+                A premier government engineering college in Chapra, Bihar, offering undergraduate programmes
+                in CSE, ME, CE, EE, Food Processing & Preservation, and Mathematics & Computing.
               </p>
             </div>
           </div>
@@ -122,8 +122,8 @@ export function AboutFestSection({
             label="FESTIVAL DAYS"
           />
           <Stat
-            value="100%"
-            label="VERIFIED CERTIFICATES"
+            value="6"
+            label="LNJPIT BRANCHES"
           />
         </div>
       </div>

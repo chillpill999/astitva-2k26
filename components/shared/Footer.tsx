@@ -19,7 +19,7 @@ export function Footer() {
             </div>
 
             <p className="text-xs sm:text-sm text-[#8E8D8A] leading-relaxed max-w-md">
-              Lok Nayak Jai Prakash Institute of Technology (LNJPIT), Chapra brings together over 1,000+ participants across 16 premier tournaments from 4 to 8 September 2026.
+              Lok Nayak Jai Prakash Institute of Technology (LNJPIT), Chapra presents the annual festival bringing together students across Sports, Cultural, Gaming, and Literary competitions from 4 to 8 September 2026.
             </p>
 
             <div className="space-y-2 pt-2 text-xs text-[#8E8D8A]">

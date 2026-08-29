@@ -189,7 +189,7 @@ export default async function ParticipantDashboardPage() {
                 {profile?.participantId ?? user.participantId ?? "—"}
               </p>
               <p className="text-[10px] text-slate-400 font-mono">
-                HMAC-SHA256 encrypted pass
+                Encrypted digital pass
               </p>
             </div>
             <Link href="/profile">
@@ -212,7 +212,7 @@ export default async function ParticipantDashboardPage() {
             <Award className="h-4 w-4 text-amber-300 mr-2" /> Certificates
           </CardTitle>
           <CardDescription className="text-xs text-slate-400">
-            Verifiable certificates with HMAC-SHA256 signatures.
+            Verifiable digital certificates with authenticity signatures.
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">

@@ -53,7 +53,7 @@ export default async function VerifyCertificateIndex() {
               VERIFY AN <span className="text-[#E85A4F]">AST26-CERT</span>
             </h1>
             <p className="text-sm sm:text-base text-[#8E8D8A] font-mono leading-relaxed">
-              Each ASTITVA 2K26 certificate carries a unique cryptographic ID and HMAC-SHA256 signature.
+              Each ASTITVA 2K26 certificate carries a unique cryptographic ID and digital verification signature.
               Employers, universities, and recruiters can confirm authenticity by visiting
               <code className="mx-1 px-1.5 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] text-xs">/verify-certificate/&lt;ID&gt;</code>.
             </p>

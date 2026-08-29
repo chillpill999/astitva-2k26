@@ -19,7 +19,7 @@ export function CallToActionBanner() {
               Register for <span className="text-[#E85A4F]">ASTITVA 2K26</span>
             </h2>
             <p className="text-sm sm:text-lg text-[#8E8D8A] leading-relaxed max-w-2xl mx-auto">
-              Sign in with your LNJPIT account, complete your profile, and register for events.
+              Sign in, complete your profile, and register for official festival events.
               Form a team if you need one — captains can share a 6-character invite code.
             </p>
           </div>

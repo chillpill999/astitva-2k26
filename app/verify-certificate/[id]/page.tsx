@@ -108,7 +108,7 @@ export default async function VerifyCertificateById({
             </div>
 
             <div className="p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 space-y-1">
-              <span className="text-[10px] text-[#8E8D8A] uppercase block">HMAC-SHA256 Signature</span>
+              <span className="text-[10px] text-[#8E8D8A] uppercase block">Digital Verification Hash</span>
               <p className="text-[11px] text-[#1A1918] break-all font-mono">{cert.signatureHash}</p>
             </div>
           </div>

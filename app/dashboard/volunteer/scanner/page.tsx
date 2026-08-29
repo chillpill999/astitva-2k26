@@ -50,8 +50,7 @@ export default async function VolunteerScannerPage() {
             Scanner Terminal · {scannerName}
           </h1>
           <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono mt-1">
-            HMAC-SHA256 signed badges, anti-tamper checks, rate-limited at 30 scans/min, duplicate
-            blocked at the database level.
+            Digitally signed badges, anti-tamper verification, and duplicate check-in prevention.
           </p>
         </div>
         <div className="flex gap-2">

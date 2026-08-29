@@ -35,10 +35,10 @@ export function PrizePoolShowcase({ totalPrizePool }: PrizePoolShowcaseProps = {
             Official Accolades &amp; Certification
           </p>
           <p className="mt-2 text-4xl sm:text-5xl font-extrabold text-[#1A1918] font-mono">
-            50+ Trophies &amp; Medals
+            Trophies, Medals &amp; Certificates
           </p>
           <p className="text-xs text-[#8E8D8A] mt-2">
-            100% of participants receive cryptographically verifiable digital certificates upon attendance.
+            Verified digital certificates are issued for all registered attendees and podium finishers.
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export function PrizePoolShowcase({ totalPrizePool }: PrizePoolShowcaseProps = {
             <div className="flex items-start gap-3">
               <ShieldCheck className="h-4 w-4 text-[#E85A4F] mt-0.5 flex-shrink-0" />
               <span>
-                Every certificate carries a unique ID and a tamper-evident HMAC-SHA256 signature. The public
+                Every certificate carries a unique certificate ID and tamper-evident digital verification. The public
                 verification page confirms authenticity.
               </span>
             </div>

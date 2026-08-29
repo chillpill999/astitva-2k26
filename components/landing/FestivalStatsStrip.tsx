@@ -42,9 +42,9 @@ export function FestivalStatsStrip({ stats }: FestivalStatsProps) {
     },
     {
       icon: Award,
-      value: formatInr(s.totalPrizePool),
-      label: "TOTAL PRIZE POOL",
-      detail: "From published events",
+      value: s.totalDays > 0 ? `${s.totalDays} Days` : "5 Days",
+      label: "FESTIVAL DURATION",
+      detail: "4–8 September 2026",
       color: "text-[#1A1918]",
       borderHover: "hover:border-[#1A1918]",
     },
