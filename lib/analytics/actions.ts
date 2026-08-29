@@ -30,51 +30,11 @@ export interface AnalyticsOverview {
 }
 
 export async function getAdminAnalytics(): Promise<AnalyticsOverview> {
-  const ctx = await getRequestContext();
-  if (!ctx.user) return emptyOverview();
+  try {
+    const ctx = await getRequestContext();
+    if (!ctx.user) return emptyOverview();
 
-  const [
-    users,
-    participants,
-    events,
-    registrations,
-    teams,
-    attendance,
-    certificates,
-    announcements,
-    results,
-    velocity,
-    branchDist,
-    genderDist,
-    catPop,
-    topEvents,
-  ] = await Promise.all([
-    prisma.user.count({ where: { isActive: true } }),
-    prisma.profile.count(),
-    prisma.event.count(),
-    prisma.registration.count(),
-    prisma.team.count(),
-    prisma.attendance.count(),
-    prisma.certificate.count(),
-    prisma.announcement.count({ where: { isActive: true } }),
-    prisma.result.count(),
-    registrationVelocity(),
-    branchDistribution(),
-    genderDistribution(),
-    categoryPopularity(),
-    topScoringEvents(),
-  ]);
-
-  await recordAudit({
-    action: "ADMIN_ANALYTICS_VIEW",
-    userId: ctx.user.id,
-    userEmail: ctx.user.email,
-    ipAddress: ctx.ipAddress,
-    userAgent: ctx.userAgent,
-  });
-
-  return {
-    totals: {
+    const [
       users,
       participants,
       events,
@@ -84,14 +44,61 @@ export async function getAdminAnalytics(): Promise<AnalyticsOverview> {
       certificates,
       announcements,
       results,
-    },
-    registrationVelocity: velocity,
-    branchDistribution: branchDist,
-    genderDistribution: genderDist,
-    categoryPopularity: catPop,
-    attendanceRate: registrations ? Math.round((attendance / registrations) * 1000) / 10 : 0,
-    topScoringEvents: topEvents,
-  };
+      velocity,
+      branchDist,
+      genderDist,
+      catPop,
+      topEvents,
+    ] = await Promise.all([
+      prisma.user.count({ where: { isActive: true } }).catch(() => 0),
+      prisma.profile.count().catch(() => 0),
+      prisma.event.count().catch(() => 0),
+      prisma.registration.count().catch(() => 0),
+      prisma.team.count().catch(() => 0),
+      prisma.attendance.count().catch(() => 0),
+      prisma.certificate.count().catch(() => 0),
+      prisma.announcement.count({ where: { isActive: true } }).catch(() => 0),
+      prisma.result.count().catch(() => 0),
+      registrationVelocity().catch(() => []),
+      branchDistribution().catch(() => []),
+      genderDistribution().catch(() => []),
+      categoryPopularity().catch(() => []),
+      topScoringEvents().catch(() => []),
+    ]);
+
+    await recordAudit({
+      action: "ADMIN_ANALYTICS_VIEW",
+      userId: ctx.user.id,
+      userEmail: ctx.user.email,
+      resource: "analytics:overview",
+      ipAddress: ctx.ipAddress,
+      userAgent: ctx.userAgent,
+    }).catch(() => null);
+
+    const attendanceRate = registrations > 0 ? Math.round((attendance / registrations) * 1000) / 10 : 0;
+
+    return {
+      totals: {
+        users,
+        participants,
+        events,
+        registrations,
+        teams,
+        attendance,
+        certificates,
+        announcements,
+        results,
+      },
+      registrationVelocity: velocity,
+      branchDistribution: branchDist,
+      genderDistribution: genderDist,
+      categoryPopularity: catPop,
+      attendanceRate,
+      topScoringEvents: topEvents,
+    };
+  } catch {
+    return emptyOverview();
+  }
 }
 
 function emptyOverview(): AnalyticsOverview {

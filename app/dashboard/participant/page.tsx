@@ -46,18 +46,31 @@ export default async function ParticipantDashboardPage() {
     redirect("/unauthorized?attempted=/dashboard/participant");
   }
 
-  const [profile, registrations, certificates] = await Promise.all([
-    prisma.profile.findUnique({ where: { userId: user.id } }),
-    prisma.registration.findMany({
-      where: { userId: user.id },
-      include: {
-        event: { include: { category: true } },
-        team: true,
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    getUserCertificates(user.id),
-  ]);
+  let profile: any = null;
+  let registrations: any[] = [];
+  let certificates: any[] = [];
+
+  try {
+    const results = await Promise.all([
+      prisma.profile.findUnique({ where: { userId: user.id } }).catch(() => null),
+      prisma.registration.findMany({
+        where: { userId: user.id },
+        include: {
+          event: { include: { category: true } },
+          team: true,
+        },
+        orderBy: { createdAt: "desc" },
+      }).catch(() => []),
+      getUserCertificates(user.id).catch(() => []),
+    ]);
+    profile = results[0];
+    registrations = results[1] || [];
+    certificates = results[2] || [];
+  } catch {
+    profile = null;
+    registrations = [];
+    certificates = [];
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-300">

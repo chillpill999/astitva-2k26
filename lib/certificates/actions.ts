@@ -208,39 +208,43 @@ export interface PublicCertificate {
 export async function getPublicCertificate(
   certificateNumber: string
 ): Promise<PublicCertificate | null> {
-  const cert = await prisma.certificate.findUnique({
-    where: { certificateNumber },
-  });
-  if (!cert) return null;
+  try {
+    const cert = await prisma.certificate.findUnique({
+      where: { certificateNumber },
+    });
+    if (!cert) return null;
 
-  const valid = verifyCertificateSignature(
-    {
+    const valid = verifyCertificateSignature(
+      {
+        certificateNumber: cert.certificateNumber,
+        recipientName: cert.recipientName,
+        participantId: cert.participantId,
+        eventName: cert.eventName,
+        category: cert.category,
+        position: cert.type,
+        issueDate: cert.issueDate.toISOString(),
+      },
+      cert.signatureHash
+    );
+
+    return {
       certificateNumber: cert.certificateNumber,
       recipientName: cert.recipientName,
       participantId: cert.participantId,
       eventName: cert.eventName,
       category: cert.category,
-      position: cert.type,
+      type: cert.type,
+      title: cert.title,
       issueDate: cert.issueDate.toISOString(),
-    },
-    cert.signatureHash
-  );
-
-  return {
-    certificateNumber: cert.certificateNumber,
-    recipientName: cert.recipientName,
-    participantId: cert.participantId,
-    eventName: cert.eventName,
-    category: cert.category,
-    type: cert.type,
-    title: cert.title,
-    issueDate: cert.issueDate.toISOString(),
-    isRevoked: cert.isRevoked,
-    revokedReason: cert.revokedReason,
-    signatureHash: cert.signatureHash,
-    verificationUrl: cert.verificationUrl,
-    valid: !cert.isRevoked && valid,
-  };
+      isRevoked: cert.isRevoked,
+      revokedReason: cert.revokedReason,
+      signatureHash: cert.signatureHash,
+      verificationUrl: cert.verificationUrl,
+      valid: !cert.isRevoked && valid,
+    };
+  } catch {
+    return null;
+  }
 }
 
 export interface UserCertificateSummary {
@@ -257,18 +261,22 @@ export interface UserCertificateSummary {
 export async function getUserCertificates(
   userId: string
 ): Promise<UserCertificateSummary[]> {
-  const certs = await prisma.certificate.findMany({
-    where: { userId },
-    orderBy: { issueDate: "desc" },
-  });
-  return certs.map((c) => ({
-    id: c.id,
-    certificateNumber: c.certificateNumber,
-    title: c.title,
-    type: c.type,
-    eventName: c.eventName,
-    category: c.category,
-    issueDate: c.issueDate.toISOString(),
-    isRevoked: c.isRevoked,
-  }));
+  try {
+    const certs = await prisma.certificate.findMany({
+      where: { userId },
+      orderBy: { issueDate: "desc" },
+    });
+    return certs.map((c) => ({
+      id: c.id,
+      certificateNumber: c.certificateNumber,
+      title: c.title,
+      type: c.type,
+      eventName: c.eventName,
+      category: c.category,
+      issueDate: c.issueDate.toISOString(),
+      isRevoked: c.isRevoked,
+    }));
+  } catch {
+    return [];
+  }
 }

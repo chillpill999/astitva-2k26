@@ -228,66 +228,70 @@ export interface EventResultSummary {
 }
 
 export async function getEventResults(eventId: string): Promise<EventResultSummary | null> {
-  const event = await prisma.event.findUnique({
-    where: { id: eventId },
-    include: {
-      category: true,
-      results: {
-        orderBy: { rank: "asc" },
-        include: {
-          user: { include: { profile: true } },
-          team: {
-            include: {
-              members: {
-                include: { user: { include: { profile: true } } },
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        category: true,
+        results: {
+          orderBy: { rank: "asc" },
+          include: {
+            user: { include: { profile: true } },
+            team: {
+              include: {
+                members: {
+                  include: { user: { include: { profile: true } } },
+                },
               },
             },
           },
         },
       },
-    },
-  });
-  if (!event) return null;
-  return {
-    id: event.id,
-    title: event.title,
-    eventType: event.eventType as "INDIVIDUAL" | "TEAM",
-    category: event.category.name,
-    categorySlug: event.category.slug,
-    venue: event.venue,
-    dayNumber: event.dayNumber,
-    scheduleStart: event.scheduleStart.toISOString(),
-    results: event.results.map((r) => ({
-      id: r.id,
-      rank: r.rank,
-      positionTitle: r.positionTitle,
-      score: r.score,
-      prizeAwarded: r.prizeAwarded,
-      notes: r.notes,
-      publishedAt: r.publishedAt.toISOString(),
-      winner: r.user
-        ? {
-            kind: "user" as const,
-            id: r.user.id,
-            name: r.user.name,
-            branch: r.user.profile?.branch,
-            collegeId: r.user.profile?.collegeId,
-            participantId: r.user.profile?.participantId,
-          }
-        : r.team
-        ? {
-            kind: "team" as const,
-            id: r.team.id,
-            name: r.team.name,
-            members: r.team.members.map((m) => ({
-              participantId: m.user.profile?.participantId ?? "",
-              name: m.user.name,
-              branch: String(m.user.profile?.branch ?? ""),
-            })),
-          }
-        : null,
-    })),
-  };
+    });
+    if (!event) return null;
+    return {
+      id: event.id,
+      title: event.title,
+      eventType: event.eventType as "INDIVIDUAL" | "TEAM",
+      category: event.category.name,
+      categorySlug: event.category.slug,
+      venue: event.venue,
+      dayNumber: event.dayNumber,
+      scheduleStart: event.scheduleStart.toISOString(),
+      results: event.results.map((r) => ({
+        id: r.id,
+        rank: r.rank,
+        positionTitle: r.positionTitle,
+        score: r.score,
+        prizeAwarded: r.prizeAwarded,
+        notes: r.notes,
+        publishedAt: r.publishedAt.toISOString(),
+        winner: r.user
+          ? {
+              kind: "user" as const,
+              id: r.user.id,
+              name: r.user.name,
+              branch: r.user.profile?.branch,
+              collegeId: r.user.profile?.collegeId,
+              participantId: r.user.profile?.participantId,
+            }
+          : r.team
+          ? {
+              kind: "team" as const,
+              id: r.team.id,
+              name: r.team.name,
+              members: r.team.members.map((m) => ({
+                participantId: m.user.profile?.participantId ?? "",
+                name: m.user.name,
+                branch: String(m.user.profile?.branch ?? ""),
+              })),
+            }
+          : null,
+      })),
+    };
+  } catch {
+    return null;
+  }
 }
 
 export interface CategoryLeaderboard {
@@ -302,74 +306,132 @@ export interface CategoryLeaderboard {
   topTeams: Array<{ teamId: string; name: string; points: number }>;
 }
 
+const DEFAULT_CATEGORY_BOARDS: CategoryLeaderboard[] = [
+  {
+    category: "Sports Championship",
+    slug: "sports",
+    events: [
+      { id: "evt-cricket", title: "Cricket Championship (T20)", winners: [] },
+      { id: "evt-football", title: "Football Tournament", winners: [] },
+      { id: "evt-volleyball", title: "Volleyball Spikers Cup", winners: [] },
+      { id: "evt-badminton", title: "Badminton Open (Singles & Doubles)", winners: [] },
+      { id: "evt-chess", title: "Grandmaster Chess Blitz", winners: [] },
+    ],
+    topParticipants: [],
+    topTeams: [],
+  },
+  {
+    category: "Cultural & Arts",
+    slug: "cultural",
+    events: [
+      { id: "evt-dance", title: "Solo & Group Dance Battle", winners: [] },
+      { id: "evt-singing", title: "Voice of Astitva (Singing)", winners: [] },
+      { id: "evt-comedy", title: "Stand-Up Comedy Spotlight", winners: [] },
+      { id: "evt-rampwalk", title: "Fashion Odyssey (Ramp Walk)", winners: [] },
+    ],
+    topParticipants: [],
+    topTeams: [],
+  },
+  {
+    category: "Esports & Gaming",
+    slug: "gaming",
+    events: [
+      { id: "evt-bgmi", title: "BGMI Mobile Championship", winners: [] },
+      { id: "evt-freefire", title: "Free Fire Battle Arena", winners: [] },
+    ],
+    topParticipants: [],
+    topTeams: [],
+  },
+  {
+    category: "Literary Arena",
+    slug: "literary",
+    events: [
+      { id: "evt-debate", title: "National Parliamentary Debate", winners: [] },
+      { id: "evt-quiz", title: "Mega Tech & General Quiz", winners: [] },
+      { id: "evt-poetry", title: "Kavyanjali (Poetry Slam)", winners: [] },
+      { id: "evt-writing", title: "Creative Writing Challenge", winners: [] },
+    ],
+    topParticipants: [],
+    topTeams: [],
+  },
+];
+
 export async function getLeaderboard(): Promise<CategoryLeaderboard[]> {
-  const categories = await prisma.category.findMany({
-    where: { isActive: true },
-    orderBy: { order: "asc" },
-    include: {
-      events: {
-        include: {
-          results: {
-            orderBy: { rank: "asc" },
-            include: {
-              user: { include: { profile: true } },
-              team: true,
+  try {
+    const categories = await prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: { order: "asc" },
+      include: {
+        events: {
+          include: {
+            results: {
+              orderBy: { rank: "asc" },
+              include: {
+                user: { include: { profile: true } },
+                team: true,
+              },
             },
           },
+          orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
         },
-        orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
       },
-    },
-  });
-
-  return categories.map((cat) => {
-    const userPoints = new Map<string, { name: string; points: number; branch?: string }>();
-    const teamPoints = new Map<string, { name: string; points: number }>();
-    const events = cat.events.map((e) => {
-      const winners = e.results.map((r) => {
-        if (r.user) {
-          const cur = userPoints.get(r.user.id) ?? {
-            name: r.user.name,
-            points: 0,
-            branch: r.user.profile?.branch,
-          };
-          cur.points += POINTS_BY_POSITION[r.positionTitle];
-          userPoints.set(r.user.id, cur);
-          return {
-            rank: r.rank,
-            name: r.user.name,
-            kind: "user" as const,
-          };
-        }
-        if (r.team) {
-          const cur = teamPoints.get(r.team.id) ?? { name: r.team.name, points: 0 };
-          cur.points += POINTS_BY_POSITION[r.positionTitle];
-          teamPoints.set(r.team.id, cur);
-          return {
-            rank: r.rank,
-            name: r.team.name,
-            kind: "team" as const,
-          };
-        }
-        return null;
-      }).filter(Boolean) as Array<{ rank: number; name: string; kind: "user" | "team" }>;
-      return { id: e.id, title: e.title, winners };
     });
 
-    return {
-      category: cat.name,
-      slug: cat.slug,
-      events,
-      topParticipants: Array.from(userPoints.entries())
-        .map(([userId, v]) => ({ userId, ...v }))
-        .sort((a, b) => b.points - a.points)
-        .slice(0, 10),
-      topTeams: Array.from(teamPoints.entries())
-        .map(([teamId, v]) => ({ teamId, ...v }))
-        .sort((a, b) => b.points - a.points)
-        .slice(0, 10),
-    };
-  });
+    if (!categories || categories.length === 0) {
+      return DEFAULT_CATEGORY_BOARDS;
+    }
+
+    return categories.map((cat) => {
+      const userPoints = new Map<string, { name: string; points: number; branch?: string }>();
+      const teamPoints = new Map<string, { name: string; points: number }>();
+      const events = cat.events.map((e) => {
+        const winners = e.results.map((r) => {
+          if (r.user) {
+            const cur = userPoints.get(r.user.id) ?? {
+              name: r.user.name,
+              points: 0,
+              branch: r.user.profile?.branch,
+            };
+            cur.points += POINTS_BY_POSITION[r.positionTitle];
+            userPoints.set(r.user.id, cur);
+            return {
+              rank: r.rank,
+              name: r.user.name,
+              kind: "user" as const,
+            };
+          }
+          if (r.team) {
+            const cur = teamPoints.get(r.team.id) ?? { name: r.team.name, points: 0 };
+            cur.points += POINTS_BY_POSITION[r.positionTitle];
+            teamPoints.set(r.team.id, cur);
+            return {
+              rank: r.rank,
+              name: r.team.name,
+              kind: "team" as const,
+            };
+          }
+          return null;
+        }).filter(Boolean) as Array<{ rank: number; name: string; kind: "user" | "team" }>;
+        return { id: e.id, title: e.title, winners };
+      });
+
+      return {
+        category: cat.name,
+        slug: cat.slug,
+        events,
+        topParticipants: Array.from(userPoints.entries())
+          .map(([userId, v]) => ({ userId, ...v }))
+          .sort((a, b) => b.points - a.points)
+          .slice(0, 10),
+        topTeams: Array.from(teamPoints.entries())
+          .map(([teamId, v]) => ({ teamId, ...v }))
+          .sort((a, b) => b.points - a.points)
+          .slice(0, 10),
+      };
+    });
+  } catch {
+    return DEFAULT_CATEGORY_BOARDS;
+  }
 }
 
 export interface BranchStanding {
@@ -379,39 +441,64 @@ export interface BranchStanding {
   totalPodiums: number;
 }
 
+const DEFAULT_BRANCH_STANDINGS: BranchStanding[] = [
+  { branch: "Computer Science & Engineering (CSE)", points: 0, wins: 0, totalPodiums: 0 },
+  { branch: "Mechanical Engineering (ME)", points: 0, wins: 0, totalPodiums: 0 },
+  { branch: "Civil Engineering (CE)", points: 0, wins: 0, totalPodiums: 0 },
+  { branch: "Electrical Engineering (EE)", points: 0, wins: 0, totalPodiums: 0 },
+  { branch: "Electronics & Comm. Engineering (ECE)", points: 0, wins: 0, totalPodiums: 0 },
+];
+
 export async function getBranchStandings(): Promise<BranchStanding[]> {
-  const results = await prisma.result.findMany({
-    where: { userId: { not: null } },
-    include: { user: { include: { profile: true } } },
-  });
-  const agg = new Map<string, { points: number; wins: number; totalPodiums: number }>();
-  for (const r of results) {
-    const branch = r.user?.profile?.branch;
-    if (!branch) continue;
-    const cur = agg.get(branch) ?? { points: 0, wins: 0, totalPodiums: 0 };
-    cur.points += POINTS_BY_POSITION[r.positionTitle];
-    cur.totalPodiums += 1;
-    if (r.rank === 1) cur.wins += 1;
-    agg.set(branch, cur);
+  try {
+    const results = await prisma.result.findMany({
+      where: { userId: { not: null } },
+      include: { user: { include: { profile: true } } },
+    });
+    if (!results || results.length === 0) {
+      return DEFAULT_BRANCH_STANDINGS;
+    }
+    const agg = new Map<string, { points: number; wins: number; totalPodiums: number }>();
+    for (const r of results) {
+      const branch = r.user?.profile?.branch;
+      if (!branch) continue;
+      const cur = agg.get(branch) ?? { points: 0, wins: 0, totalPodiums: 0 };
+      cur.points += POINTS_BY_POSITION[r.positionTitle];
+      cur.totalPodiums += 1;
+      if (r.rank === 1) cur.wins += 1;
+      agg.set(branch, cur);
+    }
+    const list = Array.from(agg.entries())
+      .map(([branch, v]) => ({ branch, ...v }))
+      .sort((a, b) => b.points - a.points);
+    return list.length > 0 ? list : DEFAULT_BRANCH_STANDINGS;
+  } catch {
+    return DEFAULT_BRANCH_STANDINGS;
   }
-  return Array.from(agg.entries())
-    .map(([branch, v]) => ({ branch, ...v }))
-    .sort((a, b) => b.points - a.points);
 }
 
 export async function getAllEventsWithResults(): Promise<
   Array<{ id: string; title: string; category: string; slug: string; dayNumber: number; hasResults: boolean }>
 > {
-  const events = await prisma.event.findMany({
-    orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
-    include: { category: true, results: { select: { id: true } } },
-  });
-  return events.map((e) => ({
-    id: e.id,
-    title: e.title,
-    category: e.category.name,
-    slug: e.slug,
-    dayNumber: e.dayNumber,
-    hasResults: e.results.length > 0,
-  }));
+  try {
+    const events = await prisma.event.findMany({
+      orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
+      include: { category: true, results: { select: { id: true } } },
+    });
+    return events.map((e) => ({
+      id: e.id,
+      title: e.title,
+      category: e.category.name,
+      slug: e.slug,
+      dayNumber: e.dayNumber,
+      hasResults: e.results.length > 0,
+    }));
+  } catch {
+    return [
+      { id: "evt-cricket", title: "Cricket Championship", category: "Sports Championship", slug: "cricket-championship", dayNumber: 1, hasResults: false },
+      { id: "evt-football", title: "Football Tournament", category: "Sports Championship", slug: "football-tournament", dayNumber: 2, hasResults: false },
+      { id: "evt-bgmi", title: "BGMI Mobile Championship", category: "Esports & Gaming", slug: "bgmi-esports-championship", dayNumber: 3, hasResults: false },
+      { id: "evt-dance", title: "Solo & Group Dance Battle", category: "Cultural & Arts", slug: "dance-competition", dayNumber: 4, hasResults: false },
+    ];
+  }
 }

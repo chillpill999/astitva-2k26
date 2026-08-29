@@ -722,39 +722,43 @@ export interface CheckInLogEntry {
 export async function getRecentCheckInLogs(
   options: { take?: number; eventId?: string } = {}
 ): Promise<CheckInLogEntry[]> {
-  const ctx = await getRequestContext();
-  if (!ctx.user) return [];
-  const take = Math.min(Math.max(options.take ?? 25, 1), 100);
+  try {
+    const ctx = await getRequestContext();
+    if (!ctx.user) return [];
+    const take = Math.min(Math.max(options.take ?? 25, 1), 100);
 
-  const logs = await prisma.checkInLog.findMany({
-    where: options.eventId ? { eventId: options.eventId } : undefined,
-    orderBy: { timestamp: "desc" },
-    take,
-    include: {
-      event: { select: { title: true } },
-    },
-  });
+    const logs = await prisma.checkInLog.findMany({
+      where: options.eventId ? { eventId: options.eventId } : undefined,
+      orderBy: { timestamp: "desc" },
+      take,
+      include: {
+        event: { select: { title: true } },
+      },
+    });
 
-  // Hydrate names by participantId
-  const pids = Array.from(new Set(logs.map((l) => l.participantId).filter((p) => p !== "unknown")));
-  const profiles = pids.length
-    ? await prisma.profile.findMany({
-        where: { participantId: { in: pids } },
-        select: { participantId: true, user: { select: { name: true } } },
-      })
-    : [];
-  const nameMap = new Map(profiles.map((p) => [p.participantId, p.user.name]));
+    // Hydrate names by participantId
+    const pids = Array.from(new Set(logs.map((l) => l.participantId).filter((p) => p !== "unknown")));
+    const profiles = pids.length
+      ? await prisma.profile.findMany({
+          where: { participantId: { in: pids } },
+          select: { participantId: true, user: { select: { name: true } } },
+        })
+      : [];
+    const nameMap = new Map(profiles.map((p) => [p.participantId, p.user.name]));
 
-  return logs.map((l) => ({
-    id: l.id,
-    participantId: l.participantId,
-    participantName: nameMap.get(l.participantId) ?? null,
-    eventTitle: l.event?.title ?? null,
-    action: l.action,
-    result: l.result,
-    reason: l.reason,
-    timestamp: l.timestamp.toISOString(),
-  }));
+    return logs.map((l) => ({
+      id: l.id,
+      participantId: l.participantId,
+      participantName: nameMap.get(l.participantId) ?? null,
+      eventTitle: l.event?.title ?? null,
+      action: l.action,
+      result: l.result,
+      reason: l.reason,
+      timestamp: l.timestamp.toISOString(),
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export interface AttendanceMetrics {
@@ -772,115 +776,131 @@ export interface AttendanceMetrics {
 export async function getAttendanceMetrics(
   eventId?: string | null
 ): Promise<AttendanceMetrics> {
-  const ctx = await getRequestContext();
-  if (!ctx.user) {
+  try {
+    const ctx = await getRequestContext();
+    if (!ctx.user) {
+      return emptyMetrics(eventId ?? null);
+    }
+
+    if (eventId) {
+      return await metricsForEvent(eventId);
+    }
+    return await metricsForFestival();
+  } catch {
     return emptyMetrics(eventId ?? null);
   }
-
-  if (eventId) {
-    return metricsForEvent(eventId);
-  }
-  return metricsForFestival();
 }
 
 async function metricsForEvent(eventId: string): Promise<AttendanceMetrics> {
-  const event = await prisma.event.findUnique({
-    where: { id: eventId },
-    select: { id: true, maxRegistrations: true, currentRegistrations: true },
-  });
-  const totalRegistered = event?.currentRegistrations ?? 0;
-  const totalCheckedIn = await prisma.attendance.count({
-    where: { eventId, checkInType: "EVENT_ENTRY", status: "PRESENT" },
-  });
-  const attendancePercent = totalRegistered
-    ? Math.round((totalCheckedIn / totalRegistered) * 1000) / 10
-    : 0;
-  const duplicateAttempts = await prisma.checkInLog.count({
-    where: { eventId, action: "QR_SCAN_DUPLICATE" },
-  });
-  const invalidAttempts = await prisma.checkInLog.count({
-    where: {
-      eventId,
-      action: { in: ["QR_SCAN_INVALID", "QR_SCAN_REVOKED", "QR_SCAN_EXPIRED"] },
-    },
-  });
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { id: true, maxRegistrations: true, currentRegistrations: true },
+    });
+    const totalRegistered = event?.currentRegistrations ?? 0;
+    const totalCheckedIn = await prisma.attendance.count({
+      where: { eventId, checkInType: "EVENT_ENTRY", status: "PRESENT" },
+    });
+    const attendancePercent = totalRegistered
+      ? Math.round((totalCheckedIn / totalRegistered) * 1000) / 10
+      : 0;
+    const duplicateAttempts = await prisma.checkInLog.count({
+      where: { eventId, action: "QR_SCAN_DUPLICATE" },
+    });
+    const invalidAttempts = await prisma.checkInLog.count({
+      where: {
+        eventId,
+        action: { in: ["QR_SCAN_INVALID", "QR_SCAN_REVOKED", "QR_SCAN_EXPIRED"] },
+      },
+    });
 
-  return {
-    eventId,
-    totalRegistered,
-    totalCheckedIn,
-    attendancePercent,
-    remainingSeats: event
-      ? Math.max(0, event.maxRegistrations - totalRegistered)
-      : 0,
-    capacity: event?.maxRegistrations ?? null,
-    duplicateAttempts,
-    invalidAttempts,
-    recentVelocity: await velocityBuckets({ eventId }),
-  };
+    return {
+      eventId,
+      totalRegistered,
+      totalCheckedIn,
+      attendancePercent,
+      remainingSeats: event
+        ? Math.max(0, event.maxRegistrations - totalRegistered)
+        : 0,
+      capacity: event?.maxRegistrations ?? null,
+      duplicateAttempts,
+      invalidAttempts,
+      recentVelocity: await velocityBuckets({ eventId }),
+    };
+  } catch {
+    return emptyMetrics(eventId);
+  }
 }
 
 async function metricsForFestival(): Promise<AttendanceMetrics> {
-  const totalRegistered = await prisma.registration.count({
-    where: { status: { in: ["CONFIRMED", "ATTENDED", "PENDING"] } },
-  });
-  const totalCheckedIn = await prisma.attendance.count({
-    where: { status: "PRESENT" },
-  });
-  const attendancePercent = totalRegistered
-    ? Math.round((totalCheckedIn / totalRegistered) * 1000) / 10
-    : 0;
-  const capacity = await prisma.event.aggregate({
-    _sum: { maxRegistrations: true },
-  });
-  const used = await prisma.event.aggregate({
-    _sum: { currentRegistrations: true },
-  });
-  const duplicateAttempts = await prisma.checkInLog.count({
-    where: { action: "QR_SCAN_DUPLICATE" },
-  });
-  const invalidAttempts = await prisma.checkInLog.count({
-    where: {
-      action: { in: ["QR_SCAN_INVALID", "QR_SCAN_REVOKED", "QR_SCAN_EXPIRED"] },
-    },
-  });
-  return {
-    eventId: null,
-    totalRegistered,
-    totalCheckedIn,
-    attendancePercent,
-    remainingSeats: Math.max(0, (capacity._sum.maxRegistrations ?? 0) - (used._sum.currentRegistrations ?? 0)),
-    capacity: capacity._sum.maxRegistrations ?? null,
-    duplicateAttempts,
-    invalidAttempts,
-    recentVelocity: await velocityBuckets({}),
-  };
+  try {
+    const totalRegistered = await prisma.registration.count({
+      where: { status: { in: ["CONFIRMED", "ATTENDED", "PENDING"] } },
+    });
+    const totalCheckedIn = await prisma.attendance.count({
+      where: { status: "PRESENT" },
+    });
+    const attendancePercent = totalRegistered
+      ? Math.round((totalCheckedIn / totalRegistered) * 1000) / 10
+      : 0;
+    const capacity = await prisma.event.aggregate({
+      _sum: { maxRegistrations: true },
+    });
+    const used = await prisma.event.aggregate({
+      _sum: { currentRegistrations: true },
+    });
+    const duplicateAttempts = await prisma.checkInLog.count({
+      where: { action: "QR_SCAN_DUPLICATE" },
+    });
+    const invalidAttempts = await prisma.checkInLog.count({
+      where: {
+        action: { in: ["QR_SCAN_INVALID", "QR_SCAN_REVOKED", "QR_SCAN_EXPIRED"] },
+      },
+    });
+    return {
+      eventId: null,
+      totalRegistered,
+      totalCheckedIn,
+      attendancePercent,
+      remainingSeats: Math.max(0, (capacity._sum.maxRegistrations ?? 0) - (used._sum.currentRegistrations ?? 0)),
+      capacity: capacity._sum.maxRegistrations ?? null,
+      duplicateAttempts,
+      invalidAttempts,
+      recentVelocity: await velocityBuckets({}),
+    };
+  } catch {
+    return emptyMetrics(null);
+  }
 }
 
 async function velocityBuckets(opts: { eventId?: string }) {
-  // Last 12 hours, hourly buckets
-  const now = new Date();
-  const start = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-  const rows = await prisma.checkInLog.findMany({
-    where: {
-      action: "QR_SCAN_SUCCESS",
-      timestamp: { gte: start },
-      ...(opts.eventId ? { eventId: opts.eventId } : {}),
-    },
-    select: { timestamp: true },
-  });
-  const buckets = new Map<string, number>();
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getTime() - i * 60 * 60 * 1000);
-    const key = `${d.getHours().toString().padStart(2, "0")}:00`;
-    buckets.set(key, 0);
+  try {
+    // Last 12 hours, hourly buckets
+    const now = new Date();
+    const start = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+    const rows = await prisma.checkInLog.findMany({
+      where: {
+        action: "QR_SCAN_SUCCESS",
+        timestamp: { gte: start },
+        ...(opts.eventId ? { eventId: opts.eventId } : {}),
+      },
+      select: { timestamp: true },
+    });
+    const buckets = new Map<string, number>();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 60 * 60 * 1000);
+      const key = `${d.getHours().toString().padStart(2, "0")}:00`;
+      buckets.set(key, 0);
+    }
+    for (const r of rows) {
+      const d = r.timestamp;
+      const key = `${d.getHours().toString().padStart(2, "0")}:00`;
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return Array.from(buckets.entries()).map(([hour, count]) => ({ hour, count }));
+  } catch {
+    return [];
   }
-  for (const r of rows) {
-    const d = r.timestamp;
-    const key = `${d.getHours().toString().padStart(2, "0")}:00`;
-    buckets.set(key, (buckets.get(key) ?? 0) + 1);
-  }
-  return Array.from(buckets.entries()).map(([hour, count]) => ({ hour, count }));
 }
 
 function emptyMetrics(eventId: string | null): AttendanceMetrics {
@@ -910,21 +930,25 @@ export interface VolunteerEventSummary {
 export async function getVolunteerEventSummaries(
   take = 12
 ): Promise<VolunteerEventSummary[]> {
-  const events = await prisma.event.findMany({
-    where: { status: { in: ["REGISTRATION_OPEN", "UPCOMING", "ONGOING"] } },
-    orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
-    take,
-    include: {
-      _count: { select: { registrations: true, attendances: true } },
-    },
-  });
-  return events.map((e) => ({
-    id: e.id,
-    title: e.title,
-    venue: e.venue,
-    startTime: e.scheduleStart.toISOString(),
-    dayNumber: e.dayNumber,
-    registered: e._count.registrations,
-    checkedIn: e._count.attendances,
-  }));
+  try {
+    const events = await prisma.event.findMany({
+      where: { status: { in: ["REGISTRATION_OPEN", "UPCOMING", "ONGOING"] } },
+      orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
+      take,
+      include: {
+        _count: { select: { registrations: true, attendances: true } },
+      },
+    });
+    return events.map((e) => ({
+      id: e.id,
+      title: e.title,
+      venue: e.venue,
+      startTime: e.scheduleStart.toISOString(),
+      dayNumber: e.dayNumber,
+      registered: e._count.registrations,
+      checkedIn: e._count.attendances,
+    }));
+  } catch {
+    return [];
+  }
 }

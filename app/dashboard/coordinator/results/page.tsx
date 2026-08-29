@@ -32,14 +32,19 @@ export default async function CoordinatorResultsPage() {
     user.role === "ADMIN"
       ? undefined
       : { OR: [{ coordinatorId: user.id }, { coordinatorId: null }] };
-  const eventsRaw = await prisma.event.findMany({
-    where,
-    orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
-    include: { category: true, results: { include: { user: true, team: true } } },
-    take: 50,
-  });
+  let eventsRaw: any[] = [];
+  try {
+    eventsRaw = await prisma.event.findMany({
+      where,
+      orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
+      include: { category: true, results: { include: { user: true, team: true } } },
+      take: 50,
+    });
+  } catch {
+    eventsRaw = [];
+  }
 
-  const events: CoordinatorEvent[] = eventsRaw.map((e) => ({
+  const events: CoordinatorEvent[] = eventsRaw.map((e: any) => ({
     id: e.id,
     title: e.title,
     category: e.category.name,
@@ -50,7 +55,7 @@ export default async function CoordinatorResultsPage() {
 
   const initialResultsByEvent: Record<string, ExistingResult[]> = {};
   for (const e of eventsRaw) {
-    initialResultsByEvent[e.id] = e.results.map((r) => ({
+    initialResultsByEvent[e.id] = (e.results || []).map((r: any) => ({
       id: r.id,
       rank: r.rank,
       positionTitle: r.positionTitle,

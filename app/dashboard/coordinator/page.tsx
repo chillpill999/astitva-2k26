@@ -35,19 +35,24 @@ export default async function CoordinatorDashboardPage() {
       ? undefined
       : { OR: [{ coordinatorId: user.id }, { coordinatorId: null }] };
 
-  const events = await prisma.event.findMany({
-    where,
-    include: {
-      category: true,
-      _count: { select: { registrations: true, results: true, attendances: true } },
-    },
-    orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
-    take: 20,
-  });
+  let events: any[] = [];
+  try {
+    events = await prisma.event.findMany({
+      where,
+      include: {
+        category: true,
+        _count: { select: { registrations: true, results: true, attendances: true } },
+      },
+      orderBy: [{ dayNumber: "asc" }, { scheduleStart: "asc" }],
+      take: 20,
+    });
+  } catch {
+    events = [];
+  }
 
-  const totalRegs = events.reduce((sum, e) => sum + e._count.registrations, 0);
-  const totalScans = events.reduce((sum, e) => sum + e._count.attendances, 0);
-  const totalPublished = events.reduce((sum, e) => sum + e._count.results, 0);
+  const totalRegs = events.reduce((sum, e) => sum + (e._count?.registrations ?? 0), 0);
+  const totalScans = events.reduce((sum, e) => sum + (e._count?.attendances ?? 0), 0);
+  const totalPublished = events.reduce((sum, e) => sum + (e._count?.results ?? 0), 0);
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-300">

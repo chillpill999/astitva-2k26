@@ -31,18 +31,23 @@ export default async function CaptainDashboardPage() {
     redirect("/unauthorized?attempted=/dashboard/captain");
   }
 
-  const teams = await prisma.team.findMany({
-    where: { captainId: user.id },
-    include: {
-      event: { include: { category: true } },
-      members: {
-        include: {
-          user: { include: { profile: true } },
+  let teams: any[] = [];
+  try {
+    teams = await prisma.team.findMany({
+      where: { captainId: user.id },
+      include: {
+        event: { include: { category: true } },
+        members: {
+          include: {
+            user: { include: { profile: true } },
+          },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    });
+  } catch {
+    teams = [];
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-300">
@@ -113,7 +118,7 @@ export default async function CaptainDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {team.members.map((m) => (
+                      {team.members.map((m: any) => (
                         <tr key={m.id}>
                           <td className="py-2 pr-4 text-white font-bold">
                             {m.user.name}

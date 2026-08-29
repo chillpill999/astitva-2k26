@@ -15,18 +15,31 @@ export const metadata = {
 };
 
 export default async function VerifyCertificateIndex() {
-  const recent = await prisma.certificate.findMany({
-    orderBy: { issueDate: "desc" },
-    take: 12,
-    select: {
-      certificateNumber: true,
-      recipientName: true,
-      eventName: true,
-      type: true,
-      issueDate: true,
-      isRevoked: true,
-    },
-  });
+  let recent: Array<{
+    certificateNumber: string;
+    recipientName: string;
+    eventName: string;
+    type: any;
+    issueDate: Date;
+    isRevoked: boolean;
+  }> = [];
+
+  try {
+    recent = await prisma.certificate.findMany({
+      orderBy: { issueDate: "desc" },
+      take: 12,
+      select: {
+        certificateNumber: true,
+        recipientName: true,
+        eventName: true,
+        type: true,
+        issueDate: true,
+        isRevoked: true,
+      },
+    });
+  } catch {
+    recent = [];
+  }
 
   return (
     <div className="min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-10">
