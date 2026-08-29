@@ -119,34 +119,34 @@ export function EventCatalogGrid({ initialEvents }: EventCatalogGridProps) {
             />
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="grid grid-cols-3 gap-1.5 w-full md:w-auto">
             {(["ALL", "INDIVIDUAL", "TEAM"] as const).map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setSelectedType(type)}
-                className={`px-3 py-2 rounded-lg text-xs font-mono font-medium transition-colors ${
+                className={`py-2.5 px-2 rounded-xl text-center text-xs font-mono font-medium transition-colors ${
                   selectedType === type
-                    ? "bg-[#1A1918] text-[#EAE7DC] font-bold"
+                    ? "bg-[#1A1918] text-[#EAE7DC] font-bold shadow-sm"
                     : "bg-[#EAE7DC] text-[#8E8D8A] border border-[#8E8D8A]/30 hover:text-[#1A1918]"
                 }`}
               >
-                {type === "ALL" ? "All Formats" : type === "INDIVIDUAL" ? "Solo Battles" : "Squad Wars"}
+                {type === "ALL" ? "All Formats" : type === "INDIVIDUAL" ? "Solo" : "Squad"}
               </button>
             ))}
           </div>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#8E8D8A]/15">
+        <div className="flex items-center gap-2 pt-2 border-t border-[#8E8D8A]/15 overflow-x-auto no-scrollbar scroll-smooth flex-nowrap sm:flex-wrap pb-1 sm:pb-0">
           {categories.map((c) => (
             <button
               key={c.value}
               type="button"
               onClick={() => setSelectedCategory(c.value)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-colors flex items-center space-x-1.5 shrink-0 ${
                 selectedCategory === c.value
-                  ? "bg-[#E85A4F] text-white font-bold"
+                  ? "bg-[#E85A4F] text-white font-bold shadow-sm"
                   : "bg-[#EAE7DC] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
               }`}
             >

@@ -119,12 +119,12 @@ export function Navbar() {
           </Link>
         </div>
 
-        <div className="flex flex-col items-center text-center">
-          <Link href="/" className="group">
-            <span className="font-mono text-sm sm:text-base tracking-[0.35em] sm:tracking-[0.45em] font-bold text-[#1A1918] group-hover:text-[#E85A4F] transition-colors uppercase">
+        <div className="flex flex-col items-center text-center truncate">
+          <Link href="/" className="group block">
+            <span className="font-mono text-xs sm:text-base tracking-[0.22em] sm:tracking-[0.45em] font-black text-[#1A1918] group-hover:text-[#E85A4F] transition-colors uppercase">
               A S T I T V A
             </span>
-            <span className="block text-[8px] sm:text-[9px] font-mono tracking-[0.25em] text-[#8E8D8A] uppercase mt-0.5">
+            <span className="block text-[7.5px] sm:text-[9px] font-mono tracking-[0.18em] sm:tracking-[0.25em] text-[#8E8D8A] uppercase mt-0.5">
               LNJPIT CHAPRA · SEPT 4–8, 2026
             </span>
           </Link>
@@ -134,7 +134,7 @@ export function Navbar() {
           {isAdmin && (
             <Link
               href="/dashboard/admin"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider uppercase bg-[#1A1918] text-[#EAE7DC] border border-[#1A1918] hover:bg-[#E85A4F] hover:border-[#E85A4F] hover:text-white transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase bg-[#1A1918] text-[#EAE7DC] border border-[#1A1918] hover:bg-[#E85A4F] hover:border-[#E85A4F] hover:text-white transition-all shadow-sm"
               title="Admin Control Center"
             >
               <Shield className="w-3.5 h-3.5 text-[#E85A4F]" />
@@ -145,8 +145,9 @@ export function Navbar() {
 
           <Link
             href="/dashboard"
-            className="w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#8E8D8A] hover:text-[#1A1918] hover:border-[#1A1918] transition-colors"
+            className="w-9 h-9 sm:w-8 sm:h-8 rounded-xl border border-[#8E8D8A]/35 flex items-center justify-center text-[#8E8D8A] hover:text-[#1A1918] hover:border-[#1A1918] transition-colors"
             title="Dashboard"
+            aria-label="Open Dashboard"
           >
             <Grid className="w-4 h-4" />
           </Link>
@@ -155,14 +156,14 @@ export function Navbar() {
             <UserButton
               appearance={{
                 elements: {
-                  userButtonAvatarBox: "w-8 h-8 rounded-full border border-[#8E8D8A]/35",
+                  userButtonAvatarBox: "w-9 h-9 sm:w-8 sm:h-8 rounded-full border border-[#8E8D8A]/35",
                 },
               }}
             />
           ) : (
             <Link
               href="/sign-up"
-              className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+              className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
             >
               SIGN UP
             </Link>
@@ -171,8 +172,8 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#1A1918]"
-            aria-label="Toggle Menu"
+            className="md:hidden w-9 h-9 rounded-xl border border-[#8E8D8A]/35 flex items-center justify-center text-[#1A1918] hover:bg-[#F6F4EE] transition-colors cursor-pointer"
+            aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
@@ -180,13 +181,13 @@ export function Navbar() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#8E8D8A]/20 bg-[#F6F4EE] px-4 py-6 space-y-3">
+        <div className="md:hidden border-t border-[#8E8D8A]/20 bg-[#F6F4EE] px-4 py-5 space-y-4 shadow-xl animate-in slide-in-from-top-2 duration-200">
           {isAdmin && (
-            <div className="pb-2">
+            <div className="pb-1">
               <Link
                 href="/dashboard/admin"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full text-center py-2.5 rounded-xl text-xs font-mono font-bold uppercase bg-[#1A1918] text-[#EAE7DC] border border-[#1A1918]"
+                className="flex items-center justify-center gap-2 w-full text-center py-2.5 rounded-xl text-xs font-mono font-bold uppercase bg-[#1A1918] text-[#EAE7DC] border border-[#1A1918] shadow-sm"
               >
                 <Shield className="w-4 h-4 text-[#E85A4F]" />
                 <span>ADMIN CONTROL CENTER</span>
@@ -195,26 +196,55 @@ export function Navbar() {
           )}
 
           <div className="grid grid-cols-2 gap-2">
-            {NAV_LINKS.map((link) => (
+            {NAV_LINKS.map((link) => {
+              const Icon = link.icon;
+              const isActive = pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-mono uppercase border transition-all flex items-center gap-2 ${
+                    isActive
+                      ? "bg-[#1A1918] text-[#EAE7DC] border-[#1A1918] font-bold shadow-sm"
+                      : "border-[#8E8D8A]/25 text-[#1A1918] bg-[#EAE7DC] hover:bg-[#F6F4EE]"
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? "text-[#E85A4F]" : "text-[#8E8D8A]"}`} />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {!isSignedIn ? (
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#8E8D8A]/20">
               <Link
-                key={link.href}
-                href={link.href}
+                href="/sign-in"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded text-xs font-mono uppercase border border-[#8E8D8A]/25 text-[#1A1918] bg-[#EAE7DC]"
+                className="block text-center py-2.5 rounded-xl text-xs font-mono font-bold uppercase border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918]"
               >
-                {link.label}
+                SIGN IN
               </Link>
-            ))}
-          </div>
-          <div className="pt-3 border-t border-[#8E8D8A]/20">
-            <Link
-              href="/sign-up"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center py-2.5 rounded text-xs font-mono font-bold uppercase bg-[#E85A4F] text-white"
-            >
-              SIGN UP
-            </Link>
-          </div>
+              <Link
+                href="/sign-up"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-center py-2.5 rounded-xl text-xs font-mono font-bold uppercase bg-[#E85A4F] text-white shadow-sm"
+              >
+                SIGN UP
+              </Link>
+            </div>
+          ) : (
+            <div className="pt-2 border-t border-[#8E8D8A]/20">
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-center py-2.5 rounded-xl text-xs font-mono font-bold uppercase bg-[#1A1918] text-[#EAE7DC]"
+              >
+                OPEN FESTIVAL DASHBOARD →
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </header>

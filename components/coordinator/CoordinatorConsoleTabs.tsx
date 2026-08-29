@@ -26,34 +26,34 @@ export function CoordinatorConsoleTabs({
   return (
     <div className="space-y-6">
       {/* Tab Switcher */}
-      <div className="flex items-center p-1.5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 max-w-md">
+      <div className="flex items-center p-1.5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 max-w-md w-full">
         <button
           type="button"
           onClick={() => setActiveTab("LIVE_SCORE")}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl text-[10px] sm:text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
             activeTab === "LIVE_SCORE"
               ? "bg-[#E85A4F] text-white shadow-sm"
               : "text-[#8E8D8A] hover:text-[#1A1918]"
           }`}
         >
-          <span className="relative flex h-2 w-2">
+          <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
           </span>
-          Live Match Scoring
+          <span>Live Match Scoring</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab("PODIUM_RESULTS")}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl text-[10px] sm:text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
             activeTab === "PODIUM_RESULTS"
               ? "bg-[#1A1918] text-[#EAE7DC] shadow-sm"
               : "text-[#8E8D8A] hover:text-[#1A1918]"
           }`}
         >
-          <Trophy className="h-3.5 w-3.5" />
-          Podium &amp; Winners
+          <Trophy className="h-3.5 w-3.5 shrink-0" />
+          <span>Podium &amp; Winners</span>
         </button>
       </div>
 

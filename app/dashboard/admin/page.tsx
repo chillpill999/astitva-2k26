@@ -127,9 +127,9 @@ export default async function AdminDashboardPage() {
                 No registration velocity data recorded yet.
               </div>
             ) : (
-              <div className="pt-4">
+              <div className="pt-4 overflow-x-auto no-scrollbar pb-1">
                 <div
-                  className="grid gap-2 h-36 items-end"
+                  className="grid gap-1.5 sm:gap-2 h-36 items-end min-w-[280px]"
                   style={{ gridTemplateColumns: `repeat(${Math.max(1, data.registrationVelocity.length)}, minmax(0, 1fr))` }}
                 >
                   {(() => {

@@ -140,47 +140,47 @@ export function LiveScoreConsole({ events }: LiveScoreConsoleProps) {
               <label className="text-xs font-mono font-bold uppercase text-[#1A1918]">
                 2. Match / Competition Status
               </label>
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
                 <button
                   type="button"
                   onClick={() => setStatus("ONGOING")}
-                  className={`py-2.5 px-3 rounded-xl text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-xl text-[10px] sm:text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
                     status === "ONGOING"
                       ? "bg-[#E85A4F] text-white border-[#E85A4F] shadow-sm"
                       : "bg-[#EAE7DC] text-[#8E8D8A] border-[#8E8D8A]/30 hover:text-[#1A1918]"
                   }`}
                 >
-                  <span className="relative flex h-2 w-2">
+                  <span className="relative flex h-2 w-2 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                   </span>
-                  🔴 Live Now
+                  <span>Live Now</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setStatus("REGISTRATION_OPEN")}
-                  className={`py-2.5 px-3 rounded-xl text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-xl text-[10px] sm:text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
                     status === "REGISTRATION_OPEN"
                       ? "bg-[#1A1918] text-[#EAE7DC] border-[#1A1918]"
                       : "bg-[#EAE7DC] text-[#8E8D8A] border-[#8E8D8A]/30 hover:text-[#1A1918]"
                   }`}
                 >
-                  <Clock className="h-3.5 w-3.5" />
-                  Upcoming
+                  <Clock className="h-3.5 w-3.5 shrink-0" />
+                  <span>Upcoming</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setStatus("COMPLETED")}
-                  className={`py-2.5 px-3 rounded-xl text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-xl text-[10px] sm:text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
                     status === "COMPLETED"
                       ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
                       : "bg-[#EAE7DC] text-[#8E8D8A] border-[#8E8D8A]/30 hover:text-[#1A1918]"
                   }`}
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  Concluded
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                  <span>Concluded</span>
                 </button>
               </div>
             </div>

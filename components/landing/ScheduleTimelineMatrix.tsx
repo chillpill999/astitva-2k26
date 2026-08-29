@@ -65,7 +65,7 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 p-1.5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25">
+        <div className="grid grid-cols-5 gap-1 sm:gap-3 p-1.5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 overflow-x-auto">
           {FESTIVAL_DAYS.map((d) => {
             const isSelected = selectedDay === d.day;
             return (
@@ -73,17 +73,17 @@ export function ScheduleTimelineMatrix({ events }: ScheduleMatrixProps) {
                 key={d.day}
                 type="button"
                 onClick={() => setSelectedDay(d.day)}
-                className={`flex flex-col items-center justify-center py-3 px-2 rounded-xl text-center transition-all cursor-pointer ${
+                className={`flex flex-col items-center justify-center py-2 sm:py-3 px-1 sm:px-2 rounded-xl text-center transition-all cursor-pointer ${
                   isSelected
                     ? "bg-[#E85A4F] text-white shadow-sm border border-[#E85A4F]"
                     : "text-[#8E8D8A] hover:text-[#1A1918] hover:bg-[#EAE7DC]"
                 }`}
               >
-                <span className="text-[10px] font-mono font-bold tracking-wider uppercase opacity-85">
-                  Day {String(d.day).padStart(2, "0")}
+                <span className="text-[8px] sm:text-[10px] font-mono font-bold tracking-wider uppercase opacity-85">
+                  Day 0{d.day}
                 </span>
-                <span className="text-sm sm:text-base font-bold tracking-tight mt-0.5">
-                  {d.date}
+                <span className="text-xs sm:text-base font-bold tracking-tight mt-0.5 whitespace-nowrap">
+                  {d.date.split(" ")[0]} <span className="hidden sm:inline">{d.date.split(" ")[1]}</span>
                 </span>
               </button>
             );

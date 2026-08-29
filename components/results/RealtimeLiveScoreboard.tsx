@@ -77,15 +77,15 @@ export function RealtimeLiveScoreboard({ initialEvents }: RealtimeLiveScoreboard
       </div>
 
       {/* Stream Filter Pills */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth flex-nowrap sm:flex-wrap pb-1 sm:pb-0">
         {["ALL", "SPORTS", "GAMING", "CULTURAL", "LITERARY"].map((cat) => (
           <button
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
-            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all uppercase cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all uppercase cursor-pointer shrink-0 ${
               activeCategory === cat
-                ? "bg-[#1A1918] text-[#EAE7DC]"
+                ? "bg-[#1A1918] text-[#EAE7DC] shadow-sm"
                 : "bg-[#EAE7DC] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
             }`}
           >

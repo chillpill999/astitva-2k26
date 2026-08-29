@@ -50,7 +50,7 @@ export function ScheduleBrowser({ events: initialEvents }: ScheduleBrowserProps)
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 p-2 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm">
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-3 p-1.5 sm:p-2 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm">
         {FESTIVAL_DAYS.map((d) => {
           const isAvailable = availableDays.includes(d);
           const isSelected = selectedDay === d;
@@ -60,7 +60,7 @@ export function ScheduleBrowser({ events: initialEvents }: ScheduleBrowserProps)
               type="button"
               onClick={() => isAvailable && setSelectedDay(d)}
               disabled={!isAvailable}
-              className={`flex flex-col items-center justify-center p-4 rounded-xl text-center transition-all ${
+              className={`flex flex-col items-center justify-center py-2 sm:py-4 px-1 sm:px-3 rounded-xl text-center transition-all ${
                 !isAvailable
                   ? "text-[#8E8D8A]/40 cursor-not-allowed bg-transparent"
                   : isSelected
@@ -68,11 +68,11 @@ export function ScheduleBrowser({ events: initialEvents }: ScheduleBrowserProps)
                   : "text-[#8E8D8A] hover:text-[#1A1918] hover:bg-[#EAE7DC] cursor-pointer"
               }`}
             >
-              <span className="text-[10px] font-mono font-bold tracking-wider uppercase opacity-85">
+              <span className="text-[8px] sm:text-[10px] font-mono font-bold tracking-wider uppercase opacity-85">
                 Day 0{d}
               </span>
-              <span className="text-sm sm:text-base font-bold tracking-tight mt-0.5">
-                {d + 3} Sept 2026
+              <span className="text-xs sm:text-base font-bold tracking-tight mt-0.5 whitespace-nowrap">
+                {d + 3} <span className="hidden sm:inline">Sept</span>
               </span>
             </button>
           );

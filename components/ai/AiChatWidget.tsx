@@ -93,28 +93,29 @@ export function AiChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#E85A4F] text-white font-mono text-xs font-bold tracking-wider uppercase shadow-xl hover:bg-[#C94A40] transition-all px-4 py-3 border border-[#E85A4F] cursor-pointer"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 rounded-full bg-[#E85A4F] text-white font-mono text-xs font-bold tracking-wider uppercase shadow-2xl hover:bg-[#C94A40] transition-all px-3.5 py-2.5 sm:px-4 sm:py-3 border border-[#E85A4F] cursor-pointer active:scale-95"
+          aria-label="Open AI Fest Assistant"
         >
-          <Sparkles className="w-4 h-4 text-white" />
-          <span>ASTITVA AI ASSISTANT</span>
+          <Sparkles className="w-4 h-4 text-white animate-pulse" />
+          <span className="sm:inline">AI ASSISTANT</span>
         </button>
       )}
 
       {/* Floating Chat Window */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[420px] max-h-[640px] h-[85vh] bg-[#F6F4EE] text-[#1A1918] border border-[#8E8D8A]/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[420px] max-h-[86vh] h-[600px] bg-[#F6F4EE] text-[#1A1918] border border-[#8E8D8A]/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden z-50">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-[#EAE7DC] border-b border-[#8E8D8A]/25">
+          <div className="flex items-center justify-between p-3.5 sm:p-4 bg-[#EAE7DC] border-b border-[#8E8D8A]/25">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#E85A4F] text-white flex items-center justify-center font-bold text-xs">
+              <div className="w-8 h-8 rounded-full bg-[#E85A4F] text-white flex items-center justify-center font-bold text-xs shadow-sm">
                 AI
               </div>
               <div>
                 <h3 className="text-xs font-bold font-mono uppercase tracking-wider text-[#1A1918]">
-                  ASTITVA FEST CONCIERGE
+                  ASTITVA CONCIERGE
                 </h3>
                 <p className="text-[10px] font-mono text-[#8E8D8A]">
-                  Official 24/7 AI Fest Assistant
+                  24/7 AI Fest Assistant
                 </p>
               </div>
             </div>

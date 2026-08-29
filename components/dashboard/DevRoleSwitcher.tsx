@@ -72,13 +72,13 @@ export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole } = {}
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <div className="bg-[#F6F4EE] border border-[#8E8D8A]/35 rounded-2xl shadow-xl p-1.5 backdrop-blur-xl flex flex-col gap-1 transition-all text-[#1A1918]">
+    <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50">
+      <div className="bg-[#F6F4EE] border border-[#8E8D8A]/35 rounded-2xl shadow-xl p-1 sm:p-1.5 backdrop-blur-xl flex flex-col gap-1 transition-all text-[#1A1918]">
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={isSwitching}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#EAE7DC] hover:bg-[#8E8D8A]/20 transition-colors text-xs font-mono cursor-pointer"
+          className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#EAE7DC] hover:bg-[#8E8D8A]/20 transition-colors text-[11px] sm:text-xs font-mono cursor-pointer"
           aria-label="Toggle dev role switcher"
         >
           {isSwitching ? (
@@ -86,7 +86,7 @@ export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole } = {}
           ) : (
             <FlaskConical className="w-3.5 h-3.5 text-[#E85A4F]" />
           )}
-          <span className="text-[#E85A4F] font-bold">DEV FIXTURES</span>
+          <span className="text-[#E85A4F] font-bold hidden sm:inline">DEV FIXTURES</span>
           <RoleBadge role={activeRole} />
           <ChevronDown
             className={`w-3.5 h-3.5 text-[#8E8D8A] transition-transform ${
