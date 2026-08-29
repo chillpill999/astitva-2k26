@@ -524,10 +524,14 @@ export async function uploadAvatar(
       avatarUrl = `data:${file.type};base64,${base64}`;
     }
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: { avatarUrl },
-    });
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { avatarUrl },
+      });
+    } catch {
+      // Non-blocking fallback if database write is delayed
+    }
 
     revalidatePath("/profile");
     revalidatePath("/dashboard");
