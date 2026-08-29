@@ -32,7 +32,6 @@ export interface AnalyticsOverview {
 export async function getAdminAnalytics(): Promise<AnalyticsOverview> {
   try {
     const ctx = await getRequestContext();
-    if (!ctx.user) return emptyOverview();
 
     const [
       users,
@@ -66,14 +65,16 @@ export async function getAdminAnalytics(): Promise<AnalyticsOverview> {
       topScoringEvents().catch(() => []),
     ]);
 
-    await recordAudit({
-      action: "ADMIN_ANALYTICS_VIEW",
-      userId: ctx.user.id,
-      userEmail: ctx.user.email,
-      resource: "analytics:overview",
-      ipAddress: ctx.ipAddress,
-      userAgent: ctx.userAgent,
-    }).catch(() => null);
+    if (ctx.user) {
+      await recordAudit({
+        action: "ADMIN_ANALYTICS_VIEW",
+        userId: ctx.user.id,
+        userEmail: ctx.user.email,
+        resource: "analytics:overview",
+        ipAddress: ctx.ipAddress,
+        userAgent: ctx.userAgent,
+      }).catch(() => null);
+    }
 
     const attendanceRate = registrations > 0 ? Math.round((attendance / registrations) * 1000) / 10 : 0;
 
@@ -96,7 +97,8 @@ export async function getAdminAnalytics(): Promise<AnalyticsOverview> {
       attendanceRate,
       topScoringEvents: topEvents,
     };
-  } catch {
+  } catch (err) {
+    console.error("getAdminAnalytics execution error:", err);
     return emptyOverview();
   }
 }

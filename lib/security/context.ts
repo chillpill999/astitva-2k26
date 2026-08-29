@@ -4,10 +4,8 @@
 // ============================================================================
 
 import { headers } from "next/headers";
-import { cookies } from "next/headers";
-import { verifyJWT, SESSION_COOKIE_NAME, getJwtSecret } from "@/lib/auth/jwt";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { SessionUser } from "@/lib/auth/types";
-import { getDemoUserByRole } from "@/lib/auth/mock-auth";
 
 export interface RequestContext {
   user: SessionUser | null;
@@ -16,34 +14,21 @@ export interface RequestContext {
 }
 
 export async function getRequestContext(): Promise<RequestContext> {
-  const cookieStore = await cookies();
-  const headerStore = await headers();
+  const user = await getCurrentUser();
+  let ipAddress = "0.0.0.0";
+  let userAgent = "unknown";
 
-  let user: SessionUser | null = null;
-  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (token) {
-    user = await verifyJWT<SessionUser>(token, getJwtSecret());
+  try {
+    const headerStore = await headers();
+    const forwarded = headerStore.get("x-forwarded-for");
+    ipAddress = (forwarded?.split(",")[0]?.trim() ||
+      headerStore.get("x-real-ip") ||
+      "0.0.0.0") as string;
+    userAgent = headerStore.get("user-agent") ?? "unknown";
+  } catch {
+    // Non-HTTP invocation / fallback
   }
-  if (!user) {
-    const mock = cookieStore.get("astitva_mock_user")?.value;
-    if (mock) {
-      try {
-        const parsed = JSON.parse(mock) as SessionUser;
-        if (parsed?.id && parsed?.role) user = parsed;
-      } catch {
-        // ignore
-      }
-    }
-  }
-  if (!user && process.env.NODE_ENV === "development") {
-    user = getDemoUserByRole("PARTICIPANT");
-  }
-
-  const forwarded = headerStore.get("x-forwarded-for");
-  const ipAddress = (forwarded?.split(",")[0]?.trim() ||
-    headerStore.get("x-real-ip") ||
-    "0.0.0.0") as string;
-  const userAgent = headerStore.get("user-agent") ?? "unknown";
 
   return { user, ipAddress, userAgent };
 }
+
