@@ -1,130 +1,16 @@
 // ============================================================================
-// ASTITVA 2K26 - Database Seed
-// Path: prisma/seed.ts
+// ASTITVA 2K26 - Events & Categories Seed
+// Path: scripts/seed-astitva-events.ts
 // ============================================================================
 
-import {
-  PrismaClient,
-  Role,
-  Branch,
-  Gender,
-  CategoryType,
-  EventType,
-  EventStatus,
-} from "@prisma/client";
-import * as bcrypt from "bcryptjs";
+import { PrismaClient, CategoryType, EventType, EventStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("ASTITVA 2K26 - Seeding official categories, events, and development fixtures...");
+  console.log("Seeding categories and events into Supabase PostgreSQL...");
 
-  // 1. Development account fixtures
-  console.log("Seeding development account fixtures...");
-  const defaultPasswordHash = await bcrypt.hash("Password@123", 10);
-
-  const fixtures = [
-    {
-      id: "usr_dev_admin",
-      email: "dev-admin@lnjpit.local",
-      name: "Development Account · Admin",
-      role: Role.ADMIN,
-      profile: {
-        participantId: "AST26-DEV-A1",
-        collegeId: "DEV-ADMIN",
-        branch: Branch.CSE,
-        semester: 1,
-        gender: Gender.OTHER,
-        bio: "Development fixture.",
-      },
-    },
-    {
-      id: "usr_dev_coordinator",
-      email: "dev-coordinator@lnjpit.local",
-      name: "Development Account · Coordinator",
-      role: Role.EVENT_COORDINATOR,
-      profile: {
-        participantId: "AST26-DEV-C1",
-        collegeId: "DEV-COORD",
-        branch: Branch.CSE,
-        semester: 1,
-        gender: Gender.OTHER,
-        bio: "Development fixture.",
-      },
-    },
-    {
-      id: "usr_dev_volunteer",
-      email: "dev-volunteer@lnjpit.local",
-      name: "Development Account · Volunteer",
-      role: Role.VOLUNTEER,
-      profile: {
-        participantId: "AST26-DEV-V1",
-        collegeId: "DEV-VOL",
-        branch: Branch.CSE,
-        semester: 1,
-        gender: Gender.OTHER,
-        bio: "Development fixture.",
-      },
-    },
-    {
-      id: "usr_dev_captain",
-      email: "dev-captain@lnjpit.local",
-      name: "Development Account · Captain",
-      role: Role.TEAM_CAPTAIN,
-      profile: {
-        participantId: "AST26-DEV-T1",
-        collegeId: "DEV-CAPT",
-        branch: Branch.CSE,
-        semester: 1,
-        gender: Gender.OTHER,
-        bio: "Development fixture.",
-      },
-    },
-    {
-      id: "usr_dev_participant",
-      email: "dev-participant@lnjpit.local",
-      name: "Development Account · Participant",
-      role: Role.PARTICIPANT,
-      profile: {
-        participantId: "AST26-DEV-P1",
-        collegeId: "DEV-PART",
-        branch: Branch.CSE,
-        semester: 1,
-        gender: Gender.OTHER,
-        bio: "Development fixture.",
-      },
-    },
-  ];
-
-  for (const f of fixtures) {
-    await prisma.user.upsert({
-      where: { email: f.email },
-      update: { role: f.role, name: f.name },
-      create: {
-        id: f.id,
-        email: f.email,
-        name: f.name,
-        role: f.role,
-        passwordHash: defaultPasswordHash,
-        isActive: true,
-        profile: {
-          create: {
-            participantId: f.profile.participantId,
-            collegeId: f.profile.collegeId,
-            collegeName: "LNJPIT Chapra",
-            branch: f.profile.branch,
-            semester: f.profile.semester,
-            phone: "",
-            gender: f.profile.gender,
-            isHosteler: false,
-            bio: f.profile.bio,
-          },
-        },
-      },
-    });
-  }
-
-  // 2. Official Categories
+  // 1. Categories
   const categories = [
     {
       id: "cat-sports",
@@ -175,9 +61,13 @@ async function main() {
       create: cat,
     });
   }
+  console.log("Categories upserted successfully.");
 
-  // 3. Official Events
+  // 2. Events List
   const events = [
+    // ------------------------------------------------------------------------
+    // SPORTS EVENTS (Cricket, Fun Cricket, Badminton Single/Double, Table Tennis, etc.)
+    // ------------------------------------------------------------------------
     {
       id: "evt-cricket",
       slug: "cricket-championship",
@@ -386,6 +276,10 @@ async function main() {
       coordinatorName: "Chess Club LNJPIT",
       coordinatorEmail: "sports@lnjpit.ac.in",
     },
+
+    // ------------------------------------------------------------------------
+    // CULTURAL EVENTS
+    // ------------------------------------------------------------------------
     {
       id: "evt-dance",
       slug: "dance-battle",
@@ -490,6 +384,10 @@ async function main() {
       coordinatorName: "Fashion Wing LNJPIT",
       coordinatorEmail: "cultural@lnjpit.ac.in",
     },
+
+    // ------------------------------------------------------------------------
+    // GAMING EVENTS
+    // ------------------------------------------------------------------------
     {
       id: "evt-bgmi",
       slug: "bgmi-mobile-championship",
@@ -542,6 +440,10 @@ async function main() {
       coordinatorName: "Esports Club LNJPIT",
       coordinatorEmail: "gaming@lnjpit.ac.in",
     },
+
+    // ------------------------------------------------------------------------
+    // LITERARY EVENTS
+    // ------------------------------------------------------------------------
     {
       id: "evt-debate",
       slug: "parliamentary-debate",
@@ -656,14 +558,11 @@ async function main() {
     });
   }
 
-  console.log(`Seed complete: 5 dev fixtures, ${categories.length} categories, and ${events.length} events initialized.`);
+  console.log(`Successfully seeded all ${events.length} official festival events into Supabase!`);
+  await prisma.$disconnect();
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((err) => {
+  console.error("Failed to seed events:", err);
+  process.exit(1);
+});
