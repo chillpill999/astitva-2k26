@@ -5,7 +5,7 @@
 
 import { z } from "zod";
 
-export const BranchEnum = z.enum(["CSE", "ME", "CE", "EE", "ECE", "OTHER"], {
+export const BranchEnum = z.enum(["CSE", "ME", "CE", "EE", "FPP", "MC", "OTHER"], {
   errorMap: () => ({ message: "Please select a valid LNJPIT branch" }),
 });
 
@@ -60,12 +60,19 @@ export const BRANCH_METADATA: Record<
     badgeClass: "bg-yellow-500/10 text-yellow-400 border-yellow-500/30",
     icon: "Zap",
   },
-  ECE: {
-    name: "Electronics & Communication",
-    code: "ECE",
+  FPP: {
+    name: "Food Processing & Preservation",
+    code: "FPP",
+    color: "#10b981",
+    badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+    icon: "Utensils",
+  },
+  MC: {
+    name: "Mathematics and Computing",
+    code: "MC",
     color: "#a855f7",
     badgeClass: "bg-purple-500/10 text-purple-400 border-purple-500/30",
-    icon: "Radio",
+    icon: "Calculator",
   },
   OTHER: {
     name: "Applied Science & Humanities / Faculty",

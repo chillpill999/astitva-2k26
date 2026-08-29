@@ -89,7 +89,7 @@ export interface SessionUser {
   role: 'ADMIN' | 'EVENT_COORDINATOR' | 'VOLUNTEER' | 'TEAM_CAPTAIN' | 'PARTICIPANT';
   participantId?: string; // e.g. "AST26-1001"
   collegeId?: string;
-  branch?: 'CSE' | 'ME' | 'CE' | 'EE' | 'ECE' | 'OTHER';
+  branch?: 'CSE' | 'ME' | 'CE' | 'EE' | 'FPP' | 'MC' | 'OTHER';
   semester?: number;
   avatarUrl?: string;
 }

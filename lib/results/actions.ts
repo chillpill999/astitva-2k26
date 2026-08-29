@@ -441,12 +441,23 @@ export interface BranchStanding {
   totalPodiums: number;
 }
 
+export const BRANCH_FULL_NAMES: Record<string, string> = {
+  CSE: "Computer Science & Engineering (CSE)",
+  ME: "Mechanical Engineering (ME)",
+  CE: "Civil Engineering (CE)",
+  EE: "Electrical Engineering (EE)",
+  FPP: "Food Processing & Preservation (FPP)",
+  MC: "Mathematics and Computing (MC)",
+  OTHER: "Applied Science & Humanities (OTHER)",
+};
+
 const DEFAULT_BRANCH_STANDINGS: BranchStanding[] = [
   { branch: "Computer Science & Engineering (CSE)", points: 0, wins: 0, totalPodiums: 0 },
   { branch: "Mechanical Engineering (ME)", points: 0, wins: 0, totalPodiums: 0 },
   { branch: "Civil Engineering (CE)", points: 0, wins: 0, totalPodiums: 0 },
   { branch: "Electrical Engineering (EE)", points: 0, wins: 0, totalPodiums: 0 },
-  { branch: "Electronics & Comm. Engineering (ECE)", points: 0, wins: 0, totalPodiums: 0 },
+  { branch: "Food Processing & Preservation (FPP)", points: 0, wins: 0, totalPodiums: 0 },
+  { branch: "Mathematics and Computing (MC)", points: 0, wins: 0, totalPodiums: 0 },
 ];
 
 export async function getBranchStandings(): Promise<BranchStanding[]> {
@@ -460,10 +471,11 @@ export async function getBranchStandings(): Promise<BranchStanding[]> {
     }
     const agg = new Map<string, { points: number; wins: number; totalPodiums: number }>();
     for (const r of results) {
-      const branch = r.user?.profile?.branch;
-      if (!branch) continue;
+      const rawBranch = r.user?.profile?.branch;
+      if (!rawBranch) continue;
+      const branch = BRANCH_FULL_NAMES[rawBranch] || rawBranch;
       const cur = agg.get(branch) ?? { points: 0, wins: 0, totalPodiums: 0 };
-      cur.points += POINTS_BY_POSITION[r.positionTitle];
+      cur.points += POINTS_BY_POSITION[r.positionTitle] || 0;
       cur.totalPodiums += 1;
       if (r.rank === 1) cur.wins += 1;
       agg.set(branch, cur);

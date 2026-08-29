@@ -31,7 +31,8 @@ enum Branch {
   ME
   CE
   EE
-  ECE
+  FPP
+  MC
   OTHER
 }
 
