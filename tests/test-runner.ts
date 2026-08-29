@@ -16,6 +16,7 @@ const suites = [
   "tests/m8/ai-matcher.test.ts",
   "tests/m9/export.test.ts",
   "tests/production-features.test.ts",
+  "tests/supabase-production.test.ts",
 ];
 
 async function run(file: string): Promise<{ code: number; name: string }> {

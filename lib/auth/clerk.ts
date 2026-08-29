@@ -7,6 +7,8 @@ import { currentUser, auth } from "@clerk/nextjs/server";
 import { SessionUser, Role } from "./types";
 import { prisma } from "@/lib/db/prisma";
 
+export const ADMIN_EMAILS = ["aryanrockstar2007@gmail.com", "technogamerzthenextlevel@gmail.com"];
+
 /**
  * Resolves the appropriate role for a Clerk user based on configured email lists,
  * Clerk user metadata, or existing database records.
@@ -21,12 +23,11 @@ export function resolveUserRole(
     .filter(Boolean);
 
   // 1. Check environment-configured Admin emails
-  const defaultAdminEmails = ["aryanrockstar2007@gmail.com", "technogamerzthenextlevel@gmail.com"];
   const envAdminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
-  const adminEmails = Array.from(new Set([...defaultAdminEmails, ...envAdminEmails]));
+  const adminEmails = Array.from(new Set([...ADMIN_EMAILS, ...envAdminEmails]));
   if (emailList.some((e) => adminEmails.includes(e))) {
     return "ADMIN";
   }
