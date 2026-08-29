@@ -138,10 +138,10 @@ export function Navbar() {
             />
           ) : (
             <Link
-              href="/sign-in"
+              href="/sign-up"
               className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
             >
-              SIGN IN
+              SIGN UP
             </Link>
           )}
 
@@ -172,11 +172,11 @@ export function Navbar() {
           </div>
           <div className="pt-3 border-t border-[#8E8D8A]/20">
             <Link
-              href="/sign-in"
+              href="/sign-up"
               onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-center py-2.5 rounded text-xs font-mono font-bold uppercase bg-[#E85A4F] text-white"
             >
-              SIGN IN
+              SIGN UP
             </Link>
           </div>
         </div>

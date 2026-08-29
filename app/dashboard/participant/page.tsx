@@ -72,6 +72,11 @@ export default async function ParticipantDashboardPage() {
     certificates = [];
   }
 
+  // If profile is incomplete (no branch, roll number, etc.), redirect to /profile to complete it
+  if (!profile || !profile.branch || !profile.collegeId) {
+    redirect("/profile");
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-300">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">

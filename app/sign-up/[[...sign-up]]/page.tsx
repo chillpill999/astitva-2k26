@@ -15,6 +15,10 @@ export default function SignUpPage() {
 
       <div className="rounded-3xl p-2 bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-xl">
         <SignUp
+          routing="path"
+          path="/sign-up"
+          signInUrl="/sign-in"
+          fallbackRedirectUrl="/profile"
           appearance={{
             elements: {
               card: "shadow-none bg-transparent",
