@@ -7,7 +7,7 @@ import { Camera, Info } from "lucide-react";
 import { getFestGallery } from "@/lib/data/fest-data";
 import { GalleryBrowser } from "@/components/gallery/GalleryBrowser";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export const metadata = {
   title: "Gallery | ASTITVA 2K26",
   description: "Photos and videos from ASTITVA 2K26.",

@@ -9,7 +9,7 @@ import { getPublicAnnouncements } from "@/lib/ai/actions";
 import { formatDate } from "@/lib/utils";
 import { RealtimeAnnouncementsStream } from "@/components/announcements/RealtimeAnnouncementsStream";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 export const metadata = {
   title: "Announcements & Notice Board | ASTITVA 2K26",
   description: "Live announcements from the ASTITVA 2K26 organizing committee.",

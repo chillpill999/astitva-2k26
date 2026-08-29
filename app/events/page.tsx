@@ -8,6 +8,8 @@ import { Trophy, Sparkles, Layers } from "lucide-react";
 import { getEventsCatalog } from "@/lib/events/actions";
 import { EventCatalogGrid } from "@/components/events/EventCatalogGrid";
 
+export const revalidate = 30;
+
 export const metadata = {
   title: "Event Catalog | ASTITVA 2K26 — LNJPIT Chapra",
   description:

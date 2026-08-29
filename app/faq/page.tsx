@@ -7,7 +7,7 @@ import { HelpCircle } from "lucide-react";
 import { getFestFaqs } from "@/lib/data/fest-data";
 import { FaqBrowser } from "@/components/faq/FaqBrowser";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export const metadata = {
   title: "FAQ & Helpdesk | ASTITVA 2K26",
   description: "Frequently asked questions and helpdesk for ASTITVA 2K26.",

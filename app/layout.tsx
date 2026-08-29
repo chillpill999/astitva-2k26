@@ -5,7 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { Toaster } from "@/components/ui/sonner";
-import { AiChatWidget } from "@/components/ai/AiChatWidget";
+import { AiChatWidget } from "@/components/ai/AiChatWidgetLoader";
 
 const inter = Inter({
   subsets: ["latin"],

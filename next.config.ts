@@ -2,7 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  compress: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
@@ -26,6 +31,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "10mb",
     },
+    optimizePackageImports: ["lucide-react", "framer-motion", "@clerk/nextjs", "date-fns"],
   },
   webpack: (config) => {
     config.resolve.alias.canvas = false;
@@ -34,3 +40,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+

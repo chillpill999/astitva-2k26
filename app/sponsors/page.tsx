@@ -8,7 +8,7 @@ import { Handshake, ExternalLink, Info } from "lucide-react";
 import { getFestSponsors } from "@/lib/data/fest-data";
 import { FestSponsor } from "@/lib/data/fest-data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export const metadata = {
   title: "Sponsors & Partners | ASTITVA 2K26",
   description: "Sponsors and partners supporting ASTITVA 2K26.",

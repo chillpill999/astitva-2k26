@@ -32,6 +32,8 @@ import {
   CallToActionBanner,
 } from "@/components/landing";
 
+export const revalidate = 60;
+
 export const metadata = {
   title: "ASTITVA 2K26 — Annual Fest | LNJPIT Chapra",
   description:

@@ -9,7 +9,12 @@ import { PrismaClient } from "@prisma/client";
 const prismaClientSingleton = () => {
   const connectionString = process.env.DATABASE_URL || process.env.DIRECT_URL;
   if (connectionString && !connectionString.includes("localhost:5432")) {
-    const pool = new Pool({ connectionString });
+    const pool = new Pool({
+      connectionString,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    });
     const adapter = new PrismaPg(pool);
     return new PrismaClient({
       adapter,
@@ -28,10 +33,11 @@ const globalForPrisma = globalThis as unknown as {
   prismaGlobal: PrismaClientSingleton | undefined;
 };
 
-export const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prismaGlobal = prisma;
+if (!globalForPrisma.prismaGlobal) {
+  globalForPrisma.prismaGlobal = prismaClientSingleton();
 }
 
+export const prisma = globalForPrisma.prismaGlobal;
+
 export default prisma;
+

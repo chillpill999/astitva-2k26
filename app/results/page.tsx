@@ -13,7 +13,7 @@ import {
 import { formatDate } from "@/lib/utils";
 import { RealtimeLiveScoreboard } from "@/components/results/RealtimeLiveScoreboard";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 export const metadata = {
   title: "Results & Live Match Scoreboard | ASTITVA 2K26",
   description: "Realtime live match scores and published podium results across LNJPIT fest tournaments.",

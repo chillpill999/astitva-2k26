@@ -8,7 +8,7 @@ import { Calendar, Clock, MapPin, CalendarOff } from "lucide-react";
 import { getFestEvents } from "@/lib/data/fest-data";
 import { ScheduleBrowser } from "@/components/schedule/ScheduleBrowser";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 export const metadata = {
   title: "Festival Schedule | ASTITVA 2K26 — LNJPIT Chapra",
   description: "Day-by-day schedule for ASTITVA 2K26 (4–8 September 2026).",

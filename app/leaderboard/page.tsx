@@ -7,7 +7,7 @@ import { Flame } from "lucide-react";
 import { getLeaderboard, getBranchStandings } from "@/lib/results/actions";
 import { RealtimeLeaderboardView } from "@/components/leaderboard/RealtimeLeaderboardView";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 export const metadata = {
   title: "Live Leaderboards | ASTITVA 2K26",
   description:
