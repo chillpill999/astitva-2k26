@@ -37,51 +37,57 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  const hasClerkSession = Boolean(
+    req.cookies.get("__session")?.value || req.cookies.get("__client_uat")?.value
+  );
+
   const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isAuth = AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   // 2. Handle Protected Routes
   if (isProtected) {
-    if (!user) {
+    if (!user && !hasClerkSession) {
       const signInUrl = new URL("/sign-in", req.url);
       signInUrl.searchParams.set("callbackUrl", pathname + req.nextUrl.search);
       return NextResponse.redirect(signInUrl);
     }
 
-    // Role-Based Route Access Control
-    const role = user.role;
-    if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
-      return NextResponse.redirect(
-        new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
-      );
-    }
-    if (
-      pathname.startsWith("/dashboard/coordinator") &&
-      role !== "ADMIN" &&
-      role !== "EVENT_COORDINATOR"
-    ) {
-      return NextResponse.redirect(
-        new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
-      );
-    }
-    if (
-      pathname.startsWith("/dashboard/volunteer") &&
-      role !== "ADMIN" &&
-      role !== "EVENT_COORDINATOR" &&
-      role !== "VOLUNTEER"
-    ) {
-      return NextResponse.redirect(
-        new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
-      );
-    }
-    if (
-      pathname.startsWith("/dashboard/captain") &&
-      role !== "ADMIN" &&
-      role !== "TEAM_CAPTAIN"
-    ) {
-      return NextResponse.redirect(
-        new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
-      );
+    // If we have parsed user (from JWT or mock), apply strict RBAC redirect
+    if (user) {
+      const role = user.role;
+      if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
+        return NextResponse.redirect(
+          new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
+        );
+      }
+      if (
+        pathname.startsWith("/dashboard/coordinator") &&
+        role !== "ADMIN" &&
+        role !== "EVENT_COORDINATOR"
+      ) {
+        return NextResponse.redirect(
+          new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
+        );
+      }
+      if (
+        pathname.startsWith("/dashboard/volunteer") &&
+        role !== "ADMIN" &&
+        role !== "EVENT_COORDINATOR" &&
+        role !== "VOLUNTEER"
+      ) {
+        return NextResponse.redirect(
+          new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
+        );
+      }
+      if (
+        pathname.startsWith("/dashboard/captain") &&
+        role !== "ADMIN" &&
+        role !== "TEAM_CAPTAIN"
+      ) {
+        return NextResponse.redirect(
+          new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
+        );
+      }
     }
   }
 

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const NAV_LINKS = [
   { href: "/events", label: "Events", icon: Trophy },
@@ -173,12 +174,24 @@ export function Navbar() {
               <Grid className="w-4 h-4" />
             </Link>
 
-            <Link
-              href="/sign-in"
-              className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
-            >
-              SIGN IN
-            </Link>
+            <SignedIn>
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "w-8 h-8 rounded-full border border-[#8E8D8A]/35",
+                  },
+                }}
+              />
+            </SignedIn>
+
+            <SignedOut>
+              <Link
+                href="/sign-in"
+                className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+              >
+                SIGN IN
+              </Link>
+            </SignedOut>
 
             <button
               type="button"
