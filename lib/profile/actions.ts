@@ -22,6 +22,8 @@ import * as crypto from "crypto";
 import { verifyJWT, SESSION_COOKIE_NAME, getJwtSecret } from "@/lib/auth/jwt";
 import { SessionUser } from "@/lib/auth/types";
 
+import { getCurrentUser } from "@/lib/auth/auth";
+
 export interface ActionResult<T = unknown> {
   success: boolean;
   data?: T;
@@ -34,6 +36,9 @@ export interface ActionResult<T = unknown> {
  */
 async function getAuthUserId(): Promise<string | null> {
   try {
+    const user = await getCurrentUser();
+    if (user?.id) return user.id;
+
     const cookieStore = await cookies();
     
     // 1. Check primary JWT session cookie
@@ -52,15 +57,6 @@ async function getAuthUserId(): Promise<string | null> {
       } catch {
         // invalid JSON
       }
-    }
-
-    // 3. Fallback to participant in development
-    if (process.env.NODE_ENV === "development") {
-      const demoUser = await prisma.user.findFirst({
-        where: { email: "participant@lnjpit.ac.in" },
-        select: { id: true },
-      });
-      return demoUser?.id ?? "usr_part_005";
     }
 
     return null;
@@ -401,7 +397,7 @@ export async function updateProfile(
 }
 
 /**
- * Upload Avatar Server Action (Base64 data URL for instant zero-config storage).
+ * Upload Avatar Server Action (Cloudinary when configured, Base64 data URL fallback).
  */
 export async function uploadAvatar(
   formData: FormData
@@ -428,8 +424,29 @@ export async function uploadAvatar(
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString("base64");
-    const avatarUrl = `data:${file.type};base64,${base64}`;
+
+    let avatarUrl = "";
+    const { isCloudinaryConfigured, uploadBufferToCloudinary } = await import(
+      "@/lib/storage/cloudinary"
+    );
+
+    if (isCloudinaryConfigured) {
+      try {
+        const uploadResult = await uploadBufferToCloudinary(buffer, {
+          folder: "astitva-2k26/avatars",
+          publicId: `avatar_${userId}_${Date.now()}`,
+          transformation: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
+        });
+        avatarUrl = uploadResult.secure_url;
+      } catch (cloudErr) {
+        console.warn("Cloudinary upload failed, falling back to base64:", cloudErr);
+        const base64 = buffer.toString("base64");
+        avatarUrl = `data:${file.type};base64,${base64}`;
+      }
+    } else {
+      const base64 = buffer.toString("base64");
+      avatarUrl = `data:${file.type};base64,${base64}`;
+    }
 
     await prisma.user.update({
       where: { id: userId },
