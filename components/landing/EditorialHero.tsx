@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, Grid, LogIn, Sparkles } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -167,21 +168,16 @@ export function EditorialHero() {
 
             <motion.div
               style={{ transform: "translateZ(40px)" }}
-              className="relative px-6 py-4 rounded-3xl bg-[#F6F4EE]/90 border border-[#8E8D8A]/30 backdrop-blur-sm shadow-[0_20px_40px_rgba(26,25,24,0.08)] flex flex-col items-center justify-center transition-transform duration-300"
+              className="relative w-[280px] sm:w-[440px] lg:w-[540px] h-[110px] sm:h-[160px] lg:h-[200px] filter drop-shadow-[0_15px_30px_rgba(232,90,79,0.3)] transition-transform duration-300"
             >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#E85A4F]" />
-                <span className="text-[10px] font-mono tracking-[0.35em] text-[#8E8D8A] font-bold uppercase">
-                  LNJPIT CHAPRA
-                </span>
-                <span className="h-1.5 w-1.5 rounded-full bg-[#E85A4F]" />
-              </div>
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-[0.18em] text-[#1A1918] leading-none uppercase">
-                ASTITVA
-              </h1>
-              <div className="mt-2 inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#E85A4F] text-white text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase shadow-sm">
-                <span>2K26 EDITION</span>
-              </div>
+              <Image
+                src="/images/astitva-logo-3d.png"
+                alt="ASTITVA 2K26 Official Emblem"
+                fill
+                priority
+                className="object-contain"
+                sizes="(max-width: 768px) 320px, (max-width: 1200px) 500px, 600px"
+              />
             </motion.div>
 
             <motion.div style={{ transform: "translateZ(25px)" }} className="mt-3 sm:mt-5 space-y-2">
