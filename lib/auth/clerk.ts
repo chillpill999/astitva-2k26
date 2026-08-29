@@ -74,27 +74,54 @@ export function resolveUserRole(
  */
 export async function getClerkSessionUser(): Promise<SessionUser | null> {
   try {
-    const { userId } = await auth();
+    const authState = await auth();
+    const userId = authState?.userId;
     if (!userId) return null;
 
-    const user = await currentUser();
-    if (!user) return null;
+    const sessionClaims = (authState?.sessionClaims as any) || {};
 
+    let user: any = null;
+    try {
+      user = await currentUser();
+    } catch {
+      user = null;
+    }
+
+    const emailFromClaims = (sessionClaims?.email as string) || (sessionClaims?.email_address as string) || "";
     const primaryEmail =
-      user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress ||
-      user.emailAddresses[0]?.emailAddress ||
+      user?.emailAddresses?.find((e: any) => e.id === user.primaryEmailAddressId)?.emailAddress ||
+      user?.emailAddresses?.[0]?.emailAddress ||
+      emailFromClaims ||
       "";
-    const allEmails = user.emailAddresses
-      .map((e) => e.emailAddress.toLowerCase().trim())
-      .filter(Boolean);
 
-    const name = user.firstName
+    const allEmails = Array.from(
+      new Set(
+        [
+          primaryEmail,
+          emailFromClaims,
+          ...(user?.emailAddresses?.map((e: any) => e.emailAddress) || []),
+        ]
+          .filter(Boolean)
+          .map((e) => e.toLowerCase().trim())
+      )
+    );
+
+    const claimsName =
+      (sessionClaims?.name as string) ||
+      `${sessionClaims?.first_name || ""} ${sessionClaims?.last_name || ""}`.trim();
+
+    const name = user?.firstName
       ? `${user.firstName} ${user.lastName || ""}`.trim()
-      : user.username || primaryEmail.split("@")[0] || "Participant";
-    const avatarUrl = user.imageUrl || undefined;
+      : user?.username || claimsName || primaryEmail.split("@")[0] || "Participant";
+
+    const avatarUrl = user?.imageUrl || (sessionClaims?.image_url as string) || undefined;
 
     // Determine intended role based on email & metadata
-    const metadataRole = (user.publicMetadata?.role as string) || (user.privateMetadata?.role as string) || null;
+    const metadataRole =
+      (user?.publicMetadata?.role as string) ||
+      (user?.privateMetadata?.role as string) ||
+      (sessionClaims?.metadata?.role as string) ||
+      null;
 
     // Check if user exists in database or sync them
     let dbUser: any = null;

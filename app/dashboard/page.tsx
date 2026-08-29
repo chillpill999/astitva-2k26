@@ -18,17 +18,20 @@ export default async function DashboardPage() {
   // Admins, coordinators, and volunteers skip profile completion — they're staff, not students
   const staffRoles: string[] = ["ADMIN", "EVENT_COORDINATOR", "VOLUNTEER"];
   if (!staffRoles.includes(user.role)) {
-    // Check if the user has completed their profile (branch, roll number, etc.)
+    let isProfileIncomplete = false;
     try {
       const profile = await prisma.profile.findUnique({
         where: { userId: user.id },
         select: { branch: true, collegeId: true },
       });
       if (!profile || !profile.branch || !profile.collegeId) {
-        redirect("/profile");
+        isProfileIncomplete = true;
       }
     } catch {
-      // Database not available — redirect to profile as a safe default
+      isProfileIncomplete = false;
+    }
+
+    if (isProfileIncomplete) {
       redirect("/profile");
     }
   }

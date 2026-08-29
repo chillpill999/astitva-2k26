@@ -1,49 +1,43 @@
 // ============================================================================
-// ASTITVA 2K26 - Pure Edge RBAC & Authentication Middleware
+// ASTITVA 2K26 - Pure Edge RBAC & Authentication Middleware with Clerk
 // Path: middleware.ts
 // ============================================================================
 
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyJWT, SESSION_COOKIE_NAME, DEFAULT_JWT_SECRET } from "@/lib/auth/jwt";
 import { SessionUser } from "@/lib/auth/types";
 import { getRoleDashboardUrl } from "@/lib/auth/profile";
 
-const PROTECTED_PREFIXES = [
-  "/dashboard",
-  "/profile",
-  "/events",
-  "/teams",
-  "/schedule",
-  "/leaderboard",
-  "/results",
-  "/gallery",
-  "/verify-certificate",
-  "/sponsors",
-  "/team",
-  "/faq",
-  "/announcements",
-];
-const AUTH_PREFIXES = ["/sign-in", "/sign-up"];
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/profile(.*)",
+]);
 
-export async function middleware(req: NextRequest) {
+const isAuthRoute = createRouteMatcher([
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+]);
+
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { pathname } = req.nextUrl;
 
   // 1. Check Local / Mock session token
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const secret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
-  let user: SessionUser | null = null;
+  let mockUser: SessionUser | null = null;
 
   if (token) {
-    user = await verifyJWT<SessionUser>(token, secret);
+    mockUser = await verifyJWT<SessionUser>(token, secret);
   }
 
-  if (!user) {
+  if (!mockUser) {
     const mockCookie = req.cookies.get("astitva_mock_user")?.value;
     if (mockCookie) {
       try {
         const parsed = JSON.parse(mockCookie) as SessionUser;
         if (parsed?.id && parsed?.role) {
-          user = parsed;
+          mockUser = parsed;
         }
       } catch {
         // ignore parse error
@@ -51,24 +45,20 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  const hasClerkSession = Boolean(
-    req.cookies.get("__session")?.value || req.cookies.get("__client_uat")?.value
-  );
-
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-  const isAuth = AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-
   // 2. Handle Protected Routes
-  if (isProtected) {
-    if (!user && !hasClerkSession) {
+  if (isProtectedRoute(req)) {
+    const { userId } = await auth();
+    const isAuthenticated = Boolean(userId || mockUser);
+
+    if (!isAuthenticated) {
       const signInUrl = new URL("/sign-in", req.url);
       signInUrl.searchParams.set("callbackUrl", pathname + req.nextUrl.search);
       return NextResponse.redirect(signInUrl);
     }
 
-    // If we have parsed user (from JWT or mock), apply strict RBAC redirect
-    if (user) {
-      const role = user.role;
+    // If we have a local mock user, enforce strict RBAC redirects at the edge
+    if (mockUser) {
+      const role = mockUser.role;
       if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
         return NextResponse.redirect(
           new URL("/unauthorized?attempted=" + encodeURIComponent(pathname), req.url)
@@ -105,21 +95,23 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // 3. Smart Redirect for Authenticated Users accessing /sign-in or /sign-up without ?switch=true
-  if (isAuth && user && !req.nextUrl.searchParams.has("switch")) {
+  // 3. Smart Redirect for Authenticated Mock Users accessing /sign-in or /sign-up without ?switch=true
+  if (isAuthRoute(req) && mockUser && !req.nextUrl.searchParams.has("switch")) {
     const callbackUrl = req.nextUrl.searchParams.get("callbackUrl");
     if (callbackUrl && callbackUrl.startsWith("/")) {
       return NextResponse.redirect(new URL(callbackUrl, req.url));
     }
-    return NextResponse.redirect(new URL(getRoleDashboardUrl(user.role), req.url));
+    return NextResponse.redirect(new URL(getRoleDashboardUrl(mockUser.role), req.url));
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static assets
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
   ],
 };
