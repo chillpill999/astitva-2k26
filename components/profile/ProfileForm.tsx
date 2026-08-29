@@ -376,7 +376,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                 <SelectContent className="bg-[#F6F4EE] border-[#8E8D8A]/30 text-[#1A1918] text-xs font-mono">
                   {LNJPIT_HOSTELS.map((h) => (
                     <SelectItem key={h} value={h}>
-                      {h}
+                      {h} — {h.startsWith("GH") ? `Girls Hostel (${h})` : `Boys Hostel (${h})`}
                     </SelectItem>
                   ))}
                 </SelectContent>

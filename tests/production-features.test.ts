@@ -86,6 +86,11 @@ async function runTests() {
     assert.strictEqual(res.success, true);
   });
 
+  it("LNJPIT_HOSTELS includes H1-H5 and GH1-GH2", () => {
+    const { LNJPIT_HOSTELS } = require("../lib/profile/schema");
+    assert.deepStrictEqual(Array.from(LNJPIT_HOSTELS), ["H1", "H2", "H3", "H4", "H5", "GH1", "GH2"]);
+  });
+
   // 3. EVENT REGISTRATION
   it("Registration number formatting produces AST26-REG-XXXXX", () => {
     const regNum = formatRegistrationNumber(10042);
