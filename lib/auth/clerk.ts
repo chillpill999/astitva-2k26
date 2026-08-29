@@ -19,10 +19,12 @@ export function resolveUserRole(
   const normalized = email.toLowerCase().trim();
 
   // 1. Check environment-configured Admin emails
-  const adminEmails = (process.env.ADMIN_EMAILS || "technogamerzthenextlevel@gmail.com")
+  const defaultAdminEmails = ["aryanrockstar2007@gmail.com", "technogamerzthenextlevel@gmail.com"];
+  const envAdminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
+  const adminEmails = Array.from(new Set([...defaultAdminEmails, ...envAdminEmails]));
   if (adminEmails.includes(normalized)) {
     return "ADMIN";
   }
