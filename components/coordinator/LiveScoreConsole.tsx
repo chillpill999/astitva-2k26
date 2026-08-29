@@ -38,7 +38,7 @@ interface LiveScoreConsoleProps {
 export function LiveScoreConsole({ events }: LiveScoreConsoleProps) {
   const router = useRouter();
   const [selectedEventId, setSelectedEventId] = useState<string>(events[0]?.id ?? "");
-  const [status, setStatus] = useState<LiveScorePayload["status"]>("IN_PROGRESS");
+  const [status, setStatus] = useState<LiveScorePayload["status"]>("ONGOING");
   const [currentRound, setCurrentRound] = useState<string>("Quarter Finals");
   const [liveScoreText, setLiveScoreText] = useState<string>("");
   const [commentary, setCommentary] = useState<string>("");
@@ -143,9 +143,9 @@ export function LiveScoreConsole({ events }: LiveScoreConsoleProps) {
               <div className="grid grid-cols-3 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => setStatus("IN_PROGRESS")}
+                  onClick={() => setStatus("ONGOING")}
                   className={`py-2.5 px-3 rounded-xl text-xs font-mono font-bold uppercase border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    status === "IN_PROGRESS"
+                    status === "ONGOING"
                       ? "bg-[#E85A4F] text-white border-[#E85A4F] shadow-sm"
                       : "bg-[#EAE7DC] text-[#8E8D8A] border-[#8E8D8A]/30 hover:text-[#1A1918]"
                   }`}

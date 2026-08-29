@@ -149,9 +149,9 @@ async function runTests() {
   });
 
   // 12. Realtime Event Status Progression
-  await it("Event status transitions through REGISTRATION_OPEN, IN_PROGRESS, COMPLETED", () => {
-    const validStatuses = ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
-    assert.ok(validStatuses.includes("IN_PROGRESS"));
+  await it("Event status transitions through REGISTRATION_OPEN, ONGOING, COMPLETED", () => {
+    const validStatuses = ["UPCOMING", "REGISTRATION_OPEN", "REGISTRATION_CLOSED", "ONGOING", "COMPLETED", "CANCELLED"];
+    assert.ok(validStatuses.includes("ONGOING"));
     assert.ok(validStatuses.includes("COMPLETED"));
   });
 

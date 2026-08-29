@@ -126,7 +126,7 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
             {/* TAB 1: OVERVIEW */}
             <TabsContent value="overview" className="space-y-6 pt-6">
               {/* Live Match Score Indicator if active */}
-              {event.status === "IN_PROGRESS" && (
+              {event.status === "ONGOING" && (
                 <div className="p-5 rounded-2xl bg-[#E85A4F]/10 border border-[#E85A4F]/40 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#E85A4F] uppercase">

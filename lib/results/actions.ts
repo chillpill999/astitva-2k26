@@ -520,9 +520,11 @@ export async function getAllEventsWithResults(): Promise<
 // LIVE MATCH SCORING & REALTIME BROADCASTING
 // ============================================================================
 
+import { EventStatus, AnnouncementCategory } from "@prisma/client";
+
 export interface LiveScorePayload {
   eventId: string;
-  status: "REGISTRATION_OPEN" | "REGISTRATION_CLOSED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+  status: EventStatus;
   liveScoreText: string;
   currentRound?: string;
   commentary?: string;
@@ -543,7 +545,9 @@ export interface LiveEventCard {
   updatedAt: string;
 }
 
-export async function updateEventLiveScore(payload: LiveScorePayload): Promise<ActionResult<{ eventId: string; liveScoreText: string; status: string }>> {
+export async function updateEventLiveScore(
+  payload: LiveScorePayload
+): Promise<ActionResult<{ eventId: string; liveScoreText: string; status: string }>> {
   try {
     const ctx = await getRequestContext();
     if (!ctx.user) return { success: false, error: "Authentication required" };
@@ -572,7 +576,7 @@ export async function updateEventLiveScore(payload: LiveScorePayload): Promise<A
     }
 
     // Format subtitle to include live round and live score
-    const formattedSubtitle = currentRound 
+    const formattedSubtitle = currentRound
       ? `${currentRound} • ${liveScoreText}`
       : liveScoreText;
 
@@ -580,18 +584,18 @@ export async function updateEventLiveScore(payload: LiveScorePayload): Promise<A
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
       data: {
-        status: status as any,
+        status: status,
         subtitle: formattedSubtitle,
       },
     });
 
     // Also record an Announcement if status is LIVE or score is significant
-    if (status === "IN_PROGRESS" && commentary) {
+    if (status === EventStatus.ONGOING && commentary) {
       await prisma.announcement.create({
         data: {
           title: `[LIVE SCORE] ${event.title}`,
           body: `${currentRound ? `[${currentRound}] ` : ""}${liveScoreText}${commentary ? ` — ${commentary}` : ""}`,
-          category: "EVENT_UPDATES",
+          category: AnnouncementCategory.EVENT_UPDATE,
           priority: "HIGH",
           eventId: event.id,
           pinned: false,
@@ -634,9 +638,9 @@ export async function getLiveAndRecentEvents(): Promise<LiveEventCard[]> {
     const events = await prisma.event.findMany({
       where: {
         OR: [
-          { status: "IN_PROGRESS" },
-          { status: "COMPLETED" },
-          { status: "REGISTRATION_OPEN" },
+          { status: EventStatus.ONGOING },
+          { status: EventStatus.COMPLETED },
+          { status: EventStatus.REGISTRATION_OPEN },
         ],
       },
       include: { category: true },
@@ -647,14 +651,14 @@ export async function getLiveAndRecentEvents(): Promise<LiveEventCard[]> {
     return events.map((e) => ({
       id: e.id,
       title: e.title,
-      category: e.category.name,
+      category: e.category?.name || "General",
       venue: e.venue,
       dayNumber: e.dayNumber,
       eventType: e.eventType,
       status: e.status,
       subtitle: e.subtitle,
       liveScore: e.subtitle,
-      currentRound: e.status === "IN_PROGRESS" ? "Live Match" : null,
+      currentRound: e.status === EventStatus.ONGOING ? "Live Match" : null,
       commentary: null,
       updatedAt: e.updatedAt.toISOString(),
     }));

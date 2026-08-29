@@ -41,7 +41,7 @@ export function RealtimeLiveScoreboard({ initialEvents }: RealtimeLiveScoreboard
   const events = useRealtimeLiveScoreboard<LiveScoreboardItem>(initialEvents);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
 
-  const liveEvents = events.filter((e) => e.status === "IN_PROGRESS");
+  const liveEvents = events.filter((e) => e.status === "ONGOING");
   const displayEvents = liveEvents.length > 0 ? liveEvents : events.slice(0, 6);
 
   const filtered =
@@ -106,7 +106,7 @@ export function RealtimeLiveScoreboard({ initialEvents }: RealtimeLiveScoreboard
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((item) => {
-            const isLive = item.status === "IN_PROGRESS";
+            const isLive = item.status === "ONGOING";
             return (
               <div
                 key={item.id}
