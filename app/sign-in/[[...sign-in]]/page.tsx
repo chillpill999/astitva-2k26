@@ -27,7 +27,7 @@ export default function SignInPage() {
             routing="path"
             path="/sign-in"
             signUpUrl="/sign-up"
-            fallbackRedirectUrl={callbackUrl || "/profile"}
+            fallbackRedirectUrl={callbackUrl || "/dashboard"}
             appearance={{
               elements: {
                 rootBox: "w-full",
