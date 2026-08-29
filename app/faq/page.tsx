@@ -6,11 +6,29 @@
 import { HelpCircle } from "lucide-react";
 import { getFestFaqs } from "@/lib/data/fest-data";
 import { FaqBrowser } from "@/components/faq/FaqBrowser";
+import { FaqPageJsonLd, BreadcrumbsJsonLd } from "@/components/seo/JsonLd";
+import { Metadata } from "next";
 
 export const revalidate = 60;
-export const metadata = {
-  title: "FAQ & Helpdesk | ASTITVA 2K26",
-  description: "Frequently asked questions and helpdesk for ASTITVA 2K26.",
+
+export const metadata: Metadata = {
+  title: "FAQ & Helpdesk | ASTITVA 2K26 LNJPIT Chapra",
+  description:
+    "Official FAQ and helpdesk for ASTITVA 2K26. Find answers on tournament registration, team squad creation, entry QR code passes, and certificates.",
+  alternates: {
+    canonical: "/faq",
+  },
+  openGraph: {
+    title: "FAQ & Helpdesk — ASTITVA 2K26 LNJPIT",
+    description: "Tournament rules, registration eligibility, QR scanner gate entry, and certificate verification.",
+    url: "/faq",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FAQ & Helpdesk — ASTITVA 2K26 LNJPIT",
+    description: "Tournament rules, registration eligibility, QR scanner gate entry, and certificate verification.",
+  },
 };
 
 export default async function FaqPage() {
@@ -18,6 +36,13 @@ export default async function FaqPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-16">
+      <FaqPageJsonLd faqs={faqs} />
+      <BreadcrumbsJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "FAQ", url: "/faq" },
+        ]}
+      />
       <div className="container max-w-5xl mx-auto space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#8E8D8A]/20 pb-8">
           <div className="space-y-3 max-w-3xl">

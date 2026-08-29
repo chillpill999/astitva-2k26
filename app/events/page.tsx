@@ -8,12 +8,29 @@ import { Trophy, Sparkles, Layers } from "lucide-react";
 import { getEventsCatalog } from "@/lib/events/actions";
 import { EventCatalogGrid } from "@/components/events/EventCatalogGrid";
 
+import { Metadata } from "next";
+import { BreadcrumbsJsonLd } from "@/components/seo/JsonLd";
+
 export const revalidate = 30;
 
-export const metadata = {
-  title: "Event Catalog | ASTITVA 2K26 — LNJPIT Chapra",
+export const metadata: Metadata = {
+  title: "Tournaments & Competitions | ASTITVA 2K26 LNJPIT Chapra",
   description:
-    "Browse the events for ASTITVA 2K26, the annual fest of LNJPIT Chapra (4–8 September 2026).",
+    "Explore 20 official sports, cultural, esports, and literary competitions at ASTITVA 2K26, LNJPIT Chapra (4–8 Sept 2026). Cricket, Badminton, BGMI, Dance, Debate, and more.",
+  alternates: {
+    canonical: "/events",
+  },
+  openGraph: {
+    title: "Tournaments & Competitions — ASTITVA 2K26 LNJPIT",
+    description: "Browse 20 official competitions with rules, schedules, squad limits, and online registration.",
+    url: "/events",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tournaments & Competitions — ASTITVA 2K26 LNJPIT",
+    description: "Browse 20 official competitions with rules, schedules, squad limits, and online registration.",
+  },
 };
 
 export default async function EventsPage() {
@@ -24,6 +41,12 @@ export default async function EventsPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+      <BreadcrumbsJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Tournaments", url: "/events" },
+        ]}
+      />
       <div className="container max-w-7xl mx-auto space-y-10">
         <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-8 sm:p-12 shadow-sm">
           <div className="relative z-10 space-y-6 max-w-3xl">

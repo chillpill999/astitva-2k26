@@ -8,10 +8,29 @@ import { Calendar, Clock, MapPin, CalendarOff } from "lucide-react";
 import { getFestEvents } from "@/lib/data/fest-data";
 import { ScheduleBrowser } from "@/components/schedule/ScheduleBrowser";
 
+import { Metadata } from "next";
+import { BreadcrumbsJsonLd } from "@/components/seo/JsonLd";
+
 export const revalidate = 30;
-export const metadata = {
-  title: "Festival Schedule | ASTITVA 2K26 — LNJPIT Chapra",
-  description: "Day-by-day schedule for ASTITVA 2K26 (4–8 September 2026).",
+
+export const metadata: Metadata = {
+  title: "5-Day Event Schedule & Timetable | ASTITVA 2K26 LNJPIT Chapra",
+  description:
+    "Official 5-day schedule (4–8 September 2026) for ASTITVA 2K26 at LNJPIT Chapra. Day-by-day timetable for cricket, esports, cultural performances, debate, and closing night.",
+  alternates: {
+    canonical: "/schedule",
+  },
+  openGraph: {
+    title: "5-Day Event Schedule & Timetable — ASTITVA 2K26 LNJPIT",
+    description: "Browse the multi-day tournament timetable across all campus arenas and main stage.",
+    url: "/schedule",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "5-Day Event Schedule & Timetable — ASTITVA 2K26 LNJPIT",
+    description: "Browse the multi-day tournament timetable across all campus arenas and main stage.",
+  },
 };
 
 export default async function SchedulePage() {
@@ -19,6 +38,12 @@ export default async function SchedulePage() {
 
   return (
     <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+      <BreadcrumbsJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Schedule", url: "/schedule" },
+        ]}
+      />
       <div className="container max-w-7xl mx-auto space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#8E8D8A]/20 pb-8">
           <div className="space-y-3 max-w-3xl">

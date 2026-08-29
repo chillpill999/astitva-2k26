@@ -1,0 +1,27 @@
+# ASTITVA 2K26 — Official Festival Information
+> Annual Sports, Cultural, Gaming & Literary Festival of LNJPIT Chapra
+
+- **Festival Dates**: 4 September 2026 – 8 September 2026
+- **Location**: Lok Nayak Jai Prakash Institute of Technology (LNJPIT), NH-19, Chapra, Bihar 841302, India
+- **Official Website**: https://astitva-2k26.vercel.app
+- **Affiliation**: Aryabhatta Knowledge University (AKU) / Department of Science & Technology, Govt. of Bihar
+
+## Festival Categories
+1. **Sports**: Cricket, Fun Cricket, Football, Volleyball, Badminton (Singles & Doubles), Table Tennis, Chess
+2. **Cultural**: Solo Dance, Group Dance, Singing, Standup Comedy, Ramp Walk, Night Cultural Party
+3. **Gaming**: BGMI Squad Battle, Free Fire Championship
+4. **Literary**: Parliamentary Debate, Mega Fest Quiz, Poetry Slam, Creative Writing
+
+## Core Features
+- Live real-time match scoring and tournament bracket feeds
+- Encrypted QR code gate scanner and attendance badge system
+- Verifiable PDF certificates with cryptographic digital signatures at /verify-certificate/[id]
+- AI Festival Assistant (Astitva Bot) for natural language schedule queries
+
+## Key Routes
+- Tournaments & Events: https://astitva-2k26.vercel.app/events
+- Live Schedule: https://astitva-2k26.vercel.app/schedule
+- Live Leaderboard: https://astitva-2k26.vercel.app/leaderboard
+- Match Results: https://astitva-2k26.vercel.app/results
+- Announcements: https://astitva-2k26.vercel.app/announcements
+- FAQs: https://astitva-2k26.vercel.app/faq

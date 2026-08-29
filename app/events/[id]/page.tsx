@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { getEventBySlugOrId } from "@/lib/events/actions";
 import { EventDetailTabs } from "@/components/events/EventDetailTabs";
+import { TournamentJsonLd, BreadcrumbsJsonLd } from "@/components/seo/JsonLd";
 
 interface EventDetailPageProps {
   params: Promise<{ id: string }>;
@@ -29,9 +30,27 @@ export async function generateMetadata({ params }: EventDetailPageProps) {
   if (!res.success || !res.data) {
     return { title: "Tournament Not Found | ASTITVA 2K26" };
   }
+  const event = res.data;
+  const title = `${event.title} — ASTITVA 2K26 LNJPIT`;
+  const desc = event.subtitle || event.description.slice(0, 160);
+
   return {
-    title: `${res.data.title} | ASTITVA 2K26 LNJPIT Chapra`,
-    description: res.data.subtitle || res.data.description.slice(0, 160),
+    title,
+    description: desc,
+    alternates: {
+      canonical: `/events/${event.slug}`,
+    },
+    openGraph: {
+      title,
+      description: desc,
+      url: `/events/${event.slug}`,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: desc,
+    },
   };
 }
 
@@ -48,6 +67,14 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
   return (
     <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+      <TournamentJsonLd event={event} />
+      <BreadcrumbsJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Tournaments", url: "/events" },
+          { name: event.title, url: `/events/${event.slug}` },
+        ]}
+      />
       <div className="container max-w-7xl mx-auto space-y-8">
         {/* Back Link */}
         <div>
