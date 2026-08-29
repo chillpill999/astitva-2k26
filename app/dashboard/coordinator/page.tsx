@@ -1,26 +1,31 @@
 // ============================================================================
-// ASTITVA 2K26 - Event Coordinator Dashboard (real DB)
+// ASTITVA 2K26 - Event Coordinator Command Deck (Exteta Luxury Aesthetic)
 // Path: app/dashboard/coordinator/page.tsx
 // ============================================================================
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Trophy, Users, FileCheck, Award, Activity, ArrowRight, Info } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {
+  Trophy,
+  Users,
+  Award,
+  Activity,
+  ArrowRight,
+  Radio,
+  Calendar,
+  MapPin,
+  Clock,
+  Sparkles,
+} from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
+import { RoleBadge } from "@/components/dashboard/RoleBadge";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Coordinator Dashboard | ASTITVA 2K26",
-  description: "Manage your assigned events, score entry, and results.",
+  title: "Coordinator Command Deck | ASTITVA 2K26",
+  description: "Manage assigned events, broadcast live match scores, and publish official podium results.",
 };
-
-function statusLabel(s: string) {
-  return s.replace(/_/g, " ");
-}
 
 export default async function CoordinatorDashboardPage() {
   const user = await getCurrentUser();
@@ -55,107 +60,142 @@ export default async function CoordinatorDashboardPage() {
   const totalPublished = events.reduce((sum, e) => sum + (e._count?.results ?? 0), 0);
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Coordinator Dashboard
+    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
+      {/* Top Banner */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <RoleBadge role="EVENT_COORDINATOR" />
+            <span className="text-[10px] font-mono text-[#8E8D8A] uppercase font-bold">
+              Tournament Jury &amp; Scoring Control
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1A1918] tracking-tight uppercase font-mono">
+            Coordinator Command Deck
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Manage assigned events, record scores, and publish results.
+          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
+            Signed in as <strong className="text-[#1A1918]">{user.name}</strong>. Broadcast live match points and publish official podium winners.
           </p>
         </div>
-        <Link href="/dashboard/coordinator/results">
-          <Button variant="neonAmber" size="sm" className="text-xs font-bold">
-            <Trophy className="h-4 w-4 mr-1.5" /> Open Results Publisher
-          </Button>
-        </Link>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link href="/dashboard/coordinator/results">
+            <button className="px-4 py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+              <Radio className="h-4 w-4 animate-pulse" /> Live Scoring &amp; Results Hub
+            </button>
+          </Link>
+          <Link href="/schedule">
+            <button className="px-4 py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5 cursor-pointer">
+              <Calendar className="h-4 w-4" /> Festival Timeline
+            </button>
+          </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Kpi icon={<Trophy className="h-4 w-4 text-amber-300" />} label="Events" value={events.length} accent="text-amber-300" />
-        <Kpi icon={<Users className="h-4 w-4 text-cyan-300" />} label="Registrations" value={totalRegs} accent="text-cyan-300" />
-        <Kpi icon={<Activity className="h-4 w-4 text-emerald-300" />} label="Check-ins" value={totalScans} accent="text-emerald-300" />
-        <Kpi icon={<Award className="h-4 w-4 text-purple-300" />} label="Podiums" value={totalPublished} accent="text-purple-300" />
+      {/* KPI Stats Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
+        <KpiCard icon={<Trophy className="h-4 w-4 text-[#E85A4F]" />} label="Assigned Events" value={events.length} accent="text-[#E85A4F]" />
+        <KpiCard icon={<Users className="h-4 w-4 text-[#1A1918]" />} label="Total Registrations" value={totalRegs} />
+        <KpiCard icon={<Activity className="h-4 w-4 text-[#1A1918]" />} label="Gate Check-ins" value={totalScans} />
+        <KpiCard icon={<Award className="h-4 w-4 text-[#E85A4F]" />} label="Podiums Published" value={totalPublished} accent="text-[#E85A4F]" />
       </div>
 
-      <Card className="glass-panel border-white/10 bg-slate-900/70">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-bold text-white">My Events</CardTitle>
-          <CardDescription className="text-xs text-slate-400">
-            Events assigned to you, or unassigned.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0">
-          {events.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-slate-950/60 p-6 text-center">
-              <Info className="h-6 w-6 text-slate-500 mx-auto mb-2" />
-              <p className="text-sm text-slate-300">No events assigned</p>
-              <p className="text-xs text-slate-500 mt-1">
-                Contact the admin to be assigned as the coordinator of an event.
-              </p>
-            </div>
-          ) : (
-            <ul className="divide-y divide-white/5">
-              {events.map((e) => (
-                <li
-                  key={e.id}
-                  className="py-3 flex items-center justify-between gap-3 flex-wrap"
-                >
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] font-mono border-white/10 text-slate-300"
-                      >
-                        {e.category.name}
-                      </Badge>
-                      <span className="font-mono text-[10px] text-slate-400">Day {e.dayNumber}</span>
-                      <Badge
-                        variant="outline"
-                        className={`text-[10px] font-mono ${
-                          e.status === "COMPLETED"
-                            ? "border-emerald-500/30 text-emerald-300"
-                            : e.status === "ONGOING"
-                            ? "border-cyan-500/30 text-cyan-300"
-                            : e.status === "CANCELLED"
-                            ? "border-red-500/30 text-red-300"
-                            : "border-white/10 text-slate-300"
-                        }`}
-                      >
-                        {statusLabel(e.status)}
-                      </Badge>
-                    </div>
-                    <Link
-                      href={`/events/${e.id}`}
-                      className="block text-sm font-bold text-white hover:text-cyan-300"
-                    >
-                      {e.title}
-                    </Link>
-                    <p className="text-[11px] text-slate-400">{e.venue}</p>
+      {/* Events Roster */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-5 font-mono">
+        <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
+          <div>
+            <h2 className="text-base font-bold uppercase text-[#1A1918] flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-[#E85A4F]" />
+              Tournament Management Roster ({events.length})
+            </h2>
+            <p className="text-xs text-[#8E8D8A] mt-0.5">
+              Live status, registered participant counts, and 1-click live score access.
+            </p>
+          </div>
+          <Link href="/dashboard/coordinator/results" className="text-xs font-bold text-[#E85A4F] hover:underline">
+            Open Live Broadcast Console →
+          </Link>
+        </div>
+
+        {events.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 text-center space-y-2">
+            <Sparkles className="h-6 w-6 text-[#E85A4F] mx-auto" />
+            <p className="text-xs font-bold text-[#1A1918] uppercase">No events assigned yet</p>
+            <p className="text-[11px] text-[#8E8D8A]">
+              Contact the central admin committee to assign your coordination responsibilities.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {events.map((e) => (
+              <div
+                key={e.id}
+                className="p-5 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 hover:border-[#E85A4F]/60 transition-all space-y-4 shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
+                    {e.category.name}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                      e.status === "ONGOING"
+                        ? "bg-[#E85A4F] text-white"
+                        : e.status === "COMPLETED"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-[#F6F4EE] text-[#1A1918] border border-[#8E8D8A]/30"
+                    }`}
+                  >
+                    {e.status.replace(/_/g, " ")}
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-[#1A1918] uppercase">{e.title}</h3>
+                  <p className="text-xs text-[#8E8D8A] flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-[#E85A4F]" /> {e.venue} · Day 0{e.dayNumber}
+                  </p>
+                  {e.subtitle && (
+                    <p className="text-[11px] font-bold text-[#E85A4F] bg-[#F6F4EE] px-2.5 py-1 rounded-lg border border-[#8E8D8A]/20">
+                      ⚡ {e.subtitle}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#8E8D8A]/20 text-center text-[10px]">
+                  <div className="p-2 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/20">
+                    <span className="text-[#8E8D8A] block">REGS</span>
+                    <strong className="text-xs text-[#1A1918]">{e._count.registrations}</strong>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
-                    <span>{e._count.registrations} reg</span>
-                    <span>·</span>
-                    <span>{e._count.attendances} check-in</span>
-                    <Link
-                      href={`/events/${e.id}`}
-                      className="text-cyan-300 hover:text-cyan-200"
-                    >
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                  <div className="p-2 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/20">
+                    <span className="text-[#8E8D8A] block">SCANS</span>
+                    <strong className="text-xs text-[#1A1918]">{e._count.attendances}</strong>
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+                  <div className="p-2 rounded-xl bg-[#F6F4EE] border border-[#8E8D8A]/20">
+                    <span className="text-[#8E8D8A] block">PODIUM</span>
+                    <strong className="text-xs text-[#E85A4F]">{e._count.results > 0 ? "PUBLISHED" : "PENDING"}</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <Link href={`/events/${e.id}`} className="text-[11px] text-[#8E8D8A] hover:text-[#1A1918] hover:underline">
+                    Public View →
+                  </Link>
+                  <Link href="/dashboard/coordinator/results">
+                    <button className="px-3 py-1.5 rounded-lg bg-[#E85A4F] text-white text-[10px] font-bold uppercase hover:bg-[#C94A40] transition-all flex items-center gap-1 cursor-pointer">
+                      Score / Podium <ArrowRight className="h-3 w-3" />
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-function Kpi({
+function KpiCard({
   icon,
   label,
   value,
@@ -167,16 +207,14 @@ function Kpi({
   accent?: string;
 }) {
   return (
-    <Card className="glass-panel border-white/10 bg-slate-900/70">
-      <CardContent className="p-4 space-y-1">
-        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-          <span>{label}</span>
-          {icon}
-        </div>
-        <p className={`text-2xl font-black font-mono ${accent ?? "text-white"}`}>
-          {value.toLocaleString("en-IN")}
-        </p>
-      </CardContent>
-    </Card>
+    <div className="p-5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-2">
+      <div className="flex items-center justify-between text-[10px] text-[#8E8D8A] uppercase font-bold">
+        <span>{label}</span>
+        {icon}
+      </div>
+      <p className={`text-2xl sm:text-3xl font-black ${accent ?? "text-[#1A1918]"}`}>
+        {value.toLocaleString("en-IN")}
+      </p>
+    </div>
   );
 }

@@ -1,12 +1,8 @@
 "use client";
 
 // ============================================================================
-// ASTITVA 2K26 - Dev Role Switcher (development-only fixture switcher)
+// ASTITVA 2K26 - Dev Role Switcher (Warm Sand Palette)
 // Path: components/dashboard/DevRoleSwitcher.tsx
-//
-// This widget is rendered only in development. It does not display any real
-// user data — it switches between the labelled "Development Account · ..."
-// fixtures defined in lib/auth/mock-auth.ts.
 // ============================================================================
 
 import { useState } from "react";
@@ -23,11 +19,11 @@ interface DevAccount {
 }
 
 const DEV_ACCOUNTS: DevAccount[] = [
-  { role: "ADMIN", label: "Development Account · Admin", route: "/dashboard/admin", icon: ShieldAlert },
-  { role: "EVENT_COORDINATOR", label: "Development Account · Coordinator", route: "/dashboard/coordinator", icon: Sparkles },
-  { role: "VOLUNTEER", label: "Development Account · Volunteer", route: "/dashboard/volunteer", icon: QrCode },
-  { role: "TEAM_CAPTAIN", label: "Development Account · Captain", route: "/dashboard/captain", icon: Crown },
-  { role: "PARTICIPANT", label: "Development Account · Participant", route: "/dashboard/participant", icon: UserCheck },
+  { role: "ADMIN", label: "Dev Account · Admin", route: "/dashboard/admin", icon: ShieldAlert },
+  { role: "EVENT_COORDINATOR", label: "Dev Account · Coordinator", route: "/dashboard/coordinator", icon: Sparkles },
+  { role: "VOLUNTEER", label: "Dev Account · Volunteer", route: "/dashboard/volunteer", icon: QrCode },
+  { role: "TEAM_CAPTAIN", label: "Dev Account · Captain", route: "/dashboard/captain", icon: Crown },
+  { role: "PARTICIPANT", label: "Dev Account · Participant", route: "/dashboard/participant", icon: UserCheck },
 ];
 
 export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole } = {}) {
@@ -77,30 +73,30 @@ export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole } = {}
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      <div className="bg-slate-900 border border-amber-500/30 rounded-2xl shadow-xl p-1.5 backdrop-blur-xl flex flex-col gap-1 transition-all text-white">
+      <div className="bg-[#F6F4EE] border border-[#8E8D8A]/35 rounded-2xl shadow-xl p-1.5 backdrop-blur-xl flex flex-col gap-1 transition-all text-[#1A1918]">
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={isSwitching}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500/20 transition-colors text-xs font-mono"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#EAE7DC] hover:bg-[#8E8D8A]/20 transition-colors text-xs font-mono cursor-pointer"
           aria-label="Toggle dev role switcher"
         >
           {isSwitching ? (
-            <RefreshCw className="w-3.5 h-3.5 text-amber-300 animate-spin" />
+            <RefreshCw className="w-3.5 h-3.5 text-[#E85A4F] animate-spin" />
           ) : (
-            <FlaskConical className="w-3.5 h-3.5 text-amber-300" />
+            <FlaskConical className="w-3.5 h-3.5 text-[#E85A4F]" />
           )}
-          <span className="text-amber-300 font-bold">DEV ONLY</span>
+          <span className="text-[#E85A4F] font-bold">DEV FIXTURES</span>
           <RoleBadge role={activeRole} />
           <ChevronDown
-            className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
+            className={`w-3.5 h-3.5 text-[#8E8D8A] transition-transform ${
               isExpanded ? "rotate-180" : ""
             }`}
           />
         </button>
 
         {isExpanded && (
-          <div className="flex flex-col gap-1 pt-1 border-t border-white/10 mt-1 min-w-[280px] font-mono">
+          <div className="flex flex-col gap-1 pt-1 border-t border-[#8E8D8A]/20">
             {DEV_ACCOUNTS.map((acc) => {
               const Icon = acc.icon;
               const isSelected = activeRole === acc.role;
@@ -110,29 +106,21 @@ export function DevRoleSwitcher({ currentRole }: { currentRole?: FestRole } = {}
                   key={acc.role}
                   type="button"
                   onClick={() => handleRoleSwitch(acc)}
-                  className={`flex items-center justify-between p-2 rounded-xl text-left transition-colors ${
+                  disabled={isSwitching}
+                  className={`flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-xs font-mono transition-colors text-left cursor-pointer ${
                     isSelected
-                      ? "bg-amber-500/20 text-white border border-amber-500/40"
-                      : "hover:bg-slate-800 text-slate-200"
+                      ? "bg-[#E85A4F] text-white font-bold"
+                      : "text-[#1A1918] hover:bg-[#EAE7DC]"
                   }`}
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Icon
-                      className={`w-4 h-4 shrink-0 ${
-                        isSelected ? "text-amber-300" : "text-cyan-300"
-                      }`}
-                    />
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold truncate">{acc.label}</p>
-                      <p className="text-[10px] opacity-75 truncate">{acc.role}</p>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{acc.label}</span>
                   </div>
+                  {isSelected && <span className="text-[10px]">ACTIVE</span>}
                 </button>
               );
             })}
-            <p className="text-[9px] text-amber-300/70 px-2 pb-1 pt-1 font-mono leading-relaxed">
-              Visible only in development. These are not real users.
-            </p>
           </div>
         )}
       </div>

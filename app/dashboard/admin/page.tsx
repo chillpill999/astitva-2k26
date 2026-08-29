@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Admin Control Center
+// ASTITVA 2K26 - Admin Executive Control Center (Exteta Luxury Aesthetic)
 // Path: app/dashboard/admin/page.tsx
 // ============================================================================
 
@@ -9,7 +9,6 @@ import {
   Users,
   Trophy,
   UserCheck,
-  Search,
   Download,
   TrendingUp,
   Shield,
@@ -18,28 +17,28 @@ import {
   Calendar,
   Award,
   Activity,
+  ArrowRight,
+  Sparkles,
+  Zap,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { getAdminAnalytics } from "@/lib/analytics/actions";
+import { RoleBadge } from "@/components/dashboard/RoleBadge";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Admin Control Center | ASTITVA 2K26",
-  description: "Festival-wide operations, analytics, and exports.",
+  title: "Admin Executive Control Center | ASTITVA 2K26",
+  description: "Festival-wide operations, real-time metrics, live scoring supervision, and data exports.",
 };
 
-const ROLE_LABELS: Record<string, string> = {
-  ADMIN: "Admin",
-  EVENT_COORDINATOR: "Coordinator",
-  VOLUNTEER: "Volunteer",
-  TEAM_CAPTAIN: "Captain",
-  PARTICIPANT: "Participant",
-};
-
-const EXPORT_KINDS = ["registrations", "attendance", "results", "certificates", "participants", "teams"] as const;
+const EXPORT_KINDS = [
+  { key: "registrations", label: "Registrations", desc: "Full student registration roster" },
+  { key: "attendance", label: "Attendance", desc: "Gate & event check-in logs" },
+  { key: "results", label: "Results", desc: "Podium winners and scores" },
+  { key: "certificates", label: "Certificates", desc: "Issued certificate hashes" },
+  { key: "participants", label: "Participants", desc: "Verified student profiles" },
+  { key: "teams", label: "Teams", desc: "Squad rosters and invite codes" },
+] as const;
 
 const ADMIN_EMAILS = [
   "aryanrockstar2007@gmail.com",
@@ -62,153 +61,199 @@ export default async function AdminDashboardPage() {
   const data = await getAdminAnalytics();
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918] dark:text-slate-100">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Admin Control Center</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Signed in as {user.name}. Real-time festival metrics from the production database.
+    <div className="space-y-8 animate-in fade-in-50 duration-300 text-[#1A1918]">
+      {/* Top Banner */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#8E8D8A]/20 pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <RoleBadge role="ADMIN" />
+            <span className="text-[10px] font-mono text-[#8E8D8A] uppercase font-bold">
+              Root Authority · LNJPIT Festival Security
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-[#1A1918] tracking-tight uppercase font-mono">
+            Executive Control Center
+          </h1>
+          <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono">
+            Signed in as <strong className="text-[#1A1918]">{user.name}</strong> ({user.email}). Live database telemetry &amp; operations.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link href="/dashboard/admin/analytics">
-            <Button variant="neonCyan" size="sm" className="text-xs font-bold">
-              <Activity className="h-4 w-4 mr-1.5" /> Analytics
-            </Button>
+            <button className="px-4 py-2.5 rounded-xl bg-[#E85A4F] text-white text-xs font-mono font-bold uppercase hover:bg-[#C94A40] transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+              <Activity className="h-4 w-4" /> Global Analytics
+            </button>
           </Link>
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/api/export/registrations?format=csv">
-            <Button variant="outline" size="sm" className="text-xs font-bold">
-              <Download className="h-4 w-4 mr-1.5" /> Export
-            </Button>
-          </a>
+          <Link href="/dashboard/coordinator/results">
+            <button className="px-4 py-2.5 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5 cursor-pointer">
+              <Trophy className="h-4 w-4" /> Live Scoring Deck
+            </button>
+          </Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        <Kpi icon={<Users className="h-4 w-4 text-cyan-300" />} label="Users" value={data.totals.users} />
-        <Kpi icon={<UserCheck className="h-4 w-4 text-emerald-300" />} label="Registrations" value={data.totals.registrations} accent="text-emerald-300" />
-        <Kpi icon={<Trophy className="h-4 w-4 text-amber-300" />} label="Events" value={data.totals.events} accent="text-amber-300" />
-        <Kpi icon={<Award className="h-4 w-4 text-purple-300" />} label="Certificates" value={data.totals.certificates} accent="text-purple-300" />
-        <Kpi icon={<Megaphone className="h-4 w-4 text-rose-300" />} label="Active Announcements" value={data.totals.announcements} accent="text-rose-300" />
+      {/* KPI Stats Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 font-mono">
+        <KpiCard icon={<Users className="h-4 w-4 text-[#1A1918]" />} label="Total Users" value={data.totals.users} />
+        <KpiCard icon={<UserCheck className="h-4 w-4 text-[#E85A4F]" />} label="Registrations" value={data.totals.registrations} accent="text-[#E85A4F]" />
+        <KpiCard icon={<Trophy className="h-4 w-4 text-[#1A1918]" />} label="Tournaments" value={data.totals.events} />
+        <KpiCard icon={<Award className="h-4 w-4 text-[#E85A4F]" />} label="Certificates" value={data.totals.certificates} accent="text-[#E85A4F]" />
+        <KpiCard icon={<Megaphone className="h-4 w-4 text-[#1A1918]" />} label="Announcements" value={data.totals.announcements} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="glass-panel border-white/10 bg-slate-900/70 lg:col-span-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold text-white flex items-center">
-              <TrendingUp className="h-4 w-4 text-cyan-300 mr-2" /> 14-Day Registration Velocity
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              New registrations per day.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {data.registrationVelocity.length === 0 ? (
-              <EmptyHint label="No registrations yet" />
-            ) : (
-              <div className="grid grid-cols-14 gap-1.5 h-32 items-end" style={{ gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
-                {(() => {
-                  const max = Math.max(1, ...data.registrationVelocity.map((v) => v.count));
-                  return data.registrationVelocity.map((v) => (
-                    <div key={v.day} className="flex flex-col items-center gap-1">
-                      <div
-                        className="w-full rounded-md bg-gradient-to-t from-cyan-500/30 to-cyan-300/90 border border-cyan-400/40"
-                        style={{ height: `${Math.max(4, (v.count / max) * 110)}px` }}
-                        title={`${v.count} registrations on ${v.day}`}
-                      />
-                      <span className="text-[8px] font-mono text-slate-500">{v.day}</span>
-                    </div>
-                  ));
-                })()}
+      {/* Main Grid: Velocity & Attendance Telemetry */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column (8 cols): 14-Day Registration Velocity */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="p-6 sm:p-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-5 font-mono">
+            <div className="flex items-center justify-between border-b border-[#8E8D8A]/20 pb-4">
+              <div>
+                <h2 className="text-base font-bold uppercase text-[#1A1918] flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-[#E85A4F]" />
+                  14-Day Registration Velocity
+                </h2>
+                <p className="text-xs text-[#8E8D8A] mt-0.5">
+                  Daily incoming student registrations across all departments.
+                </p>
               </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="glass-panel border-white/10 bg-slate-900/70">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold text-white">Attendance Rate</CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              {data.totals.attendance} scans / {data.totals.registrations} registrations
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-4xl font-black font-mono text-emerald-300">
-              {data.attendanceRate.toFixed(1)}%
-            </p>
-            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400"
-                style={{ width: `${Math.min(100, data.attendanceRate)}%` }}
-              />
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/30 text-[#E85A4F] uppercase">
+                Live Postgres Stream
+              </span>
             </div>
-            <p className="text-[11px] text-slate-400 pt-1">
-              {data.totals.teams} teams · {data.totals.announcements} active announcements
-            </p>
-          </CardContent>
-        </Card>
-      </div>
 
-      <Card className="glass-panel border-white/10 bg-slate-900/70">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-bold text-white flex items-center">
-            <FileSpreadsheet className="h-4 w-4 text-amber-300 mr-2" /> Data Export Center
-          </CardTitle>
-          <CardDescription className="text-xs text-slate-400">
-            Download CSV or Excel of operational datasets. All downloads are audit-logged.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {EXPORT_KINDS.map((e) => (
-              <div key={e} className="rounded-xl border border-white/10 bg-slate-950/70 p-3 space-y-2">
-                <p className="text-sm font-bold text-white capitalize">{e}</p>
-                <p className="text-[10px] text-slate-400 font-mono">/api/export/{e}</p>
-                <div className="flex gap-2">
-                  <a href={`/api/export/${e}?format=csv`}>
-                    <Button size="sm" variant="outline" className="text-[10px] font-bold">
-                      <Download className="h-3 w-3 mr-1" /> CSV
-                    </Button>
-                  </a>
-                  <a href={`/api/export/${e}?format=xlsx`}>
-                    <Button size="sm" variant="neonCyan" className="text-[10px] font-bold">
-                      <Download className="h-3 w-3 mr-1" /> XLSX
-                    </Button>
-                  </a>
+            {data.registrationVelocity.length === 0 ? (
+              <div className="p-8 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/20 text-center text-xs text-[#8E8D8A]">
+                No registration velocity data recorded yet.
+              </div>
+            ) : (
+              <div className="pt-4">
+                <div
+                  className="grid gap-2 h-36 items-end"
+                  style={{ gridTemplateColumns: `repeat(${Math.max(1, data.registrationVelocity.length)}, minmax(0, 1fr))` }}
+                >
+                  {(() => {
+                    const max = Math.max(1, ...data.registrationVelocity.map((v) => v.count));
+                    return data.registrationVelocity.map((v) => (
+                      <div key={v.day} className="flex flex-col items-center gap-1.5 group">
+                        <div
+                          className="w-full rounded-lg bg-[#E85A4F]/20 group-hover:bg-[#E85A4F] border border-[#E85A4F]/40 transition-all cursor-pointer relative"
+                          style={{ height: `${Math.max(8, (v.count / max) * 120)}px` }}
+                        >
+                          <div className="opacity-0 group-hover:opacity-100 absolute -top-7 left-1/2 -translate-x-1/2 bg-[#1A1918] text-[#EAE7DC] text-[9px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap pointer-events-none transition-opacity">
+                            {v.count} regs
+                          </div>
+                        </div>
+                        <span className="text-[8px] text-[#8E8D8A] truncate w-full text-center">
+                          {v.day.slice(5)}
+                        </span>
+                      </div>
+                    ));
+                  })()}
                 </div>
               </div>
-            ))}
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      <Card className="glass-panel border-white/10 bg-slate-900/70">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-bold text-white flex items-center">
-            <Shield className="h-4 w-4 text-rose-300 mr-2" /> Quick Links
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-          <Link href="/dashboard/admin/analytics" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
-            <Activity className="h-4 w-4 text-cyan-300 mb-1" /> Detailed Analytics
-          </Link>
-          <Link href="/announcements" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
-            <Megaphone className="h-4 w-4 text-rose-300 mb-1" /> Announcements
-          </Link>
-          <Link href="/results" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
-            <Trophy className="h-4 w-4 text-amber-300 mb-1" /> Results
-          </Link>
-          <Link href="/schedule" className="rounded-lg border border-white/10 bg-slate-950/70 p-3 hover:border-cyan-500/40">
-            <Calendar className="h-4 w-4 text-emerald-300 mb-1" /> Schedule
-          </Link>
-        </CardContent>
-      </Card>
+        {/* Right Column (4 cols): Attendance & Gate Telemetry */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="p-6 sm:p-7 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-5 font-mono">
+            <div className="border-b border-[#8E8D8A]/20 pb-3">
+              <h2 className="text-xs font-bold uppercase text-[#1A1918] flex items-center gap-1.5">
+                <Shield className="h-4 w-4 text-[#E85A4F]" /> Gate &amp; Check-in Rate
+              </h2>
+              <p className="text-[11px] text-[#8E8D8A] mt-0.5">
+                {data.totals.attendance} scans / {data.totals.registrations} registrations
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 space-y-3">
+              <div className="flex items-baseline justify-between">
+                <span className="text-3xl sm:text-4xl font-black text-[#1A1918]">
+                  {data.attendanceRate.toFixed(1)}%
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-600 text-white uppercase">
+                  ACTIVE
+                </span>
+              </div>
+              <div className="h-2.5 bg-[#F6F4EE] rounded-full overflow-hidden border border-[#8E8D8A]/20">
+                <div
+                  className="h-full bg-[#E85A4F] transition-all"
+                  style={{ width: `${Math.min(100, data.attendanceRate)}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-[#8E8D8A]">
+                {data.totals.teams} registered squads · {data.totals.announcements} active broadcasts
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Link href="/dashboard/volunteer/scanner" className="block">
+                <button className="w-full py-2.5 px-4 rounded-xl bg-[#1A1918] text-[#EAE7DC] text-xs font-bold uppercase hover:bg-[#E85A4F] transition-all cursor-pointer">
+                  Launch QR Gate Terminal
+                </button>
+              </Link>
+              <Link href="/announcements" className="block">
+                <button className="w-full py-2.5 px-4 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all cursor-pointer">
+                  Broadcast Notice
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Data Export Center */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-5 font-mono">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#8E8D8A]/20 pb-4">
+          <div>
+            <h2 className="text-base font-bold uppercase text-[#1A1918] flex items-center gap-2">
+              <FileSpreadsheet className="h-5 w-5 text-[#E85A4F]" />
+              Data Export Center
+            </h2>
+            <p className="text-xs text-[#8E8D8A] mt-0.5">
+              Instant CSV &amp; Excel dumps of operational tables. All downloads are audit-logged.
+            </p>
+          </div>
+          <span className="text-[10px] text-[#8E8D8A] uppercase font-bold">
+            Audit Tracked · SHA-256
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {EXPORT_KINDS.map((item) => (
+            <div
+              key={item.key}
+              className="p-4 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/25 space-y-3 flex flex-col justify-between shadow-sm"
+            >
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-[#1A1918] uppercase">{item.label}</p>
+                <p className="text-[11px] text-[#8E8D8A]">{item.desc}</p>
+                <code className="text-[10px] text-[#E85A4F] block">/api/export/{item.key}</code>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2 border-t border-[#8E8D8A]/20">
+                <a href={`/api/export/${item.key}?format=csv`} className="flex-1">
+                  <button className="w-full py-1.5 px-3 rounded-lg border border-[#8E8D8A]/35 bg-[#F6F4EE] text-[#1A1918] text-[10px] font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center justify-center gap-1 cursor-pointer">
+                    <Download className="h-3 w-3" /> CSV
+                  </button>
+                </a>
+                <a href={`/api/export/${item.key}?format=xlsx`} className="flex-1">
+                  <button className="w-full py-1.5 px-3 rounded-lg bg-[#E85A4F] text-white text-[10px] font-bold uppercase hover:bg-[#C94A40] transition-all flex items-center justify-center gap-1 cursor-pointer">
+                    <Download className="h-3 w-3" /> XLSX
+                  </button>
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-function Kpi({
+function KpiCard({
   icon,
   label,
   value,
@@ -220,24 +265,14 @@ function Kpi({
   accent?: string;
 }) {
   return (
-    <Card className="glass-panel border-white/10 bg-slate-900/70">
-      <CardContent className="p-4 space-y-1">
-        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-          <span>{label}</span>
-          {icon}
-        </div>
-        <p className={`text-2xl font-black font-mono ${accent ?? "text-white"}`}>
-          {value.toLocaleString("en-IN")}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function EmptyHint({ label }: { label: string }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/60 p-6 text-center">
-      <p className="text-sm text-slate-400">{label}</p>
+    <div className="p-5 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-2">
+      <div className="flex items-center justify-between text-[10px] text-[#8E8D8A] uppercase font-bold">
+        <span>{label}</span>
+        {icon}
+      </div>
+      <p className={`text-2xl sm:text-3xl font-black ${accent ?? "text-[#1A1918]"}`}>
+        {value.toLocaleString("en-IN")}
+      </p>
     </div>
   );
 }

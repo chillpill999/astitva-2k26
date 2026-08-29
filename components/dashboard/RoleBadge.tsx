@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Role Badge Component
+// ASTITVA 2K26 - Role Badge Component (Exteta Warm Sand Palette)
 // Path: components/dashboard/RoleBadge.tsx
 // ============================================================================
 
@@ -21,38 +21,38 @@ export function RoleBadge({ role, className }: RoleBadgeProps) {
   > = {
     ADMIN: {
       label: "ADMIN",
-      color: "text-red-400",
-      border: "border-red-500/30",
-      bg: "bg-red-500/10",
-      dot: "bg-red-500",
+      color: "text-[#E85A4F]",
+      border: "border-[#E85A4F]/40",
+      bg: "bg-[#E85A4F]/10",
+      dot: "bg-[#E85A4F]",
     },
     EVENT_COORDINATOR: {
       label: "COORDINATOR",
-      color: "text-purple-400",
-      border: "border-purple-500/30",
-      bg: "bg-purple-500/10",
-      dot: "bg-purple-500",
+      color: "text-[#EAE7DC]",
+      border: "border-[#1A1918]",
+      bg: "bg-[#1A1918]",
+      dot: "bg-[#E85A4F]",
     },
     VOLUNTEER: {
       label: "VOLUNTEER",
-      color: "text-emerald-400",
-      border: "border-emerald-500/30",
-      bg: "bg-emerald-500/10",
-      dot: "bg-emerald-500",
+      color: "text-emerald-700",
+      border: "border-emerald-600/30",
+      bg: "bg-emerald-600/10",
+      dot: "bg-emerald-600",
     },
     TEAM_CAPTAIN: {
       label: "CAPTAIN",
-      color: "text-amber-400",
-      border: "border-amber-500/30",
-      bg: "bg-amber-500/10",
-      dot: "bg-amber-500",
+      color: "text-amber-800",
+      border: "border-amber-600/30",
+      bg: "bg-amber-600/10",
+      dot: "bg-amber-600",
     },
     PARTICIPANT: {
       label: "PARTICIPANT",
-      color: "text-cyan-400",
-      border: "border-cyan-500/30",
-      bg: "bg-cyan-500/10",
-      dot: "bg-cyan-500",
+      color: "text-[#1A1918]",
+      border: "border-[#8E8D8A]/35",
+      bg: "bg-[#EAE7DC]",
+      dot: "bg-[#8E8D8A]",
     },
   };
 
@@ -61,7 +61,7 @@ export function RoleBadge({ role, className }: RoleBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border shadow-sm",
+        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border shadow-sm",
         c.bg,
         c.color,
         c.border,
