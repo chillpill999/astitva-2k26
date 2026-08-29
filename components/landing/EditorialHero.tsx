@@ -4,12 +4,21 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ArrowRight, Grid } from "lucide-react";
+import { ArrowRight, Grid, LogIn, Sparkles } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 export function EditorialHero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  let isSignedIn = false;
+  try {
+    const authState = useAuth();
+    isSignedIn = Boolean(authState?.isSignedIn);
+  } catch {
+    isSignedIn = false;
+  }
 
   const springConfig = { damping: 25, stiffness: 120 };
   const rotateX = useSpring(useTransform(mouseY, [-300, 300], [6, -6]), springConfig);
@@ -55,13 +64,13 @@ export function EditorialHero() {
               ABOUT
             </Link>
             <Link
-              href="#events"
+              href={isSignedIn ? "/events" : "/sign-in?callbackUrl=/events"}
               className="px-3.5 py-1.5 rounded text-[11px] sm:text-xs font-mono font-medium tracking-wider uppercase border border-[#8E8D8A]/35 text-[#1A1918] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all duration-300"
             >
               EVENTS
             </Link>
             <Link
-              href="#schedule"
+              href={isSignedIn ? "/schedule" : "/sign-in?callbackUrl=/schedule"}
               className="hidden md:inline-block px-3.5 py-1.5 rounded text-[11px] sm:text-xs font-mono font-medium tracking-wider uppercase border border-[#8E8D8A]/35 text-[#1A1918] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all duration-300"
             >
               SCHEDULE
@@ -80,13 +89,23 @@ export function EditorialHero() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <Link
-              href="/events"
-              className="hidden sm:flex items-center space-x-1.5 px-4 py-1.5 rounded text-xs font-mono font-medium tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
-            >
-              <span>EXPLORE</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
+            {isSignedIn ? (
+              <Link
+                href="/events"
+                className="hidden sm:flex items-center space-x-1.5 px-4 py-1.5 rounded text-xs font-mono font-medium tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+              >
+                <span>EXPLORE EVENTS</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            ) : (
+              <Link
+                href="/sign-in?callbackUrl=/events"
+                className="hidden sm:flex items-center space-x-1.5 px-4 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-md animate-pulse"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>SIGN IN TO EXPLORE</span>
+              </Link>
+            )}
             <Link
               href="/dashboard"
               className="w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#8E8D8A] hover:text-[#1A1918] hover:border-[#1A1918] transition-colors"
@@ -172,7 +191,7 @@ export function EditorialHero() {
 
             <motion.div style={{ transform: "translateZ(30px)" }} className="mt-4 flex items-center justify-center">
               <Link
-                href="#events"
+                href={isSignedIn ? "/events" : "/sign-in?callbackUrl=/events"}
                 className="w-7 h-7 rounded-full border border-[#E85A4F]/60 flex items-center justify-center text-[#E85A4F] hover:bg-[#E85A4F] hover:text-white transition-all duration-300 group"
                 aria-label="Browse events"
               >

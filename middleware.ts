@@ -8,7 +8,21 @@ import { verifyJWT, SESSION_COOKIE_NAME, DEFAULT_JWT_SECRET } from "@/lib/auth/j
 import { SessionUser } from "@/lib/auth/types";
 import { getRoleDashboardUrl } from "@/lib/auth/profile";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/teams/create"];
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/profile",
+  "/events",
+  "/teams",
+  "/schedule",
+  "/leaderboard",
+  "/results",
+  "/gallery",
+  "/verify-certificate",
+  "/sponsors",
+  "/team",
+  "/faq",
+  "/announcements",
+];
 const AUTH_PREFIXES = ["/sign-in", "/sign-up"];
 
 export async function middleware(req: NextRequest) {
