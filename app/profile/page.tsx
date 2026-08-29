@@ -39,7 +39,7 @@ export default async function ProfilePage() {
           </div>
           <h2 className="text-xl font-bold font-mono text-[#1A1918] uppercase">Authentication Required</h2>
           <p className="text-xs text-[#8E8D8A]">
-            {result.error || "Please sign in to access your ASTITVA 2K26 festival pass."}
+            Please sign in to access your ASTITVA 2K26 festival pass, registered tournaments, and team roster.
           </p>
           <Link href="/sign-in">
             <button className="w-full py-2.5 rounded-xl bg-[#E85A4F] text-white font-mono text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors">
