@@ -7,8 +7,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Calendar, Clock, MapPin, Search } from "lucide-react";
+import { Calendar, Clock, MapPin, Search, Radio } from "lucide-react";
 import { FestEvent } from "@/lib/data/fest-data";
+import { useRealtimeSchedule } from "@/lib/supabase/hooks";
 
 interface ScheduleBrowserProps {
   events: FestEvent[];
@@ -16,7 +17,8 @@ interface ScheduleBrowserProps {
 
 const FESTIVAL_DAYS = [1, 2, 3, 4, 5];
 
-export function ScheduleBrowser({ events }: ScheduleBrowserProps) {
+export function ScheduleBrowser({ events: initialEvents }: ScheduleBrowserProps) {
+  const events = useRealtimeSchedule(initialEvents);
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,27 +91,37 @@ export function ScheduleBrowser({ events }: ScheduleBrowserProps) {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {[
-            { label: "All Streams", value: "all" },
-            { label: "Sports", value: "sports" },
-            { label: "Cultural", value: "cultural" },
-            { label: "Gaming", value: "gaming" },
-            { label: "Literary", value: "literary" },
-          ].map((c) => (
-            <button
-              key={c.value}
-              type="button"
-              onClick={() => setSelectedCategory(c.value)}
-              className={`px-3 py-1.5 rounded text-xs font-mono transition-colors ${
-                selectedCategory === c.value
-                  ? "bg-[#1A1918] text-[#EAE7DC] font-bold"
-                  : "bg-[#EAE7DC] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
-              }`}
-            >
-              {c.label}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { label: "All Streams", value: "all" },
+              { label: "Sports", value: "sports" },
+              { label: "Cultural", value: "cultural" },
+              { label: "Gaming", value: "gaming" },
+              { label: "Literary", value: "literary" },
+            ].map((c) => (
+              <button
+                key={c.value}
+                type="button"
+                onClick={() => setSelectedCategory(c.value)}
+                className={`px-3 py-1.5 rounded text-xs font-mono transition-colors ${
+                  selectedCategory === c.value
+                    ? "bg-[#1A1918] text-[#EAE7DC] font-bold"
+                    : "bg-[#EAE7DC] text-[#8E8D8A] border border-[#8E8D8A]/25 hover:text-[#1A1918]"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#EAE7DC] border border-[#8E8D8A]/20 text-[10px] font-mono text-[#8E8D8A]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>Live Schedule Sync</span>
+          </div>
         </div>
       </div>
 

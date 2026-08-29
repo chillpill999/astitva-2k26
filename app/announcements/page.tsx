@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Megaphone, Pin, AlertTriangle, Calendar, Filter } from "lucide-react";
 import { getPublicAnnouncements } from "@/lib/ai/actions";
 import { formatDate } from "@/lib/utils";
+import { RealtimeAnnouncementsStream } from "@/components/announcements/RealtimeAnnouncementsStream";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -96,46 +97,8 @@ export default async function AnnouncementsPage({
           })}
         </div>
 
-        {/* Notices Stream */}
-        {items.length === 0 ? (
-          <div className="p-8 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center text-xs font-mono text-[#8E8D8A]">
-            No announcements match the selected filter.
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="p-6 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm space-y-3 hover:border-[#E85A4F] transition-all"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] uppercase">
-                      {item.category}
-                    </span>
-                    <h3 className="text-base font-bold font-mono text-[#1A1918] uppercase">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <span className="text-[10px] font-mono text-[#8E8D8A]">
-                    {formatDate(item.publishedAt)}
-                  </span>
-                </div>
-
-                <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono leading-relaxed whitespace-pre-wrap">
-                  {item.content}
-                </p>
-
-                <div className="pt-2 border-t border-[#8E8D8A]/15 flex items-center justify-between text-[10px] font-mono text-[#8E8D8A]">
-                  <span>Issued by: <strong className="text-[#1A1918]">{item.authorName}</strong></span>
-                  {item.isPinned && (
-                    <span className="text-[#E85A4F] font-bold">★ PINNED TO BOARD</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Notices Stream with Realtime Sync */}
+        <RealtimeAnnouncementsStream initialItems={items} />
       </div>
     </div>
   );
