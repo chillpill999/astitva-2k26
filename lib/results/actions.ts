@@ -594,12 +594,12 @@ export async function updateEventLiveScore(
       await prisma.announcement.create({
         data: {
           title: `[LIVE SCORE] ${event.title}`,
-          body: `${currentRound ? `[${currentRound}] ` : ""}${liveScoreText}${commentary ? ` — ${commentary}` : ""}`,
+          content: `${currentRound ? `[${currentRound}] ` : ""}${liveScoreText}${commentary ? ` — ${commentary}` : ""}`,
           category: AnnouncementCategory.EVENT_UPDATE,
           priority: "HIGH",
-          eventId: event.id,
-          pinned: false,
-          createdById: ctx.user.id,
+          authorId: ctx.user.id,
+          authorName: ctx.user.name || "Event Coordinator",
+          isPinned: false,
         },
       });
     }
