@@ -1,5 +1,5 @@
 // ============================================================================
-// ASTITVA 2K26 - Coordinator Results Entry Page (Exteta Luxury Aesthetic)
+// ASTITVA 2K26 - Coordinator Live Scoring & Results Entry Page
 // Path: app/dashboard/coordinator/results/page.tsx
 // ============================================================================
 
@@ -9,15 +9,20 @@ import { Trophy, ArrowLeft, AlertTriangle } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import {
-  ResultsEntryClient,
-  type CoordinatorEvent,
-  type ExistingResult,
+  CoordinatorConsoleTabs,
+} from "@/components/coordinator/CoordinatorConsoleTabs";
+import type {
+  CoordinatorEvent,
+  ExistingResult,
 } from "@/components/coordinator/ResultsEntryClient";
+import type {
+  CoordinatorScoringEvent,
+} from "@/components/coordinator/LiveScoreConsole";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Results Entry | ASTITVA 2K26",
-  description: "Coordinator console for recording podium results.",
+  title: "Live Scoring & Results | ASTITVA 2K26",
+  description: "Coordinator console for broadcasting live match scores and recording podium results.",
 };
 
 export default async function CoordinatorResultsPage() {
@@ -27,7 +32,7 @@ export default async function CoordinatorResultsPage() {
     redirect("/unauthorized?attempted=/dashboard/coordinator/results");
   }
 
-  // Admins see all events; coordinators only their own
+  // Admins see all events; coordinators see all or assigned
   const where =
     user.role === "ADMIN"
       ? undefined
@@ -53,6 +58,17 @@ export default async function CoordinatorResultsPage() {
     eventType: e.eventType as "INDIVIDUAL" | "TEAM",
   }));
 
+  const scoringEvents: CoordinatorScoringEvent[] = eventsRaw.map((e: any) => ({
+    id: e.id,
+    title: e.title,
+    category: e.category.name,
+    venue: e.venue,
+    dayNumber: e.dayNumber,
+    eventType: e.eventType as "INDIVIDUAL" | "TEAM",
+    status: e.status,
+    subtitle: e.subtitle,
+  }));
+
   const initialResultsByEvent: Record<string, ExistingResult[]> = {};
   for (const e of eventsRaw) {
     initialResultsByEvent[e.id] = (e.results || []).map((r: any) => ({
@@ -71,14 +87,14 @@ export default async function CoordinatorResultsPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#1A1918] tracking-tight uppercase font-mono flex items-center">
             <Trophy className="h-6 w-6 text-[#E85A4F] mr-2" />
-            Score Entry &amp; Results
+            Live Scoring &amp; Results
           </h1>
           <p className="text-xs sm:text-sm text-[#8E8D8A] font-mono mt-1">
-            Publish podiums, auto-issue certificates, and lock events as COMPLETED.
+            Broadcast live match points in real-time, record podium winners, and auto-issue certificates.
           </p>
         </div>
         <Link href="/dashboard/coordinator">
-          <button className="px-4 py-2 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5">
+          <button className="px-4 py-2 rounded-xl border border-[#8E8D8A]/35 bg-[#EAE7DC] text-[#1A1918] text-xs font-mono font-bold uppercase hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all flex items-center gap-1.5 cursor-pointer">
             <ArrowLeft className="h-3.5 w-3.5" /> Back to Console
           </button>
         </Link>
@@ -93,7 +109,11 @@ export default async function CoordinatorResultsPage() {
           </p>
         </div>
       ) : (
-        <ResultsEntryClient events={events} initialResultsByEvent={initialResultsByEvent} />
+        <CoordinatorConsoleTabs
+          events={events}
+          scoringEvents={scoringEvents}
+          initialResultsByEvent={initialResultsByEvent}
+        />
       )}
     </div>
   );

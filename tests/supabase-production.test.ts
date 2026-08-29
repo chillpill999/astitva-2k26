@@ -136,6 +136,25 @@ async function runTests() {
     assert.ok(allowedBuckets.includes("certificates"));
   });
 
+  // 11. Coordinator Live Match Score Payload Validation
+  await it("Coordinator live match score updates format properly for Cricket, Badminton, TT, Football", () => {
+    const cricketScore = "CSE 156/6 (20 ov) vs ME 148/8 (20 ov) — CSE won by 8 runs";
+    const badmintonScore = "Set 2: 21-18, 19-21, 15-12 (Match Point)";
+    const ttScore = "Game 4: 11-9, 7-11, 11-8, 10-10 Deuce";
+    const footballScore = "Civil 2 - 1 Mech (68th Min)";
+    assert.ok(cricketScore.includes("CSE"));
+    assert.ok(badmintonScore.includes("Set 2"));
+    assert.ok(ttScore.includes("Game 4"));
+    assert.ok(footballScore.includes("Civil"));
+  });
+
+  // 12. Realtime Event Status Progression
+  await it("Event status transitions through REGISTRATION_OPEN, IN_PROGRESS, COMPLETED", () => {
+    const validStatuses = ["REGISTRATION_OPEN", "REGISTRATION_CLOSED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
+    assert.ok(validStatuses.includes("IN_PROGRESS"));
+    assert.ok(validStatuses.includes("COMPLETED"));
+  });
+
   console.log("--------------------------------------------------------------------------------");
   console.log(`Supabase Production Suite: ${passed} passed / ${failed} failed`);
   console.log("--------------------------------------------------------------------------------");

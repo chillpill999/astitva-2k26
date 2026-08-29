@@ -514,3 +514,151 @@ export async function getAllEventsWithResults(): Promise<
     ];
   }
 }
+
+
+// ============================================================================
+// LIVE MATCH SCORING & REALTIME BROADCASTING
+// ============================================================================
+
+export interface LiveScorePayload {
+  eventId: string;
+  status: "REGISTRATION_OPEN" | "REGISTRATION_CLOSED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+  liveScoreText: string;
+  currentRound?: string;
+  commentary?: string;
+}
+
+export interface LiveEventCard {
+  id: string;
+  title: string;
+  category: string;
+  venue: string;
+  dayNumber: number;
+  eventType: string;
+  status: string;
+  subtitle: string | null;
+  liveScore: string | null;
+  currentRound: string | null;
+  commentary: string | null;
+  updatedAt: string;
+}
+
+export async function updateEventLiveScore(payload: LiveScorePayload): Promise<ActionResult<{ eventId: string; liveScoreText: string; status: string }>> {
+  try {
+    const ctx = await getRequestContext();
+    if (!ctx.user) return { success: false, error: "Authentication required" };
+    if (!["EVENT_COORDINATOR", "ADMIN"].includes(ctx.user.role)) {
+      return { success: false, error: "Insufficient permissions to update live scores" };
+    }
+
+    const { eventId, status, liveScoreText, currentRound, commentary } = payload;
+    if (!eventId || !liveScoreText) {
+      return { success: false, error: "Event ID and Live Score text are required" };
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { category: true },
+    });
+
+    if (!event) return { success: false, error: "Event not found" };
+
+    if (
+      ctx.user.role === "EVENT_COORDINATOR" &&
+      event.coordinatorId &&
+      event.coordinatorId !== ctx.user.id
+    ) {
+      return { success: false, error: "You are not authorized to score this event." };
+    }
+
+    // Format subtitle to include live round and live score
+    const formattedSubtitle = currentRound 
+      ? `${currentRound} • ${liveScoreText}`
+      : liveScoreText;
+
+    // Update event in DB
+    const updatedEvent = await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        status: status as any,
+        subtitle: formattedSubtitle,
+      },
+    });
+
+    // Also record an Announcement if status is LIVE or score is significant
+    if (status === "IN_PROGRESS" && commentary) {
+      await prisma.announcement.create({
+        data: {
+          title: `[LIVE SCORE] ${event.title}`,
+          body: `${currentRound ? `[${currentRound}] ` : ""}${liveScoreText}${commentary ? ` — ${commentary}` : ""}`,
+          category: "EVENT_UPDATES",
+          priority: "HIGH",
+          eventId: event.id,
+          pinned: false,
+          createdById: ctx.user.id,
+        },
+      });
+    }
+
+    await recordAudit({
+      action: "LIVE_SCORE_UPDATED",
+      userId: ctx.user.id,
+      userEmail: ctx.user.email,
+      resource: `event:${eventId}`,
+      details: { status, liveScoreText, currentRound, commentary },
+      ipAddress: ctx.ipAddress,
+      userAgent: ctx.userAgent,
+    });
+
+    revalidatePath("/results");
+    revalidatePath("/schedule");
+    revalidatePath("/leaderboard");
+    revalidatePath(`/events/${eventId}`);
+    revalidatePath("/dashboard/coordinator/results");
+
+    return {
+      success: true,
+      data: {
+        eventId,
+        liveScoreText,
+        status: updatedEvent.status,
+      },
+    };
+  } catch (err: any) {
+    return { success: false, error: err?.message || "Failed to update live score" };
+  }
+}
+
+export async function getLiveAndRecentEvents(): Promise<LiveEventCard[]> {
+  try {
+    const events = await prisma.event.findMany({
+      where: {
+        OR: [
+          { status: "IN_PROGRESS" },
+          { status: "COMPLETED" },
+          { status: "REGISTRATION_OPEN" },
+        ],
+      },
+      include: { category: true },
+      orderBy: [{ updatedAt: "desc" }],
+      take: 20,
+    });
+
+    return events.map((e) => ({
+      id: e.id,
+      title: e.title,
+      category: e.category.name,
+      venue: e.venue,
+      dayNumber: e.dayNumber,
+      eventType: e.eventType,
+      status: e.status,
+      subtitle: e.subtitle,
+      liveScore: e.subtitle,
+      currentRound: e.status === "IN_PROGRESS" ? "Live Match" : null,
+      commentary: null,
+      updatedAt: e.updatedAt.toISOString(),
+    }));
+  } catch {
+    return [];
+  }
+}

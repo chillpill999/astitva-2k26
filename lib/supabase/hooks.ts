@@ -112,3 +112,40 @@ export function useRealtimeResults<T extends { id: string }>(initialResults: T[]
 
   return results;
 }
+
+export function useRealtimeLiveScoreboard<T extends { id: string; status?: string; subtitle?: string | null }>(
+  initialEvents: T[] = []
+): T[] {
+  const [events, setEvents] = useState<T[]>(initialEvents);
+
+  useEffect(() => {
+    setEvents(initialEvents);
+  }, [initialEvents]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("realtime-live-scores-feed")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Event" },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            setEvents((prev) => [payload.new as T, ...prev]);
+          } else if (payload.eventType === "UPDATE") {
+            setEvents((prev) =>
+              prev.map((ev) => (ev.id === (payload.new as T).id ? { ...ev, ...payload.new } : ev))
+            );
+          } else if (payload.eventType === "DELETE") {
+            setEvents((prev) => prev.filter((ev) => ev.id !== (payload.old as { id: string }).id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return events;
+}

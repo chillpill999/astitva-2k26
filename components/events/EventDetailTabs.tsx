@@ -125,6 +125,25 @@ export function EventDetailTabs({ event }: EventDetailTabsProps) {
 
             {/* TAB 1: OVERVIEW */}
             <TabsContent value="overview" className="space-y-6 pt-6">
+              {/* Live Match Score Indicator if active */}
+              {event.status === "IN_PROGRESS" && (
+                <div className="p-5 rounded-2xl bg-[#E85A4F]/10 border border-[#E85A4F]/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#E85A4F] uppercase">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E85A4F] opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E85A4F]"></span>
+                      </span>
+                      MATCH CURRENTLY IN PROGRESS
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8E8D8A] uppercase">Realtime Live Score</span>
+                  </div>
+                  <p className="text-base font-mono font-black text-[#1A1918]">
+                    {event.subtitle || "Match underway. Awaiting live point update from coordinator."}
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-3">
                 <h3 className="text-lg font-bold text-[#1A1918] uppercase tracking-wider font-mono flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-[#E85A4F]" />
