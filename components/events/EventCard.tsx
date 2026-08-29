@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Trophy,
   Users,
@@ -40,24 +39,10 @@ export function EventCard({ event, onRegisterSolo, onCreateTeam }: EventCardProp
 
   return (
     <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all duration-300 hover:-translate-y-1.5">
-      {/* Top Banner Image with Gradient Overlay */}
-      <div className="relative h-48 w-full overflow-hidden bg-[#D8C3A5]/40">
-        {event.bannerImage ? (
-          <Image
-            src={event.bannerImage}
-            alt={event.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="h-full w-full bg-[#D8C3A5]/30 flex items-center justify-center">
-            <Trophy className="h-12 w-12 text-[#8E8D8A]/40" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#F6F4EE] via-[#F6F4EE]/40 to-transparent" />
-
+      {/* Top Banner with Clean Geometric Header */}
+      <div className="relative h-28 w-full bg-[#EAE7DC] border-b border-[#8E8D8A]/20 p-4 flex flex-col justify-between overflow-hidden">
         {/* Category & Status Badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
             {event.category?.name || "Event"}
           </span>
@@ -73,8 +58,8 @@ export function EventCard({ event, onRegisterSolo, onCreateTeam }: EventCardProp
         </div>
 
         {/* Team Size / Format Indicators */}
-        <div className="absolute bottom-3 left-3 flex items-center space-x-2">
-          <span className="inline-flex items-center text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] border border-[#8E8D8A]/25 text-[#1A1918]">
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#F6F4EE] border border-[#8E8D8A]/25 text-[#1A1918]">
             {isTeam ? (
               <>
                 <Users className="w-3 h-3 mr-1 text-[#E85A4F]" />
@@ -87,10 +72,12 @@ export function EventCard({ event, onRegisterSolo, onCreateTeam }: EventCardProp
               </>
             )}
           </span>
-          {isFillingFast && (
+          {isFillingFast ? (
             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#E85A4F] text-white animate-pulse">
               Filling Fast
             </span>
+          ) : (
+            <Trophy className="h-4 w-4 text-[#8E8D8A]/60" />
           )}
         </div>
       </div>

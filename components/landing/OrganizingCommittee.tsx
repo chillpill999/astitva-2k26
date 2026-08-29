@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Users, Mail, GraduationCap, Info } from "lucide-react";
 import { FestCommitteeMember } from "@/lib/data/fest-data";
 
@@ -67,19 +66,8 @@ export function OrganizingCommittee({ committee }: OrganizingCommitteeProps) {
                       key={member.id}
                       className="group relative flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm"
                     >
-                      <div className="relative h-24 w-24 sm:h-28 sm:w-28 shrink-0 rounded-2xl overflow-hidden border border-[#8E8D8A]/30 bg-[#EAE7DC]">
-                        {member.photoUrl ? (
-                          <Image
-                            src={member.photoUrl}
-                            alt={member.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="h-full w-full bg-[#EAE7DC] flex items-center justify-center text-[#8E8D8A]">
-                            <Users className="h-8 w-8" />
-                          </div>
-                        )}
+                      <div className="h-20 w-20 shrink-0 rounded-2xl border border-[#8E8D8A]/30 bg-[#EAE7DC] flex items-center justify-center text-lg font-mono font-black text-[#1A1918]">
+                        {member.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
                       </div>
 
                       <div className="space-y-2 text-center sm:text-left flex-1 min-w-0">
@@ -123,19 +111,8 @@ export function OrganizingCommittee({ committee }: OrganizingCommitteeProps) {
                       key={member.id}
                       className="group relative flex flex-col items-center text-center p-6 rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm"
                     >
-                      <div className="relative h-20 w-20 rounded-full overflow-hidden border border-[#8E8D8A]/30 bg-[#EAE7DC] mb-3">
-                        {member.photoUrl ? (
-                          <Image
-                            src={member.photoUrl}
-                            alt={member.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="h-full w-full flex items-center justify-center text-[#8E8D8A]">
-                            <Users className="h-6 w-6" />
-                          </div>
-                        )}
+                      <div className="h-16 w-16 rounded-full border border-[#8E8D8A]/30 bg-[#EAE7DC] flex items-center justify-center text-sm font-mono font-black text-[#1A1918] mb-3">
+                        {member.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
                       </div>
 
                       <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EAE7DC] text-[#E85A4F] mb-1.5 uppercase">

@@ -4,7 +4,6 @@
 // ============================================================================
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -62,26 +61,8 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         </div>
 
         {/* Hero Banner Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm">
-          {/* Background Cover Image with Gradient */}
-          <div className="relative h-64 sm:h-80 w-full overflow-hidden">
-            {event.bannerImage ? (
-              <Image
-                src={event.bannerImage}
-                alt={event.title}
-                fill
-                priority
-                className="object-cover opacity-60"
-              />
-            ) : (
-              <div className="h-full w-full bg-[#D8C3A5]" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#F6F4EE] via-[#F6F4EE]/70 to-transparent" />
-          </div>
-
-          {/* Hero Content Overlay */}
-          <div className="relative -mt-40 sm:-mt-48 p-6 sm:p-10 space-y-6 z-10">
-            {/* Badges Bar */}
+        <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-10 space-y-6 shadow-sm">
+          {/* Badges Bar */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-mono font-bold px-3 py-1 rounded bg-[#1A1918] text-[#EAE7DC] uppercase">
                 {event.category?.name || "Competition"}
@@ -130,7 +111,6 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
               </div>
             </div>
           </div>
-        </div>
 
         {/* 4-Tab Body and Interactive Registration Actions */}
         <EventDetailTabs event={event} />

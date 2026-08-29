@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Trophy, Flame, MapPin, Users, ArrowRight, Sparkles } from "lucide-react";
 import { FestEvent } from "@/lib/data/fest-data";
 
@@ -59,22 +58,8 @@ export function FeaturedTournaments({ events }: FeaturedTournamentsProps) {
                   key={evt.id}
                   className="group relative flex flex-col justify-between rounded-2xl bg-[#F6F4EE] border border-[#8E8D8A]/25 shadow-sm hover:border-[#E85A4F] transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                 >
-                  <div className="relative h-48 w-full bg-[#D8C3A5]/40 overflow-hidden">
-                    {evt.bannerImage ? (
-                      <Image
-                        src={evt.bannerImage}
-                        alt={evt.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-[#D8C3A5]/30 flex items-center justify-center">
-                        <Trophy className="w-12 h-12 text-[#8E8D8A]/50" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#F6F4EE] via-transparent to-black/30" />
-
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <div className="relative h-28 w-full bg-[#EAE7DC] border-b border-[#8E8D8A]/20 p-4 flex flex-col justify-between overflow-hidden">
+                    <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#1A1918] text-[#EAE7DC]">
                         Day {evt.dayNumber}
                       </span>
@@ -83,10 +68,11 @@ export function FeaturedTournaments({ events }: FeaturedTournamentsProps) {
                       </span>
                     </div>
 
-                    <div className="absolute bottom-3 left-3">
-                      <span className="inline-block text-[10px] font-mono uppercase tracking-wider text-[#1A1918] font-bold px-2.5 py-0.5 rounded bg-[#EAE7DC]/90 border border-[#8E8D8A]/30">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-[#1A1918] font-bold px-2.5 py-0.5 rounded bg-[#F6F4EE] border border-[#8E8D8A]/30">
                         {evt.category?.name ?? "Event"}
                       </span>
+                      <Trophy className="h-4 w-4 text-[#8E8D8A]/60" />
                     </div>
                   </div>
 

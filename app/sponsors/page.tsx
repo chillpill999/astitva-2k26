@@ -3,7 +3,6 @@
 // Path: app/sponsors/page.tsx
 // ============================================================================
 
-import Image from "next/image";
 import { Handshake, ExternalLink, Info } from "lucide-react";
 import { getFestSponsors } from "@/lib/data/fest-data";
 import { FestSponsor } from "@/lib/data/fest-data";
@@ -132,19 +131,10 @@ function SponsorCard({ sponsor }: { sponsor: FestSponsor }) {
           )}
         </div>
 
-        <div className="relative h-24 w-full rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/20 flex items-center justify-center p-3">
-          {sponsor.logoUrl ? (
-            <Image
-              src={sponsor.logoUrl}
-              alt={sponsor.name}
-              fill
-              className="object-contain p-2"
-            />
-          ) : (
-            <span className="font-mono text-sm font-bold text-[#1A1918] text-center">
-              {sponsor.name}
-            </span>
-          )}
+        <div className="h-20 w-full rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/20 flex items-center justify-center p-3">
+          <span className="font-mono text-sm font-black text-[#1A1918] text-center tracking-wider uppercase">
+            {sponsor.name}
+          </span>
         </div>
 
         <div>

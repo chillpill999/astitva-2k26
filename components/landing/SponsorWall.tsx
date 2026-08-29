@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Handshake, ExternalLink, Info } from "lucide-react";
 import { FestSponsor } from "@/lib/data/fest-data";
 
@@ -85,19 +84,10 @@ export function SponsorWall({ sponsors }: SponsorWallProps) {
                       )}
                     </div>
 
-                    <div className="relative h-28 w-full rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/20 flex items-center justify-center p-4 overflow-hidden">
-                      {sp.logoUrl ? (
-                        <Image
-                          src={sp.logoUrl}
-                          alt={sp.name}
-                          fill
-                          className="object-contain p-3 group-hover:scale-105 transition-transform"
-                        />
-                      ) : (
-                        <span className="font-mono text-sm font-bold text-[#1A1918] text-center">
-                          {sp.name}
-                        </span>
-                      )}
+                    <div className="h-20 w-full rounded-xl bg-[#EAE7DC] border border-[#8E8D8A]/20 flex items-center justify-center p-3">
+                      <span className="font-mono text-sm font-black text-[#1A1918] text-center tracking-wider uppercase">
+                        {sp.name}
+                      </span>
                     </div>
 
                     <div>

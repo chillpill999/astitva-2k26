@@ -3,7 +3,6 @@
 // Path: app/team/page.tsx
 // ============================================================================
 
-import Image from "next/image";
 import { Users, GraduationCap, Mail, Info } from "lucide-react";
 import { getFestCommittee, FestCommitteeMember } from "@/lib/data/fest-data";
 import { CommitteeBrowser } from "@/components/team/CommitteeBrowser";
