@@ -16,7 +16,8 @@ import {
   Camera,
   HelpCircle,
 } from "lucide-react";
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
+import { Shield } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/events", label: "Events", icon: Trophy },
@@ -30,16 +31,26 @@ const NAV_LINKS = [
   { href: "/faq", label: "FAQ", icon: HelpCircle },
 ];
 
+const ADMIN_EMAILS = [
+  "aryanrockstar2007@gmail.com",
+  "technogamerzthenextlevel@gmail.com",
+];
+
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isSignedIn, user } = useUser();
 
-  let isSignedIn = false;
-  try {
-    const authState = useAuth();
-    isSignedIn = Boolean(authState?.isSignedIn);
-  } catch {
-    isSignedIn = false;
+  let isAdmin = false;
+  if (isSignedIn && user) {
+    const emails = [
+      user.primaryEmailAddress?.emailAddress,
+      ...(user.emailAddresses?.map((e) => e.emailAddress) || []),
+    ]
+      .filter(Boolean)
+      .map((e) => e!.toLowerCase().trim());
+
+    isAdmin = emails.some((e) => ADMIN_EMAILS.includes(e));
   }
 
   return (
@@ -120,6 +131,18 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {isAdmin && (
+            <Link
+              href="/dashboard/admin"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider uppercase bg-[#1A1918] text-[#EAE7DC] border border-[#1A1918] hover:bg-[#E85A4F] hover:border-[#E85A4F] hover:text-white transition-all shadow-sm"
+              title="Admin Control Center"
+            >
+              <Shield className="w-3.5 h-3.5 text-[#E85A4F]" />
+              <span className="hidden sm:inline">ADMIN PANEL</span>
+              <span className="sm:hidden">ADMIN</span>
+            </Link>
+          )}
+
           <Link
             href="/dashboard"
             className="w-8 h-8 rounded border border-[#8E8D8A]/35 flex items-center justify-center text-[#8E8D8A] hover:text-[#1A1918] hover:border-[#1A1918] transition-colors"
@@ -158,6 +181,19 @@ export function Navbar() {
 
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-[#8E8D8A]/20 bg-[#F6F4EE] px-4 py-6 space-y-3">
+          {isAdmin && (
+            <div className="pb-2">
+              <Link
+                href="/dashboard/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full text-center py-2.5 rounded-xl text-xs font-mono font-bold uppercase bg-[#1A1918] text-[#EAE7DC] border border-[#1A1918]"
+              >
+                <Shield className="w-4 h-4 text-[#E85A4F]" />
+                <span>ADMIN CONTROL CENTER</span>
+              </Link>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-2">
             {NAV_LINKS.map((link) => (
               <Link

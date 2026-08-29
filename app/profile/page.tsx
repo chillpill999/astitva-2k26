@@ -55,6 +55,33 @@ export default async function ProfilePage() {
 
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 bg-[#EAE7DC] text-[#1A1918]">
+      {/* Admin Quick Action Banner */}
+      {pass.role === "ADMIN" && (
+        <div className="rounded-3xl bg-[#1A1918] text-[#EAE7DC] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-[#1A1918] shadow-lg">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-[#E85A4F]/20 border border-[#E85A4F]/40 flex items-center justify-center text-[#E85A4F] shrink-0">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#E85A4F] font-bold">
+                  Administrator Privileges Active
+                </span>
+              </div>
+              <p className="text-xs text-[#EAE7DC]/80 font-mono mt-0.5 max-w-2xl">
+                You have full access to manage festival registrations, tournaments, QR verification scanners, results, announcements, and data exports.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/dashboard/admin"
+            className="px-5 py-2.5 rounded-xl bg-[#E85A4F] text-white font-mono text-xs font-bold uppercase hover:bg-[#C94A40] transition-colors whitespace-nowrap shadow-sm"
+          >
+            Launch Admin Panel →
+          </Link>
+        </div>
+      )}
+
       {/* Top Banner: Profile Completion & Festival Identity */}
       <div className="relative overflow-hidden rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 p-6 sm:p-8 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
