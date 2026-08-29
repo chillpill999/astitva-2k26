@@ -41,10 +41,23 @@ const ROLE_LABELS: Record<string, string> = {
 
 const EXPORT_KINDS = ["registrations", "attendance", "results", "certificates", "participants", "teams"] as const;
 
+const ADMIN_EMAILS = [
+  "aryanrockstar2007@gmail.com",
+  "technogamerzthenextlevel@gmail.com",
+  ...(process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean),
+];
+
 export default async function AdminDashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in?callbackUrl=/dashboard/admin");
-  if (user.role !== "ADMIN") redirect("/unauthorized?attempted=/dashboard/admin");
+
+  const isAuthorized =
+    user.role === "ADMIN" &&
+    ADMIN_EMAILS.includes(user.email.toLowerCase().trim());
+
+  if (!isAuthorized) {
+    redirect("/unauthorized?attempted=/dashboard/admin");
+  }
 
   const data = await getAdminAnalytics();
 

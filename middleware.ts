@@ -22,27 +22,13 @@ const isAuthRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { pathname } = req.nextUrl;
 
-  // 1. Check Local / Mock session token
+  // 1. Check Local Cryptographically Signed JWT Token
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const secret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
   let mockUser: SessionUser | null = null;
 
   if (token) {
     mockUser = await verifyJWT<SessionUser>(token, secret);
-  }
-
-  if (!mockUser) {
-    const mockCookie = req.cookies.get("astitva_mock_user")?.value;
-    if (mockCookie) {
-      try {
-        const parsed = JSON.parse(mockCookie) as SessionUser;
-        if (parsed?.id && parsed?.role) {
-          mockUser = parsed;
-        }
-      } catch {
-        // ignore parse error
-      }
-    }
   }
 
   // 2. Handle Protected Routes

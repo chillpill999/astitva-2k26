@@ -14,32 +14,21 @@ import { getDemoUserByRole } from "./mock-auth";
  * Returns the currently authenticated user from session cookie or Clerk.
  */
 export async function getCurrentUser(): Promise<SessionUser | null> {
-  // 1. Check Clerk session first
+  // 1. Check Clerk session first (Production)
   try {
     const clerkUser = await getClerkSessionUser();
     if (clerkUser) return clerkUser;
   } catch {
-    // Continue to cookie verification
+    // Continue to cryptographic JWT verification
   }
 
-  // 2. Check primary JWT session cookie
+  // 2. Check primary HMAC-SHA256 signed JWT session cookie
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
     if (token) {
       const payload = await verifyJWT<SessionUser>(token, getJwtSecret());
       if (payload) return payload;
-    }
-
-    // 3. Check JSON mock user cookie if present
-    const mockCookie = cookieStore.get("astitva_mock_user")?.value;
-    if (mockCookie) {
-      try {
-        const parsed = JSON.parse(mockCookie) as SessionUser;
-        if (parsed?.id && parsed?.role) return parsed;
-      } catch {
-        // ignore JSON parse error
-      }
     }
 
     return null;
