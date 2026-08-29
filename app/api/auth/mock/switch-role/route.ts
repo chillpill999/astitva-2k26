@@ -10,6 +10,13 @@ import { signJWT, SESSION_COOKIE_NAME, SESSION_EXPIRY_SECONDS } from "@/lib/auth
 
 export async function POST(req: NextRequest) {
   try {
+    if ((process.env.NODE_ENV as string) === "production" || process.env.NEXT_PUBLIC_AUTH_PROVIDER === "clerk") {
+      return NextResponse.json(
+        { error: "Mock role switching is disabled in production. Please sign in with your official account." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { role, email } = body;
 
@@ -47,7 +54,7 @@ export async function POST(req: NextRequest) {
       redirectPath: demoUser.redirectPath,
     });
 
-    const isProd = process.env.NODE_ENV === "production";
+    const isProd = (process.env.NODE_ENV as string) === "production";
 
     // Set primary HTTP-only JWT session cookie
     response.cookies.set(SESSION_COOKIE_NAME, token, {

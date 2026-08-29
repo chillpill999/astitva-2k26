@@ -12,6 +12,13 @@ import { getRoleDashboardUrl } from "@/lib/auth/profile";
 
 export async function POST(req: NextRequest) {
   try {
+    if ((process.env.NODE_ENV as string) === "production" || process.env.NEXT_PUBLIC_AUTH_PROVIDER === "clerk") {
+      return NextResponse.json(
+        { error: "Mock login is disabled in production. Please sign in with your official account." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { email, password, role } = body;
 
@@ -83,7 +90,7 @@ export async function POST(req: NextRequest) {
       };
 
       const token = await signJWT(sessionPayload);
-      const isProd = process.env.NODE_ENV === "production";
+      const isProd = (process.env.NODE_ENV as string) === "production";
 
       const response = NextResponse.json({
         success: true,
@@ -138,7 +145,7 @@ export async function POST(req: NextRequest) {
     };
 
     const token = await signJWT(sessionPayload);
-    const isProd = process.env.NODE_ENV === "production";
+    const isProd = (process.env.NODE_ENV as string) === "production";
 
     const response = NextResponse.json({
       success: true,
