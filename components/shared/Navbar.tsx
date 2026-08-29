@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton } from "@clerk/nextjs";
 
 const NAV_LINKS = [
   { href: "/events", label: "Events", icon: Trophy },
@@ -48,6 +48,14 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const [switchingRole, setSwitchingRole] = useState(false);
+
+  let isSignedIn = false;
+  try {
+    const authState = useAuth();
+    isSignedIn = Boolean(authState?.isSignedIn);
+  } catch {
+    isSignedIn = false;
+  }
 
   const isDev = process.env.NODE_ENV !== "production";
 
@@ -174,7 +182,7 @@ export function Navbar() {
               <Grid className="w-4 h-4" />
             </Link>
 
-            <SignedIn>
+            {isSignedIn ? (
               <UserButton
                 appearance={{
                   elements: {
@@ -182,16 +190,14 @@ export function Navbar() {
                   },
                 }}
               />
-            </SignedIn>
-
-            <SignedOut>
+            ) : (
               <Link
                 href="/sign-in"
                 className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
               >
                 SIGN IN
               </Link>
-            </SignedOut>
+            )}
 
             <button
               type="button"
