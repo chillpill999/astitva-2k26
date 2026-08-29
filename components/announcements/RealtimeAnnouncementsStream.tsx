@@ -30,8 +30,11 @@ export function RealtimeAnnouncementsStream({
 
   if (items.length === 0) {
     return (
-      <div className="p-8 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center text-xs font-mono text-[#8E8D8A]">
-        No announcements match the selected filter.
+      <div className="p-10 rounded-3xl bg-[#F6F4EE] border border-[#8E8D8A]/25 text-center font-mono space-y-2">
+        <p className="text-sm font-bold text-[#1A1918]">No announcements posted yet</p>
+        <p className="text-xs text-[#8E8D8A]">
+          Official bulletins and live notices published by festival coordinators will appear here in real time.
+        </p>
       </div>
     );
   }
