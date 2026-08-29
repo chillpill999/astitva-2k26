@@ -441,7 +441,7 @@ export interface BranchStanding {
   totalPodiums: number;
 }
 
-export const BRANCH_FULL_NAMES: Record<string, string> = {
+const BRANCH_FULL_NAMES: Record<string, string> = {
   CSE: "Computer Science & Engineering (CSE)",
   ME: "Mechanical Engineering (ME)",
   CE: "Civil Engineering (CE)",
