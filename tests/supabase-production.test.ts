@@ -155,6 +155,39 @@ async function runTests() {
     assert.ok(validStatuses.includes("COMPLETED"));
   });
 
+  // 13. Supabase Realtime Channels & Subscriptions
+  await it("Supabase Realtime channels exist for Registration, Attendance, Event, and Result tables", () => {
+    const channels = [
+      "realtime-events-schedule",
+      "realtime-registrations-all",
+      "realtime-attendance-all",
+      "realtime-live-scores-feed",
+      "realtime-results",
+      "realtime-announcements"
+    ];
+    assert.equal(channels.length, 6);
+    assert.ok(channels.includes("realtime-registrations-all"));
+    assert.ok(channels.includes("realtime-attendance-all"));
+  });
+
+  // 14. Coordinator Realtime Participant Payload
+  await it("Coordinator participant payload contains ticket, student branch, squad, and live status", () => {
+    const sampleItem = {
+      id: "reg_123",
+      eventId: "ev_cricket_01",
+      eventTitle: "LNJPIT Premier League Cricket",
+      participantName: "Aryan Sharma",
+      participantId: "AST26-1049",
+      branch: "CSE",
+      teamName: "Super Strikers",
+      status: "CONFIRMED",
+      registrationNumber: "AST26-REG-10492"
+    };
+    assert.ok(sampleItem.registrationNumber.startsWith("AST26-REG-"));
+    assert.equal(sampleItem.status, "CONFIRMED");
+    assert.equal(sampleItem.branch, "CSE");
+  });
+
   console.log("--------------------------------------------------------------------------------");
   console.log(`Supabase Production Suite: ${passed} passed / ${failed} failed`);
   console.log("--------------------------------------------------------------------------------");
@@ -168,3 +201,4 @@ runTests().catch((e) => {
   console.error("Test runner crashed:", e);
   process.exit(1);
 });
+

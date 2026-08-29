@@ -142,10 +142,123 @@ export function useRealtimeLiveScoreboard<T extends { id: string; status?: strin
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
 
   return events;
 }
+
+export function useRealtimeRegistrations<T extends { id: string; eventId?: string; userId?: string }>(
+  initialRegistrations: T[] = [],
+  filterEventId?: string
+): { registrations: T[]; count: number; lastRegistered: T | null } {
+  const [registrations, setRegistrations] = useState<T[]>(initialRegistrations);
+  const [lastRegistered, setLastRegistered] = useState<T | null>(null);
+
+  useEffect(() => {
+    setRegistrations(initialRegistrations);
+  }, [initialRegistrations]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`realtime-registrations-${filterEventId || "all"}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "Registration",
+          filter: filterEventId ? `eventId=eq.${filterEventId}` : undefined,
+        },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            const newReg = payload.new as T;
+            setLastRegistered(newReg);
+            setRegistrations((prev) => {
+              const exists = prev.some((r) => r.id === newReg.id);
+              if (exists) return prev;
+              return [newReg, ...prev];
+            });
+          } else if (payload.eventType === "UPDATE") {
+            const updated = payload.new as T;
+            setRegistrations((prev) =>
+              prev.map((r) => (r.id === updated.id ? { ...r, ...updated } : r))
+            );
+          } else if (payload.eventType === "DELETE") {
+            const deleted = payload.old as { id: string };
+            setRegistrations((prev) => prev.filter((r) => r.id !== deleted.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [filterEventId]);
+
+  return {
+    registrations,
+    count: registrations.length,
+    lastRegistered,
+  };
+}
+
+export function useRealtimeAttendance<T extends { id: string; eventId?: string | null; participantId?: string }>(
+  initialAttendance: T[] = [],
+  filterEventId?: string
+): { attendanceList: T[]; presentCount: number; lastCheckIn: T | null } {
+  const [attendanceList, setAttendanceList] = useState<T[]>(initialAttendance);
+  const [lastCheckIn, setLastCheckIn] = useState<T | null>(null);
+
+  useEffect(() => {
+    setAttendanceList(initialAttendance);
+  }, [initialAttendance]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`realtime-attendance-${filterEventId || "all"}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "Attendance",
+          filter: filterEventId ? `eventId=eq.${filterEventId}` : undefined,
+        },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            const newAtt = payload.new as T;
+            setLastCheckIn(newAtt);
+            setAttendanceList((prev) => {
+              const exists = prev.some((a) => a.id === newAtt.id);
+              if (exists) return prev;
+              return [newAtt, ...prev];
+            });
+          } else if (payload.eventType === "UPDATE") {
+            const updated = payload.new as T;
+            setAttendanceList((prev) =>
+              prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a))
+            );
+          } else if (payload.eventType === "DELETE") {
+            const deleted = payload.old as { id: string };
+            setAttendanceList((prev) => prev.filter((a) => a.id !== deleted.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [filterEventId]);
+
+  return {
+    attendanceList,
+    presentCount: attendanceList.length,
+    lastCheckIn,
+  };
+}
+

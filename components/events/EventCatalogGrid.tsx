@@ -22,12 +22,14 @@ import { EventCard } from "./EventCard";
 import { RegisterSoloModal } from "./RegisterSoloModal";
 import { FestEvent } from "@/lib/data/fest-data";
 
+import { useRealtimeSchedule } from "@/lib/supabase/hooks";
+
 interface EventCatalogGridProps {
   initialEvents: FestEvent[];
 }
 
 export function EventCatalogGrid({ initialEvents }: EventCatalogGridProps) {
-  const [events] = useState<FestEvent[]>(initialEvents);
+  const events = useRealtimeSchedule(initialEvents);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedType, setSelectedType] = useState<"ALL" | "INDIVIDUAL" | "TEAM">("ALL");

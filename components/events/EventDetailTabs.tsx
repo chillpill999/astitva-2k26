@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Trophy,
@@ -26,14 +26,52 @@ import { EventDetailData } from "@/lib/events/types";
 import { RegisterSoloModal } from "./RegisterSoloModal";
 import { FestEvent } from "@/lib/data/fest-data";
 
+import { supabase } from "@/lib/supabase/client";
+
 interface EventDetailTabsProps {
   event: EventDetailData;
 }
 
-export function EventDetailTabs({ event }: EventDetailTabsProps) {
+export function EventDetailTabs({ event: initialEvent }: EventDetailTabsProps) {
+  const [event, setEvent] = useState<EventDetailData>(initialEvent);
   const [activeTab, setActiveTab] = useState("overview");
   const [isSoloModalOpen, setIsSoloModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  useEffect(() => {
+    setEvent(initialEvent);
+  }, [initialEvent]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`event-realtime-${initialEvent.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "Event",
+          filter: `id=eq.${initialEvent.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === "UPDATE") {
+            const updated = payload.new as any;
+            setEvent((prev) => ({
+              ...prev,
+              title: updated.title ?? prev.title,
+              subtitle: updated.subtitle ?? prev.subtitle,
+              status: updated.status ?? prev.status,
+              currentRegistrations: updated.currentRegistrations ?? prev.currentRegistrations,
+            }));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [initialEvent.id]);
 
   const isTeam = event.eventType === "TEAM";
   const capacityPct = Math.min(
