@@ -6,6 +6,8 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft, KeyRound } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { JoinTeamClient } from "./JoinTeamClient";
 
 export const metadata = {
@@ -19,6 +21,12 @@ interface JoinTeamPageProps {
 
 export default async function JoinTeamPage({ searchParams }: JoinTeamPageProps) {
   const { code } = await searchParams;
+  const user = await getCurrentUser();
+
+  if (!user) {
+    const callback = code ? `/teams/join?code=${code}` : "/teams/join";
+    redirect(`/sign-in?callbackUrl=${encodeURIComponent(callback)}`);
+  }
 
   return (
     <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-12 px-4 sm:px-6 lg:px-8 space-y-10">

@@ -161,12 +161,20 @@ export function Navbar() {
               }}
             />
           ) : (
-            <Link
-              href="/sign-up"
-              className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
-            >
-              SIGN UP
-            </Link>
+            <div className="flex items-center space-x-2">
+              <Link
+                href="/sign-in"
+                className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-mono font-bold tracking-wider uppercase border border-[#8E8D8A]/35 text-[#1A1918] bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] transition-all"
+              >
+                SIGN IN
+              </Link>
+              <Link
+                href="/sign-up"
+                className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold tracking-wider uppercase bg-[#E85A4F] text-white hover:bg-[#C94A40] transition-colors shadow-sm"
+              >
+                SIGN UP
+              </Link>
+            </div>
           )}
 
           <button

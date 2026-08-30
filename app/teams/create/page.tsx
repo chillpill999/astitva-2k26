@@ -6,6 +6,8 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { getEventsCatalog } from "@/lib/events/actions";
 import { CreateTeamForm } from "./CreateTeamForm";
 
@@ -20,6 +22,13 @@ interface CreateTeamPageProps {
 
 export default async function CreateTeamPage({ searchParams }: CreateTeamPageProps) {
   const { event: defaultEventId } = await searchParams;
+  const user = await getCurrentUser();
+
+  if (!user) {
+    const callback = defaultEventId ? `/teams/create?event=${defaultEventId}` : "/teams/create";
+    redirect(`/sign-in?callbackUrl=${encodeURIComponent(callback)}`);
+  }
+
   const eventsRes = await getEventsCatalog();
   const allEvents = eventsRes.data || [];
   const teamEvents = allEvents.filter((e) => e.eventType === "TEAM" || e.maxTeamSize > 1);

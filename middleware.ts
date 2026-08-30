@@ -12,6 +12,8 @@ import { getRoleDashboardUrl } from "@/lib/auth/profile";
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/profile(.*)",
+  "/teams(.*)",
+  "/team/join(.*)",
 ]);
 
 const isAuthRoute = createRouteMatcher([

@@ -5,7 +5,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { ArrowLeft } from "lucide-react";
 import { getTeamDetails } from "@/lib/teams/actions";
 import { TeamDashboardClient } from "./TeamDashboardClient";
@@ -28,6 +29,12 @@ export async function generateMetadata({ params }: TeamPageProps) {
 
 export default async function TeamPage({ params }: TeamPageProps) {
   const { id } = await params;
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect(`/sign-in?callbackUrl=/teams/${id}`);
+  }
+
   const res = await getTeamDetails(id);
 
   if (!res.success || !res.data) {

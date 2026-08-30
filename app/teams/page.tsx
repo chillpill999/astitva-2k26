@@ -13,6 +13,8 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { getUserTeams } from "@/lib/teams/actions";
 import { TeamCard } from "@/components/teams/TeamCard";
 
@@ -22,6 +24,12 @@ export const metadata = {
 };
 
 export default async function TeamsHubPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/sign-in?callbackUrl=/teams");
+  }
+
   const res = await getUserTeams();
   const teams = res.data || [];
 

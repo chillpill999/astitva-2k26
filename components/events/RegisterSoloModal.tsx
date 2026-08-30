@@ -149,9 +149,21 @@ export function RegisterSoloModal({
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-xs font-mono text-red-700 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 shrink-0" />
-                <span>{error}</span>
+              <div className="p-3.5 rounded-xl bg-red-100 border border-red-300 text-xs font-mono text-red-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-red-600" />
+                  <span>{error}</span>
+                </div>
+                {error.toLowerCase().includes("sign in") && (
+                  <Link href={`/sign-in?callbackUrl=/events/${event.slug || event.id}`} className="block pt-1">
+                    <button
+                      type="button"
+                      className="w-full py-2 bg-[#E85A4F] hover:bg-[#C94A40] text-white rounded-lg text-xs font-mono font-bold uppercase transition-colors"
+                    >
+                      Sign In Now →
+                    </button>
+                  </Link>
+                )}
               </div>
             )}
 

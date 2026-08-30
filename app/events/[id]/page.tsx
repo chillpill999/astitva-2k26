@@ -16,6 +16,7 @@ import {
   Sparkles,
   Award,
 } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { getEventBySlugOrId } from "@/lib/events/actions";
 import { EventDetailTabs } from "@/components/events/EventDetailTabs";
 import { TournamentJsonLd, BreadcrumbsJsonLd } from "@/components/seo/JsonLd";
@@ -56,7 +57,10 @@ export async function generateMetadata({ params }: EventDetailPageProps) {
 
 export default async function EventDetailPage({ params }: EventDetailPageProps) {
   const { id } = await params;
-  const res = await getEventBySlugOrId(id);
+  const [res, currentUser] = await Promise.all([
+    getEventBySlugOrId(id),
+    getCurrentUser(),
+  ]);
 
   if (!res.success || !res.data) {
     notFound();
@@ -64,6 +68,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
   const event = res.data;
   const isTeam = event.eventType === "TEAM";
+  const isAuthenticated = Boolean(currentUser);
 
   return (
     <div className="w-full min-h-screen bg-[#EAE7DC] text-[#1A1918] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 space-y-10">
@@ -140,7 +145,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
           </div>
 
         {/* 4-Tab Body and Interactive Registration Actions */}
-        <EventDetailTabs event={event} />
+        <EventDetailTabs event={event} isAuthenticated={isAuthenticated} />
       </div>
     </div>
   );

@@ -20,7 +20,9 @@ import {
   ShieldCheck,
   Share2,
   FileCheck2,
+  LogIn,
 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventDetailData } from "@/lib/events/types";
 import { RegisterSoloModal } from "./RegisterSoloModal";
@@ -30,9 +32,12 @@ import { supabase } from "@/lib/supabase/client";
 
 interface EventDetailTabsProps {
   event: EventDetailData;
+  isAuthenticated?: boolean;
 }
 
-export function EventDetailTabs({ event: initialEvent }: EventDetailTabsProps) {
+export function EventDetailTabs({ event: initialEvent, isAuthenticated = false }: EventDetailTabsProps) {
+  const { isSignedIn } = useAuth();
+  const isUserAuthenticated = Boolean(isAuthenticated || isSignedIn || initialEvent.userRegistration || initialEvent.userTeam);
   const [event, setEvent] = useState<EventDetailData>(initialEvent);
   const [activeTab, setActiveTab] = useState("overview");
   const [isSoloModalOpen, setIsSoloModalOpen] = useState(false);
@@ -427,12 +432,28 @@ export function EventDetailTabs({ event: initialEvent }: EventDetailTabsProps) {
           {/* CTAs */}
           {!isRegistered && !hasTeam && (
             <div className="space-y-3 pt-2">
-              {isTeam ? (
+              {!isUserAuthenticated ? (
+                <div className="p-5 rounded-2xl bg-[#EAE7DC] border border-[#8E8D8A]/30 space-y-3.5 shadow-sm">
+                  <div className="flex items-center gap-2 text-[#E85A4F] font-bold text-xs font-mono uppercase">
+                    <LogIn className="h-4 w-4 shrink-0" />
+                    <span>Sign In Required</span>
+                  </div>
+                  <p className="text-xs text-[#8E8D8A] font-mono leading-relaxed">
+                    You must sign in to register for {event.title}, create a squad roster, and receive your encrypted QR festival badge.
+                  </p>
+                  <Link href={`/sign-in?callbackUrl=/events/${event.slug}`} className="block">
+                    <button className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      Sign In to Register
+                    </button>
+                  </Link>
+                </div>
+              ) : isTeam ? (
                 <>
                   <Link href={`/teams/create?event=${event.id}`} className="block">
                     <button
                       disabled={isFull}
-                      className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <Users className="h-4 w-4" />
                       Create New Squad
@@ -442,7 +463,7 @@ export function EventDetailTabs({ event: initialEvent }: EventDetailTabsProps) {
                   <Link href={`/teams/join?event=${event.id}`} className="block">
                     <button
                       disabled={isFull}
-                      className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider border border-[#8E8D8A]/35 bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] text-[#1A1918] rounded-xl transition-all cursor-pointer"
+                      className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider border border-[#8E8D8A]/35 bg-[#EAE7DC] hover:bg-[#1A1918] hover:text-[#EAE7DC] text-[#1A1918] rounded-xl transition-all cursor-pointer disabled:opacity-50"
                     >
                       Join Squad with Code
                     </button>
@@ -452,7 +473,7 @@ export function EventDetailTabs({ event: initialEvent }: EventDetailTabsProps) {
                 <button
                   disabled={isFull}
                   onClick={() => setIsSoloModalOpen(true)}
-                  className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3 text-xs font-mono font-bold uppercase tracking-wider bg-[#E85A4F] hover:bg-[#C94A40] text-white rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Sparkles className="h-4 w-4" />
                   Instant Solo Registration
