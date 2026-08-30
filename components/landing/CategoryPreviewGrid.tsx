@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import { Trophy, Music, Gamepad2, BookOpen, ArrowRight, Sparkles } from "lucide-react";

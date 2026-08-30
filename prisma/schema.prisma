@@ -325,6 +325,9 @@ model Event {
   @@index([eventType])
   @@index([isFeatured])
   @@index([scheduleStart])
+  @@index([categoryId, status])
+  @@index([dayNumber, status])
+  @@index([isFeatured, status])
 }
 
 // ----------------------------------------------------------------------------
@@ -348,10 +351,12 @@ model Registration {
   team               Team?              @relation(fields: [teamId], references: [id], onDelete: SetNull)
 
   @@unique([eventId, userId])
-  @@index([eventId])
   @@index([userId])
+  @@index([eventId])
   @@index([teamId])
   @@index([status])
+  @@index([status, createdAt])
+  @@index([teamId, status])
   @@index([registrationNumber])
 }
 
@@ -621,6 +626,7 @@ model Announcement {
   @@index([isPinned])
   @@index([publishedAt])
   @@index([authorId])
+  @@index([isPinned, priority, publishedAt])
 }
 
 // ----------------------------------------------------------------------------
@@ -643,6 +649,7 @@ model Notification {
   @@index([userId])
   @@index([isRead])
   @@index([createdAt])
+  @@index([userId, isRead, createdAt])
   @@index([type])
 }
 

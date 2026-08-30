@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import { Users, Mail, GraduationCap, Info } from "lucide-react";

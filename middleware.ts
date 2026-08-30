@@ -22,6 +22,14 @@ const isAuthRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { pathname } = req.nextUrl;
 
+  // Fast-path bypass for public routes to minimize TTFB (<100ms)
+  const isProtected = isProtectedRoute(req);
+  const isAuth = isAuthRoute(req);
+
+  if (!isProtected && !isAuth) {
+    return NextResponse.next();
+  }
+
   // 1. Check Local Cryptographically Signed JWT Token
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const secret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;

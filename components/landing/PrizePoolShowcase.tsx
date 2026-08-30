@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Trophy, Medal, Award, FileCheck2, Sparkles, ShieldCheck, Info } from "lucide-react";
 
