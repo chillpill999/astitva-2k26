@@ -12,8 +12,18 @@ import { getRoleDashboardUrl } from "@/lib/auth/profile";
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/profile(.*)",
+  "/complete-profile(.*)",
   "/teams(.*)",
-  "/team/join(.*)",
+  "/team(.*)",
+  "/certificates(.*)",
+  "/attendance(.*)",
+]);
+
+const isProtectedApiRoute = createRouteMatcher([
+  "/api/ai(.*)",
+  "/api/qr(.*)",
+  "/api/notifications(.*)",
+  "/api/export(.*)",
 ]);
 
 const isAuthRoute = createRouteMatcher([
@@ -26,9 +36,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   // Fast-path bypass for public routes to minimize TTFB (<100ms)
   const isProtected = isProtectedRoute(req);
+  const isProtectedApi = isProtectedApiRoute(req);
   const isAuth = isAuthRoute(req);
 
-  if (!isProtected && !isAuth) {
+  if (!isProtected && !isProtectedApi && !isAuth) {
     return NextResponse.next();
   }
 
@@ -41,8 +52,21 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     mockUser = await verifyJWT<SessionUser>(token, secret);
   }
 
-  // 2. Handle Protected Routes
-  if (isProtectedRoute(req)) {
+  // 2. Handle Protected API Routes (return 401 JSON)
+  if (isProtectedApi) {
+    const { userId } = await auth();
+    const isAuthenticated = Boolean(userId || mockUser);
+
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: "401 Unauthorized: Authentication required" },
+        { status: 401 }
+      );
+    }
+  }
+
+  // 3. Handle Protected Page Routes (redirect to /sign-in)
+  if (isProtected) {
     const { userId } = await auth();
     const isAuthenticated = Boolean(userId || mockUser);
 

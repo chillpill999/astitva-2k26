@@ -592,3 +592,56 @@ export async function uploadAvatar(
     };
   }
 }
+
+/**
+ * Validates whether the student has completed all mandatory profile fields:
+ * Full Name, Registration Number, Branch, Semester, Phone Number.
+ */
+export async function checkUserProfileCompletion(userId: string): Promise<{
+  isComplete: boolean;
+  missingFields: string[];
+}> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { profile: true },
+    });
+
+    if (!user) {
+      return { isComplete: false, missingFields: ["User account not found"] };
+    }
+
+    const missing: string[] = [];
+    if (!user.name || user.name.trim().length < 2) {
+      missing.push("Full Name");
+    }
+    if (
+      !user.profile?.collegeId ||
+      user.profile.collegeId === "TBD" ||
+      user.profile.collegeId.trim().length === 0
+    ) {
+      missing.push("Registration / Roll Number");
+    }
+    if (!user.profile?.branch) {
+      missing.push("Branch");
+    }
+    if (!user.profile?.semester || user.profile.semester < 1 || user.profile.semester > 8) {
+      missing.push("Semester");
+    }
+    if (
+      !user.profile?.phone ||
+      user.profile.phone === "9999999999" ||
+      user.profile.phone.trim().length < 10
+    ) {
+      missing.push("Phone Number");
+    }
+
+    return {
+      isComplete: missing.length === 0,
+      missingFields: missing,
+    };
+  } catch {
+    return { isComplete: true, missingFields: [] };
+  }
+}
+

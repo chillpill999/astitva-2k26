@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth/auth";
 import {
   getMyNotifications,
   markNotificationRead,
@@ -14,11 +15,21 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
+  }
+
   const list = await getMyNotifications(50);
   return NextResponse.json({ items: list });
 }
 
 export async function POST(req: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: "401 Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json().catch(() => ({}));
   if (body?.action === "markAll") {
     const r = await markAllNotificationsRead();

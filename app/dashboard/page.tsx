@@ -32,7 +32,7 @@ export default async function DashboardPage() {
     }
 
     if (isProfileIncomplete) {
-      redirect("/profile");
+      redirect("/complete-profile");
     }
   }
 

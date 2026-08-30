@@ -47,6 +47,16 @@ export async function createTeam(
       };
     }
 
+    // Profile Completion Enforcement
+    const { checkUserProfileCompletion } = await import("@/lib/profile/actions");
+    const completion = await checkUserProfileCompletion(user.id);
+    if (!completion.isComplete) {
+      return {
+        success: false,
+        error: `Please complete your mandatory student profile (${completion.missingFields.join(", ")}) before creating a squad.`,
+      };
+    }
+
     // 1. Fetch Event metadata to verify team requirements
     const event = await prisma.event.findUnique({
       where: { id: input.eventId },
@@ -348,6 +358,16 @@ export async function joinTeamByCode(
       return {
         success: false,
         error: "You must be signed in to join a squad.",
+      };
+    }
+
+    // Profile Completion Enforcement
+    const { checkUserProfileCompletion } = await import("@/lib/profile/actions");
+    const completion = await checkUserProfileCompletion(user.id);
+    if (!completion.isComplete) {
+      return {
+        success: false,
+        error: `Please complete your mandatory student profile (${completion.missingFields.join(", ")}) before joining a squad.`,
       };
     }
 

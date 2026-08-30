@@ -407,6 +407,16 @@ export async function registerSoloEvent(
       };
     }
 
+    // Profile Completion Enforcement
+    const { checkUserProfileCompletion } = await import("@/lib/profile/actions");
+    const completion = await checkUserProfileCompletion(user.id);
+    if (!completion.isComplete) {
+      return {
+        success: false,
+        error: `Please complete your mandatory student profile (${completion.missingFields.join(", ")}) before registering.`,
+      };
+    }
+
     // 1. Fetch Event
     const event = await prisma.event.findUnique({
       where: { id: eventId },

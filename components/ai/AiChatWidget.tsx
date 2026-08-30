@@ -62,13 +62,27 @@ export function AiChatWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg, sessionId: sessionId.current }),
       });
+
+      if (res.status === 401) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `a-${Date.now()}`,
+            role: "assistant",
+            content: "You must be signed in to interact with the ASTITVA 2K26 AI Assistant.",
+            suggestedActions: [{ label: "Sign In to Continue", url: "/sign-in" }],
+          },
+        ]);
+        return;
+      }
+
       const data = await res.json();
       setMessages((prev) => [
         ...prev,
         {
           id: `a-${Date.now()}`,
           role: "assistant",
-          content: data.answer,
+          content: data.answer || "No response received.",
           relatedEvents: data.relatedEvents,
           suggestedActions: data.suggestedActions,
         },

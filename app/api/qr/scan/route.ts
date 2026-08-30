@@ -4,12 +4,28 @@
 // ============================================================================
 
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { scanQrToken, manualLookupCheckIn } from "@/lib/attendance/actions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      { success: false, error: "401 Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  if (!["VOLUNTEER", "EVENT_COORDINATOR", "ADMIN"].includes(user.role)) {
+    return NextResponse.json(
+      { success: false, error: "403 Forbidden: Insufficient scanning permissions" },
+      { status: 403 }
+    );
+  }
+
   let body: any;
   try {
     body = await req.json();

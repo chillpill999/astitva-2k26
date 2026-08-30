@@ -30,8 +30,12 @@ export interface AnalyticsOverview {
 }
 
 export async function getAdminAnalytics(): Promise<AnalyticsOverview> {
+  const ctx = await getRequestContext();
+  if (!ctx.user || ctx.user.role !== "ADMIN") {
+    throw new Error("Unauthorized: Admin access required");
+  }
+
   try {
-    const ctx = await getRequestContext();
 
     const [
       users,
