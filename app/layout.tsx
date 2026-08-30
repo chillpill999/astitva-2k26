@@ -98,11 +98,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <head>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body
+        className="min-h-screen bg-[#EAE7DC] font-sans text-[#1A1918] antialiased flex flex-col justify-between selection:bg-[#E85A4F] selection:text-white"
+        suppressHydrationWarning
+      >
         <MasterFestivalJsonLd />
-      </head>
-      <body className="min-h-screen bg-[#EAE7DC] font-sans text-[#1A1918] antialiased flex flex-col justify-between selection:bg-[#E85A4F] selection:text-white">
         <ClerkProvider>
           {/* Top Navbar */}
           <Navbar />
